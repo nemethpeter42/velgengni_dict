@@ -1,0 +1,662 @@
+<html>
+<head>
+<title>Szókereső</title>
+<style>
+.highlightedWord {
+	background: lightyellow;
+}
+.original{
+	font-weight: bold;
+}
+
+.subtitle-entry-pair{
+	padding: 5px 0px;
+}
+
+body {
+	max-height: 1000px;
+	margin: auto;
+}
+
+.navbar-container{
+	display: flex;
+	flex-direction: column;
+}
+
+.flex-container{
+	display: flex;
+	flex-direction: column;
+	max-height: 100vh;
+}
+
+body, .flex-container, .navbar-container, .main-container {
+	overflow: hidden;
+}
+
+.navbar{
+	padding: 4px;
+	border: 1px solid;
+}
+
+#quick-search-area {
+	padding-top: 6px;
+}
+
+.main {
+
+	max-height: 100vh;
+	overflow-y: scroll;
+}
+#list-hide-show-button-area {
+	padding-bottom: 8px;
+}
+
+.footer{
+	margin-top: 4px;
+	border-top: 1px solid gray;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+#quick-search-input-field{
+	min-width: 500px;
+}
+
+.plusButtonContainer {
+	margin: 2px;
+}
+
+.pairWithButtonContainer {
+	display: flex;
+	align-items: center;
+	margin: 2px 4px;
+}	
+
+.selected-pair{
+	background-color: green;
+}
+</style>
+<meta charset='utf-8'>
+</head>
+<body>
+	<div class='flex-container'>
+		<div class='navbar-container'>
+
+			<div class='navbar'>
+				<div id='prev-next-area'>
+					<a href='#' onclick='prevEntry()'>Előző</a>
+					<a href='#' onclick='nextEntry()'>Következő</a>
+				</div>
+				<div id='quick-search-area'>
+					<input type='text' id='quick-search-input-field' placeholder='Gyorsszűrés' />
+					<button id='mark-button' onclick='setFilteringMode("markOnly");repaintResults()'>
+						Csak kiemelés
+					</button>
+					<button id='exec-filter-button' onclick='setFilteringMode(undefined);repaintResults()'>Szűrés</button>
+					<button id='exec-inverse-filter-button' onclick='setFilteringMode("inverse");repaintResults()'>
+						Invertált szűrés
+					</button>
+					<button onclick='resetQuickFiltering()'>Reset</button>
+					<button onclick='copyToClipboard()'>Memória vágólapra</button>
+					<button onclick='highlightWord()'>Szó ideigl. kiemelése</button>
+				</div>
+			</div>
+			<div class='main'>
+				<div id='top-of-the-page'></div>
+				<div id='list-hide-show-button-area'>
+					<a href='#' onclick='toggleListView()'>Lista megjelenítése / elrejtése</a>
+				</div>
+				<div id='list-anchor' style='display:none;'></div>
+
+				<div>
+					<input class='customCommentForCurrWord'>
+					<button onclick='addCommentForCurrentWord()'>+ Komment</button>
+				</div>
+				<div>
+					<input class="wordOfCustomComment" placeholder='Szó'> 
+					<input class="customComment" placeholder='Komment'> 
+					<button onclick="addComment()">+ Más szóhoz komment</button>
+				</div>
+				
+				<div id='entry-anchor'></div>
+				
+				<div class='footer'>
+					<div><i>TIPP: több szóra is szűrhetsz vagy-logikával, ha vesszővel választod el őket.</i></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+<script>
+// Enable navigation prompt
+window.onbeforeunload = function(event) {
+	event.preventDefault()
+    return true;
+};
+
+let filteredResults;
+let selectedExamples = [];
+let comments = [];
+
+const copyToClipboard = async () => {
+	const res = selectedExamples.slice().reverse().concat(comments.map(e=>`COMMENT\t${e}`).slice().reverse());
+	await navigator.clipboard.writeText(res.join(`\n`));
+};
+const defaultFilteringMode = `markOnly`; // ``, `markOnly`
+//CONFIG SECTION
+const sourceLanguage = 'es';
+const  targetLanguage = 'hu'
+//CJK nyelveknél false ajánlott
+const firstExprPrefixedByDefault = false;
+const firstExprPostfixedByDefault = false;
+const apiBaseUrl = ``
+
+const subEntrySearchResultsClass = `search-results`
+
+// DEPRECATED
+const genIdForSubentrySearchResults = 
+	(entryNr,subEntryNr) => 
+		'search-results-for-entry-'+entryNr+'-subentry-'+subEntryNr;
+
+const genIdForSubentryAnchor = 
+	(entryNr,subEntryNr) => 
+		`entry-${entryNr}-subentry-${subEntryNr}`;
+
+let highlightedWords = []
+
+//https://stackoverflow.com/questions/247483/http-get-request-in-javascript
+const fetchAsync = async (url, options) => {
+  let response = await fetch(encodeURI(url), options);
+  let data = await response.json();
+  return data;
+}
+
+let quickSearchInputField = document.querySelectorAll(`#quick-search-input-field`)[0];
+let markButton = document.querySelectorAll(`#mark-button`)[0];
+
+quickSearchInputField.addEventListener("keyup", function(event) {
+  if (event.keyCode === 13) { //ENTER gomb
+    event.preventDefault();
+    markButton.click();
+  }
+}); 
+
+let currentEntry;
+let currentEntryDetails;
+
+let filteringMode;
+
+setFilteringMode = (val) => filteringMode = val;
+
+const repaintResults = (
+	selectorOfCallingForm = undefined,
+	colorMarkingDefsInp = {}
+) => {
+	const phrasesRaw = quickSearchInputField?.value ?? ''
+	const phrasesWithUnderscore = [
+		...new Set(
+			phrasesRaw.
+				split(`*`).
+				join(``).
+				split(`/`).
+				join(`;`).
+				split(`,`).
+				join(`;`).
+				split(`;`).
+				map(e=>e.trim()).
+				filter(e=>e!==``)
+		)
+	];
+	const phrases = [
+		...new Set(
+			phrasesWithUnderscore.
+				map(e=>e.split(`_`).join(` `)).
+				filter(e=>e.trim()!==``)
+		)
+	]
+	
+	if (phrasesRaw.trim()!==''){
+		if (filteringMode==='markOnly'){
+			// csak kiemeles, ilyenkor sima copy
+			filteredResults = currentEntryDetails
+		} else {
+			filteredResults = 
+				currentEntryDetails.
+				map(
+					subEntry => {
+						const res = Object.assign({},subEntry);
+						res.searchResult = subEntry.searchResult.filter(e=>{
+							const b = phrases.some(phrase => 
+								e.original.toLowerCase().includes(phrase.toLowerCase()) ||
+								e.translated.toLowerCase().includes(phrase.toLowerCase())
+							);
+							return (filteringMode==='inverse') ? !b : b;
+						});
+						return res;
+					}
+				)
+		}
+	} else {
+		filteredResults = currentEntryDetails
+		// ha nincs kifejezes, sima copy
+	}
+	for (const [i,subEntry] of filteredResults.entries()){
+		const filterPhraseColors = [
+			`rgba(204,102,  0, 0.4)`,
+			`rgba(255,  0,102, 0.4)`,
+			`rgba(0,  153,255, 0.4)`,
+			`rgba(0,  153, 51, 0.4)`,
+			`rgba(255,102,102, 0.6)`,
+			`rgba(0,  204,153, 0.4)`,
+			`rgba(204, 51,255, 0.4)`,
+			`rgba(138,183,  3, 0.4)`,
+		];
+		const selector = 
+			`#${genIdForSubentryAnchor(curr_id,i)} .${subEntrySearchResultsClass}`;
+		const anchor = document.querySelectorAll(selector)[0];
+		anchor.innerHTML = '';
+		//itt ideiglenesen felulirjuk a szinezesi definiciokat a fo szokiemelesekkel (nehogy a sztringbeli egyezes elrontsa oket)
+		const colorMarkingDefs = {}
+		for (const key of Object.keys(colorMarkingDefsInp)){
+			colorMarkingDefs[key] = colorMarkingDefsInp[key];
+		}
+		if (phrasesRaw.trim()!==''){
+			for (const [pos,phrase] of [...phrasesWithUnderscore].sort((a,b)=>a.length<b.length).entries()){
+				colorMarkingDefs[phrase]=
+					filterPhraseColors[ pos % filterPhraseColors.length ];
+			}
+		}
+		const primaryPhraseColor = `rgba(255, 255, 0,0.3)`;
+		const secondaryPhraseColor = `rgba(0, 0, 255,0.3)`;
+		if (
+			subEntry.searchPhrases[0] !== undefined &&
+			subEntry.searchPhrases[0].trim() !== ''
+		){
+			colorMarkingDefs[subEntry.searchPhrases[0]]=primaryPhraseColor;
+		}
+		if (
+			subEntry.searchPhrases[1] !== undefined &&
+			subEntry.searchPhrases[1].trim() !== ''
+		){
+			colorMarkingDefs[subEntry.searchPhrases[1]]=secondaryPhraseColor;
+		}
+		console.log(subEntry)
+		console.log(colorMarkingDefs)
+		for(const [i2,e] of subEntry.searchResult.entries()){
+			anchor.appendChild(
+				subtitleEntryPairToHtml(e.original,e.translated,colorMarkingDefs, curr_id, i, i2)
+			);
+		}
+	}
+	
+	if (selectorOfCallingForm !== undefined) {
+		scrollToFirstOccurenceOf(selectorOfCallingForm);
+	}
+}
+
+
+const resetQuickFiltering = (val = ``) => {
+	setFilteringMode(defaultFilteringMode);
+	quickSearchInputField.value=val.replaceAll(/\s*#@[\-a-zA-Z0-9]+/g,``);
+	repaintResults();
+}
+
+const toggleListView = () => {
+	listAnchor.style.display = listAnchor.style.display==='none'?'block':'none';
+}
+
+let listAnchor  = document.getElementById( 'list-anchor');
+let entryAnchor = document.getElementById('entry-anchor');
+
+
+let entries = []
+
+const refreshList = () => {
+	[...listAnchor.children].map(child => listAnchor.removeChild(child)) 
+	for(const [i,e] of entries.entries()) {
+		let viewEntryLink = document.createElement('a');
+		viewEntryLink.textContent = `${highlightedWords.includes(i)?`[S] `: ``}${e.join('; ')}`;
+		viewEntryLink.href = '#';
+		viewEntryLink.addEventListener('click',async ()=>{
+			jump(i);
+			scrollToFirstOccurenceOf(`#list-hide-show-button-area`)
+		});
+		lineBreak = document.createElement('br');
+		listAnchor.appendChild(viewEntryLink);
+		listAnchor.appendChild(lineBreak);
+	};
+
+};
+
+
+(async () => {
+	entries = await fetchAsync(apiBaseUrl+'/list');
+	await refreshList();
+	await jump(0);
+})();
+
+const selectExample = (event, entryIdx, subEntryIdx,subtPairIdx) => {
+	const word = document.querySelectorAll(`.currentElement`)[0].textContent;
+	const uuid = (/\#\@([\-a-zA-Z0-9]+)/g.exec(word) ?? [])[1] ?? `MISSING_UUID`;
+	//console.log(filteredResults)
+	const pair = filteredResults[subEntryIdx].searchResult[subtPairIdx]
+	const example = `${uuid}\t${pair.original.replaceAll(`\t`,` `)}\t${pair.translated.replaceAll(`\t`,` `)}`
+	if (!selectedExamples.includes(example)){
+		//elejére szúrunk be, hogy a debug webkonzol lássa
+		selectedExamples.unshift(example)
+	}
+	event.target.classList.add(`selected-pair`)
+}
+
+let curr_id = 0
+
+
+const highlightWord = () => {
+	highlightedWords.push(curr_id)
+	refreshList();
+	document.querySelectorAll(`.currentElement`)[0].classList.add(`highlightedWord`)
+}
+
+
+const subtitleEntryPairToHtml = (original, translated,colorMarkingDefs={}, entryIdx=-1, subEntryIdx= -1, subtPairIdx = -1) => {
+	let pairWithButtonContainer  = document.createElement('div');
+	pairWithButtonContainer.classList.add('pairWithButtonContainer');
+	let plusButtonContainer = document.createElement('div');
+	plusButtonContainer.classList.add('plusButtonContainer');
+	plusButtonContainer.innerHTML = `
+		<button onclick='selectExample(event, ${entryIdx}, ${subEntryIdx}, ${subtPairIdx})'>+</button>
+	`;
+	let subtitleEntryPairContainer = document.createElement('div');
+	subtitleEntryPairContainer.classList.add('subtitle-entry-pair');
+	let originalArea = document.createElement('div');
+	originalArea.classList.add('original');
+	originalArea.textContent = original;
+	let translatedArea = document.createElement('div')
+	translatedArea.classList.add('translated')
+	translatedArea.textContent = translated
+	for (const phrase of Object.keys(colorMarkingDefs)){
+		const colorMarkingDef = colorMarkingDefs[phrase];
+		const phraseAtSentenceBeginning = phrase && phrase[0].toUpperCase() + phrase.slice(1);
+		const splittingPhrases = [...new Set([
+			phrase,
+			phrase.replace(/a$/gi, `á`),
+			phrase.replace(/e$/gi, `é`),
+			phraseAtSentenceBeginning,
+			phraseAtSentenceBeginning.replace(/a$/gi, `á`),
+			phraseAtSentenceBeginning.replace(/e$/gi, `é`),
+		])]
+		for (const splittingPhrase of splittingPhrases) {
+			originalArea.innerHTML = 
+				originalArea.innerHTML.
+					split(splittingPhrase.trim().split(`_`).join(` `)).
+					join(
+						`<span style="background-color:${colorMarkingDef};">${splittingPhrase.trim().split(`_`).join(` `)}</span>`
+					);
+			translatedArea.innerHTML = 
+				translatedArea.innerHTML.
+					split(splittingPhrase.trim().split(`_`).join(` `)).
+					join(
+						`<span style="background-color:${colorMarkingDef};">${splittingPhrase.trim().split(`_`).join(` `)}</span>`
+					);
+		}
+	}
+	subtitleEntryPairContainer.appendChild(originalArea)
+	subtitleEntryPairContainer.appendChild(translatedArea)
+	pairWithButtonContainer.appendChild(plusButtonContainer)
+	pairWithButtonContainer.appendChild(subtitleEntryPairContainer)
+	return pairWithButtonContainer
+}
+
+const executeSearchOnServer = async (formData) => {
+	try{
+		let url = `${apiBaseUrl}/find`;
+		if (formData.limit!==undefined){
+			url = url + '&limit='+ formData.limit;
+		}
+		if (formData.q2!==undefined){
+			url = url + '&q2='+ formData.q2;
+		}
+		const res = await fetchAsync(url, {
+			method: 'POST',
+			headers: {
+			  'Accept': 'application/json',
+			  'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(formData)
+		});
+		return res;
+	} catch (error) {
+		console.error(`Error occured. Details:${error}`);
+	}
+}
+
+
+const createDropdown = (values) => {
+	let selectTag = document.createElement('select');
+	for(const e of values) {
+		let optionTag = document.createElement('option');
+		optionTag.textContent = e;
+		selectTag.appendChild(optionTag);
+	}
+	return selectTag;
+};
+
+
+const scrollToFirstOccurenceOf = (selector) => {
+	const element = document.querySelectorAll(selector)[0];
+	element.scrollIntoView();
+};
+
+
+const addCommentForCurrentWord = () => {
+	const word = document.querySelectorAll('.currentElement')[0].textContent;
+	const comment = document.querySelectorAll(`.customCommentForCurrWord`)[0].value;
+	//elejére szúrunk be, hogy a debug webkonzol lássa
+	comments.unshift(`${word}\t${comment}`);
+	console.log(comments)
+}
+
+const addComment = () => {
+	const word = document.querySelectorAll(`.wordOfCustomComment`)[0].value;
+	const comment = document.querySelectorAll(`.customComment`)[0].value;
+	//elejére szúrunk be, hogy a debug webkonzol lássa
+	comments.unshift(`${word}\t${comment}`);
+	console.log(comments)
+}
+
+const createAkarmi = () => {
+	const res = document.createElement(`div`);
+	res.innerHTML = `
+	
+	`;
+	return res;
+};
+
+const jump = async(id) => {
+	curr_id = id;
+	entryAnchor.innerHTML = "";
+	let entryAnchorWithId = document.createElement('div');
+	entryAnchorWithId.id=`entry-${id}`;
+	entryAnchor.appendChild(entryAnchorWithId);
+	
+	let entryTitle = document.createElement(`h1`);
+	entryTitle.classList.add(`currentElement`)
+	if (highlightedWords.includes(id)) {
+		entryTitle.classList.add(`highlightedWord`)
+	}
+	entryTitle.textContent = entries[id].join('; ');
+	entryAnchorWithId.appendChild(entryTitle);
+	const subEntriesEnumerated = () => [...new Set(entries[id])].filter(e => e!==undefined && (e.length < 2 || (e[0]!=='\u003C' && e[e.length-1]!=='\u003C'))).map(e=>e.replaceAll(/\s*\([^\)]*\)/g,``)).entries();
+	for (const [i,e] of subEntriesEnumerated()){
+		let refLinkContainer = document.createElement('div');
+		//refLinkContainer.innerHTML = `<a href="https://jisho.org/search/${e}" target="_blank">jisho (${e})</a><span>&nbsp;</span><a href="https://www.google.com/search?q=${e}+site%3A*.jp&tbm=isch" target="_blank">ggl jp (${e})</a>&nbsp;<a href="https://ejje.weblio.jp/content/${e}" target="_blank">weblio (${e})</a>`;
+		//refLinkContainer.innerHTML = `<a href="https://www.google.com/search?q=${e}+site%3A*.cn&tbm=isch" target="_blank">ggl cn (${e})</a>&nbsp;<a href="https://en.wiktionary.org/wiki/${e}#Chinese" target="_blank">wik (${e})</a>`;
+		refLinkContainer.innerHTML = `<a href="https://www.google.com/search?q=${e}+site%3A*.es&tbm=isch" target="_blank">ggl es (${e})</a>&nbsp;<a href="https://en.wiktionary.org/wiki/${e}#Spanish" target="_blank">wik (${e})</a> <a href="https://www.collinsdictionary.com/dictionary/spanish-english/${e.replaceAll(` `,`-`)}" target="_blank">col (${e})</a>`;
+		//refLinkContainer.innerHTML = `<a href="https://www.google.com/search?q=${e}+site%3A*.de&tbm=isch" target="_blank">ggl de (${e})</a>&nbsp;<a href="https://en.wiktionary.org/wiki/${e}#German" target="_blank">wik (${e})</a>`;
+		entryAnchorWithId.appendChild(refLinkContainer);
+	}
+	currentEntryDetails = []
+	const filterInitVal = 
+		entries[id].
+			filter(e=>
+				e!==undefined && e.length>=2 && e[0]==='\u003C' && e[e.length-1]==='\u003E' 
+			).map(e=>{
+				let res = e;
+				res = res.replaceAll(/\[[^\]]*\]/g,'');
+				res = res.replaceAll(/\([^\)]*\)/g,'');
+				res = res.replaceAll(/\{[^\}]*\}/g,'');
+				return res.substring(1,res.length-1);
+			})[0] ?? '';
+	resetQuickFiltering(filterInitVal);
+	document.querySelectorAll(`#quick-search-input-field`)[0].focus();
+	for (const [i,e] of subEntriesEnumerated()){
+		let subEntryJumpButtonCntnr = document.createElement('div');
+		let subEntryJumpButton = document.createElement('a');
+		subEntryJumpButton.textContent = `[→] ${e}`;
+		subEntryJumpButton.onclick = 
+			() => scrollToFirstOccurenceOf(`#${genIdForSubentryAnchor(id,i)}`);
+		subEntryJumpButton.href='#'
+		subEntryJumpButtonCntnr.appendChild(subEntryJumpButton)
+		entryAnchorWithId.appendChild(subEntryJumpButtonCntnr);
+	}
+	for (const [i,e] of subEntriesEnumerated()){
+		let subEntryAnchor = document.createElement('div')
+		subEntryAnchor.id = genIdForSubentryAnchor(id,i)
+		let subEntryTitle = document.createElement('h2');
+		subEntryTitle.textContent = e
+		subEntryAnchor.appendChild(subEntryTitle)
+		
+		let subentryArrayValueAnchor = document.createElement('div')
+		subentryArrayValueAnchor.id = genIdForSubentrySearchResults(id, i); //id attr.: DEPRECATED
+		subentryArrayValueAnchor.classList.add(subEntrySearchResultsClass);
+		let customSearchArea = document.createElement('div')
+		customSearchArea.classList.add('custom-search-area')
+		
+		let createCheckbox = (label,isChecked) => {
+			let checkboxInlineBox = document.createElement('span')
+			let checkbox = document.createElement('input') 
+			checkbox.type='checkbox'
+			checkbox.checked=isChecked
+			checkboxInlineBox.appendChild(checkbox)
+			let checkboxText = document.createElement('span') 
+			checkboxText.textContent = label
+			checkboxInlineBox.appendChild(checkboxText)
+			return checkboxInlineBox
+		}
+		
+		let searchPhrase1Container = document.createElement('div')
+		let prefixSpaceCheckbox = createCheckbox('prefix space (\u2423~)',firstExprPrefixedByDefault)
+		searchPhrase1Container.appendChild(prefixSpaceCheckbox)
+		let customSearchPhrase = document.createElement('input')
+		customSearchPhrase.value = e;
+		searchPhrase1Container.appendChild(customSearchPhrase)
+		let postfixSpaceCheckbox = createCheckbox('postfix space (~\u2423)',firstExprPostfixedByDefault)
+		searchPhrase1Container.appendChild(postfixSpaceCheckbox)
+		customSearchArea.appendChild(searchPhrase1Container)
+		
+		let searchPhrase2Container = document.createElement('div')
+		let prefixSpaceCheckbox2 = createCheckbox('prefix space (\u2423~)',false)
+		searchPhrase2Container.appendChild(prefixSpaceCheckbox2)
+		let customSearchPhrase2 = document.createElement('input')
+		customSearchPhrase2.value = '';
+		searchPhrase2Container.appendChild(customSearchPhrase2)
+		let postfixSpaceCheckbox2 = createCheckbox('postfix space (~\u2423)',false)
+		searchPhrase2Container.appendChild(postfixSpaceCheckbox2)
+		customSearchArea.appendChild(searchPhrase2Container)
+		
+		let resultLimitDropdown = 
+			createDropdown([
+				'3000',
+				'100', 
+				'200', 
+				'500', 
+				'1000', 
+				'10000'
+			]);
+		customSearchArea.appendChild(resultLimitDropdown);
+		
+		const executeCustomSearchButton = document.createElement(`button`);
+		const executeCustomSearchButtonAlt = document.createElement(`button`);
+		executeCustomSearchButton.textContent = `Keresés`
+		executeCustomSearchButtonAlt.textContent = `Másik nyelv`
+		const customSearchButtonClicked = async (altLanguage)=>{
+			
+			
+			
+			
+			
+			let formData_conditions = [
+				{
+					targetProperty: undefined, 
+					expression: customSearchPhrase.value.trim(),
+					onlyWithSpacePrefix: prefixSpaceCheckbox.firstChild.checked,
+					onlyWithSpaceDotOrCommaSuffix: postfixSpaceCheckbox.firstChild.checked,
+				},
+			];
+			if (customSearchPhrase2.value!==undefined && customSearchPhrase2.value.trim()!==``) {
+				formData_conditions.push(
+					{
+						targetProperty: undefined, 
+						expression: customSearchPhrase2.value.trim(),
+						onlyWithSpacePrefix: prefixSpaceCheckbox2.firstChild.checked,
+						onlyWithSpaceDotOrCommaSuffix: postfixSpaceCheckbox2.firstChild.checked,
+					},
+				);
+			}
+			const formData = {
+				lang1: sourceLanguage,
+				lang2: targetLanguage,
+				conditions: formData_conditions,
+				searchInSecondParamLanguage: altLanguage,
+				resultLimit: resultLimitDropdown.value!==`` ? Number(resultLimitDropdown.value) : undefined,
+			};
+			
+			const searchResult = (await executeSearchOnServer(formData)).entries;
+			currentEntryDetails[i].searchResult = searchResult;
+			currentEntryDetails[i].searchPhrases = [(customSearchPhrase.value?.trim() ?? ``),(customSearchPhrase2.value?.trim() ?? ``)]
+			repaintResults(`#${subEntryAnchor.id}`);
+			
+		}
+		executeCustomSearchButton.addEventListener('click',() => customSearchButtonClicked())
+		executeCustomSearchButtonAlt.addEventListener('click',() => customSearchButtonClicked(true))
+		customSearchArea.appendChild(executeCustomSearchButton);
+		customSearchArea.appendChild(executeCustomSearchButtonAlt);
+		
+		subEntryAnchor.appendChild(customSearchArea);
+		
+		subEntryAnchor.appendChild(subentryArrayValueAnchor);
+		
+		entryAnchorWithId.appendChild(subEntryAnchor);
+
+		const formData = {
+			lang1: sourceLanguage,
+			lang2: targetLanguage,
+			conditions: [
+				{
+					targetProperty: undefined, 
+					expression: e,
+					onlyWithSpacePrefix: firstExprPrefixedByDefault,
+					onlyWithSpaceDotOrCommaSuffix: firstExprPostfixedByDefault,
+				},
+			],
+			resultLimit: 2500,
+		};
+		const searchResult = (await executeSearchOnServer(formData)).entries;
+		currentEntryDetails.push({
+			title: e,
+			searchResult: searchResult,
+			searchPhrases:[e],
+			colorMarkingDefs:{},
+		});
+		
+		
+		repaintResults();
+	}
+}
+const prevEntry = 
+	async () => entries[curr_id-1]!==undefined ? (await jump(curr_id-1)) : undefined;
+const nextEntry = 
+	async () => entries[curr_id+1]!==undefined ? (await jump(curr_id+1)) : undefined;
+</script>
+</html>
