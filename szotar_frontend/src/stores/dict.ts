@@ -2,9 +2,10 @@ import { ComputedRef, Ref, WritableComputedRef, computed, ref } from "vue"
 import { defineStore } from 'pinia'
 import { Dict } from '../../../libs/szotar_common/src/models/Dict.js';
 import { DictDescription } from "../../../libs/szotar_common/src/models/DictDescription.js";
+import { ColumnDefinition } from "../../../libs/szotar_common/src/models/ColumnDefinition.js";
 
 export const useDictStore = defineStore('dict', () => {
-    const entries: Ref<Record<string, string>[]> = ref([]);
+    //const entries: Ref<Record<string, string>[]> = ref([]);
     /*
     const count = ref(0)
     const name = ref('Eduardo')
@@ -14,14 +15,17 @@ export const useDictStore = defineStore('dict', () => {
     }
     */
 
-    const backendSearchQuery = ref(``)
 
-    const selectedDictNameOnSearchForm = ref(``)
+    const dictNameOnForm = ref(``)
+    const setDictNameOnForm = async(val: string) => {
+        dictNameOnForm.value = val;
+    }
 
     const dictNameUsedInLastQuery = ref(``)
 
-
     const dictQueriesWithMeta: Ref<Record<string,Dict>> = ref({})
+
+    const lastDictQueryResult = computed(() => dictQueriesWithMeta.value[dictNameUsedInLastQuery.value])
 
     const refreshDictMetas = async () => {
         console.log(`DEBUG getDictMetas egyszer lefut`)
@@ -40,12 +44,13 @@ export const useDictStore = defineStore('dict', () => {
                     dictQueriesWithMeta.value[e.name].meta = e.meta
                 }
             }
+            await setDictNameOnForm((Object.keys(dictQueriesWithMeta.value) ?? [])[0]) 
         } catch(error) {
             console.log(error)
         }
     }
 
-    const refreshEntries = async () => {
+    const refreshEntries = async (backendSearchQuery: string, customSortComparison: string) => {
         try {
             const res = await (await fetch(`http://localhost:3035/dict`, {
                 headers: {
@@ -54,11 +59,13 @@ export const useDictStore = defineStore('dict', () => {
                 },
                 method: `POST`, 
                 body: JSON.stringify({
-                    name: `nemet_szoszedet`,
-                    code: backendSearchQuery.value,
+                    name: dictNameOnForm.value,
+                    searchQuery: backendSearchQuery,
+                    customSortComparison,
                 }),
             })).json()
-            entries.value = res as Record<string, string>[]
+            dictNameUsedInLastQuery.value = dictNameOnForm.value
+            dictQueriesWithMeta.value[dictNameUsedInLastQuery.value].main = res as Record<string, string>[]
         } catch(error) {
             console.log(error)
         }
@@ -70,7 +77,7 @@ export const useDictStore = defineStore('dict', () => {
     const currentPageOneIncremented = computed({
         get: ():number => currentPage.value + 1,
         set: (value: number) => currentPage.value = value - 1,
-    })
+    });
     
     const currentPageInputField: Ref<{val:string,valid:boolean}> = ref({
         val: ''+currentPageOneIncremented.value,
@@ -114,7 +121,20 @@ export const useDictStore = defineStore('dict', () => {
     const setResultsPerPage = async (num: number) => resultsPerPage.value = num;
 
     const filteredEntries = computed(() => {
-        return quickSearchQueryPhrase.value!==`` ? entries.value.filter(e=>Object.keys(e).some(key => (e[key]?.toString().toLowerCase() ?? ``).includes(quickSearchQueryPhrase.value.toLowerCase()))): entries.value
+        let res
+        if (quickSearchQueryPhrase.value!==``) {
+            res = lastDictQueryResult.value?.
+                main?.
+                map((e,i)=>({idx:i,val:e,})).
+                filter(
+                    e=>Object.keys(currDictColsUsedInQuickSearch.value).
+                        some(key => (e.val[key]?.toString().toLowerCase() ?? ``).
+                        includes(quickSearchQueryPhrase.value.toLowerCase()))
+                );
+        } else {
+            res = lastDictQueryResult.value?.main?.map((e,i)=>({idx:i,val:e,}));
+        }
+        return res ?? [];
     })
 
     const onePageOfFilteredEntries = computed(()=>
@@ -143,10 +163,10 @@ export const useDictStore = defineStore('dict', () => {
 
     //private, ne vezesd ki
     const selectAll = async () => {
-        selectedIndices.value = new Set(entries.value.keys())
+        selectedIndices.value = new Set(lastDictQueryResult.value?.main.keys())
     } 
 
-    const isAllSelected = computed(() => selectedIndices.value.size === entries.value.length)
+    const isAllSelected = computed(() => selectedIndices.value.size === lastDictQueryResult.value?.main.length ?? false)
 
     const toggleAllSelection = async () => {
         if (isAllSelected.value) {
@@ -156,8 +176,33 @@ export const useDictStore = defineStore('dict', () => {
         }
     }
 
+    const displayColsAsRawString = ref(false)
+
+    const currDictCols = computed(() => (dictQueriesWithMeta.value[dictNameUsedInLastQuery.value]?.meta?.cols ?? {}))
+
+    const currDictVisibleCols: ComputedRef<Record<string, ColumnDefinition>> = computed(() => Object.fromEntries(Object.entries(currDictCols.value).filter(e=>e[1]?.isVisible)))
+    
+    const currDictColsUsedInQuickSearch: ComputedRef<Record<string, ColumnDefinition>> = computed(() => Object.fromEntries(Object.entries(currDictCols.value).filter(e=>e[1]?.isUsedInTrExampleSearch)))
+    
+    const toggleVisibility = async (colName: string) => {
+        const colDef = (dictQueriesWithMeta.value[dictNameUsedInLastQuery.value]?.meta?.cols ?? {})[colName]//Object.entries(dictQueriesWithMeta.value[dictNameUsedInLastQuery.value]?.meta?.cols ?? {}).filter(e => e[0]===colName).map(e => e[1])[0]
+        //console.log(colDef)
+        if (colDef!==undefined){
+            colDef.isVisible = !colDef.isVisible;
+            if(colDef.isVisible) {
+                colDef.isUsedInTrExampleSearch=true;
+            }
+        }
+    }
+    const toggleQuickSearchEnabled = async (colName: string) => {
+        const colDef = (dictQueriesWithMeta.value[dictNameUsedInLastQuery.value]?.meta?.cols ?? {})[colName]//Object.entries(dictQueriesWithMeta.value[dictNameUsedInLastQuery.value]?.meta?.cols ?? {}).filter(e => e[0]===colName).map(e => e[1])[0]
+        //console.log(colDef)
+        if (colDef!==undefined){
+            colDef.isUsedInTrExampleSearch = !colDef.isUsedInTrExampleSearch;
+        }
+    }
+
     return {  
-        entries,
         refreshEntries,
         resultsPerPage,
         setResultsPerPage,
@@ -175,13 +220,20 @@ export const useDictStore = defineStore('dict', () => {
         currentPageInputField,
         currentPageInputForTwoWayBinding,
         currentPageOneIncremented,
-        backendSearchQuery,
         bulkOpMenuIsOpen,
         selectedIndices,
         isAllSelected,
         toggleAllSelection,
         refreshDictMetas,
-        selectedDictNameOnSearchForm,
+        dictNameOnForm,
         dictNameUsedInLastQuery,
+        dictQueriesWithMeta,
+        setDictNameOnForm,
+        displayColsAsRawString,
+        currDictCols,
+        currDictVisibleCols,
+        toggleVisibility,
+        toggleQuickSearchEnabled,
+        currDictColsUsedInQuickSearch,
     }
   })

@@ -127,7 +127,7 @@ class MeaningForest {
             rawNextLevel = ``;
         }
         const transformStarsToSpecialLabels = (str, escapedPositions) => {
-            for (let i = str.length - 1; i <= 0; --i) {
+            for (let i = str.length - 1; i >= 0; --i) {
                 if (str[i] === `*` && str[i - 1] === `*` && str[i - 2] === `*`) {
                     if (!escapedPositions.has(i - 2)) {
                         str = `${str.substring(0, i - 2)}(1!)${str.substring(i + 1)}`;
@@ -224,7 +224,7 @@ class MeaningForest {
                             let res = new MeaningLeaf();
                             res.labels = e.labels;
                             res.notes = e.notes;
-                            res.val = unesc(e.rawNextLevel);
+                            res.val = unesc(e.rawNextLevel).trim();
                             return res;
                         });
                     return res;

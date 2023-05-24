@@ -8,6 +8,7 @@ import cors from 'cors';
 import * as fsPromises from 'fs/promises';
 import path from 'path';
 import { flattenTwoDimArray } from '../libs/szotar_common/src/helpers/flattenTwoDimArray.js';
+import { DictDescription } from '../libs/szotar_common/src/models/DictDescription.js';
 const __dirname = path.resolve();
 XLSX.set_fs(fsPromises);
 const exampleSourceFiles = {
@@ -76,11 +77,21 @@ const startExampleDbThreadsAndReadDicts = async () => {
                 try {
                     console.log(`reading dictionary: "${dictName}"`);
                     const descFileRawContent = await fsPromises.readFile(`${DICTS_FOLDER}/${descFilename}`, { encoding: `utf8`, });
-                    const meta = JSON.parse(descFileRawContent);
                     const buffer = await fsPromises.readFile(`${DICTS_FOLDER}/${dictName}.ods`);
                     const workbook = XLSX.read(buffer);
                     const sheetName = workbook.SheetNames[0];
                     const main = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { raw: true, defval: ``, });
+                    const meta = DictDescription.fromJson(descFileRawContent); // JSON.parse(descFileRawContent) as DictDescription
+                    if (main[0]) {
+                        const colsInDict = Object.keys(main[0]);
+                        for (const col of colsInDict) {
+                            if (!Object.keys(meta.cols).includes(col)) {
+                                meta.cols[col] = {
+                                    tailwindClasses: ``,
+                                };
+                            }
+                        }
+                    }
                     dicts[dictName] = { main, meta, };
                     console.log(`reading dictionary "${dictName}" finished`);
                 }
@@ -226,19 +237,27 @@ app.get('/meta', async (req, res) => {
     })));
 });
 app.post('/dict', async (req, res) => {
-    const dictName = (req.body?.name ?? ``).toString();
-    if (dictName === `` || dicts[dictName] === undefined) {
-        res.status(400).send(`Dictionary "${dictName}" doesn't exist.`);
-        return;
+    try {
+        const dictName = (req.body?.name ?? ``).toString();
+        if (dictName === `` || dicts[dictName] === undefined) {
+            res.status(400).send(`Dictionary "${dictName}" doesn't exist.`);
+            return;
+        }
+        //const code = `/tuh/.test(e.original)`;
+        //const code = `e.original.includes('steig')`;
+        const searchQuery = req.body?.searchQuery !== `` ? req.body?.searchQuery : undefined ?? `e`;
+        const customSortComparison = req.body?.customSortComparison;
+        let dict = JSON.parse(JSON.stringify(dicts[dictName].main));
+        const codeBox = `dict = dict.filter((e, idx, arr) => ${searchQuery}); ${customSortComparison ? `dict = dict.sort((a,b) => ${customSortComparison})` : ``}`;
+        const context = vm.createContext({
+            dict,
+            RegExp,
+        });
+        const result = vm.runInContext(codeBox, context);
+        res.send(result);
     }
-    //const code = `/tuh/.test(e.original)`;
-    //const code = `e.original.includes('steig')`;
-    const code = req.body?.code !== `` ? req.body?.code : undefined ?? `e`;
-    const codeBox = `dict.filter((e, idx, arr) => ${code})`;
-    const context = vm.createContext({
-        dict: JSON.parse(JSON.stringify(dicts[dictName].main)),
-        RegExp,
-    });
-    const filterResult = vm.runInContext(codeBox, context);
-    res.send(filterResult);
+    catch (e) {
+        console.log(e);
+        res.status(503);
+    }
 });

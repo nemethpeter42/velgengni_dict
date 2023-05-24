@@ -1,3 +1,1 @@
-export type DictMainTable = {
-    
-}
+export type DictMainTable = (Record<string, string>)[]

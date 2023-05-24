@@ -1,8 +1,18 @@
 <template>
-  <div class="dark:bg-indigo-950 min-h-screen">
+<div class="bg-gray-50 dark:bg-indigo-950 min-h-screen">
   <nav class="m-auto text-center">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">Sandbox</router-link>
+    <router-link 
+      class="font-bold" 
+      :class="route.name===`home` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
+      to="/"
+      >Home
+    </router-link> |
+    <router-link 
+      class="font-bold" 
+      :class="route.name===`about` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
+      to="/about"
+      >Sandbox
+    </router-link>
     <button 
       id="theme-toggle" 
       type="button" 
@@ -28,6 +38,7 @@
   import { WritableComputedRef, computed, onMounted, ref } from 'vue'
   import { initFlowbite } from 'flowbite'
   import { MoonIcon, SunIcon } from '@heroicons/vue/24/solid'
+import { useRoute } from 'vue-router';
 
 
   const darkModeRef = ref(false)
@@ -58,6 +69,8 @@
     darkMode.value = localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
   })
 
+  const route = useRoute()
+
   
 
 </script>
@@ -71,16 +84,4 @@
   color: #2c3e50;
 }
 
-nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
 </style>

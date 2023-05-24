@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-7xl m-auto home-page">
-    <div class="flex">
+    <div class="flex flex-wrap ">
       <div class="m-2"> 
         <label for="command" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Keresési parancs:</label>
         <textarea 
@@ -14,8 +14,8 @@
             dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
             dark:focus:ring-blue-500 dark:focus:border-blue-500 
           " 
-          placeholder='Pl. e.original===`cat`'
-          v-model="store.backendSearchQuery"
+          placeholder='Pl. e.original.trim().toLowerCase().includes(`cat`)'
+          v-model="backendSearchQuery"
         ></textarea>
       </div>
       <div class="m-2">
@@ -23,7 +23,7 @@
         <select 
           id="dictName" 
           class="
-            w-80 p-2 mb-6 text-sm border rounded-lg 
+            w-80 p-2 text-sm border rounded-lg 
             text-gray-900 border-gray-300 bg-gray-50 
             focus:ring-blue-500 focus:border-blue-500 
             dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white
@@ -31,12 +31,29 @@
           "
         >
           <option 
-            v-for="val in store.resultsPerPageOptions" 
+            v-for="val in Object.keys(store.dictQueriesWithMeta)" 
             v-bind:key="val" 
-            :selected="store.resultsPerPage===val" 
-            @click="setResultsPerPage(val);store.jumpToFirstPage();scrollToTableTop();"
+            :selected="store.dictNameOnForm===val" 
+            @click="store.setDictNameOnForm(val);"
             >{{val}}</option>
         </select>
+      </div>
+      <div class="m-2"> 
+        <label for="command" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Rendezési függvény:</label>
+        <textarea 
+          id="command" 
+          rows="3" 
+          class="
+            block p-2.5 w-96 text-sm rounded-lg resize-none
+            text-gray-900 bg-gray-50
+            border border-gray-300 
+            focus:ring-blue-500 focus:border-blue-500 
+            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+            dark:focus:ring-blue-500 dark:focus:border-blue-500 
+          " 
+          placeholder='Pl. -1*a.original.localeCompare(b.original, `es`)'
+          v-model="customSortComparison"
+        ></textarea>
       </div>
     </div>
 
@@ -52,9 +69,9 @@
       "
       @click=" executeBackendSearch()"
     >Keresés</button>
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg" id="datatable-table-top-anchor">
-      <div class="flex items-center justify-between pb-4 bg-white dark:bg-gray-900">
-        <div>
+    <div class="shadow-md sm:rounded-lg" id="datatable-table-top-anchor">
+      <div class="flex flex-wrap items-center justify-between bg-gray-50 dark:bg-gray-900">
+        <div class="my-1.5">
           
           
           <dropdown text="Tömeges műv.">
@@ -62,7 +79,7 @@
               <button 
                 id="dropdownActionButton" 
                 class="
-                  px-3 py-1.5 
+                  px-3 py-1.5 mx-2
                   inline-flex items-center font-medium rounded-lg text-sm  
                   text-gray-500 bg-white 
                   border border-gray-300 
@@ -97,25 +114,41 @@
             </ul>
           </dropdown>
         </div>
-        <label for="table-search" class="sr-only">Search</label>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <MagnifyingGlassIcon class="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true"/>
+        <div class="flex my-1.5">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
+              <MagnifyingGlassIcon class="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true"/>
+            </div>
+            <label for="table-search" class="sr-only">Gyorskeresés</label>
+            <input 
+              type="text"  
+              id="table-search-users"
+              class="
+                block p-2 pl-7 ml-2 w-80 text-sm border rounded-lg
+                text-gray-900 border-gray-300 bg-gray-50 
+                focus:ring-blue-500 focus:border-blue-500 
+                dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                dark:focus:ring-blue-500 dark:focus:border-blue-500
+              "
+              placeholder="Gyorskeresés"
+              v-model="store.quickSearchQueryPhrase"
+              @input="store.jumpToFirstPage()"
+              >
+              
           </div>
-          <input 
-            type="text"  
-            id="table-search-users"
-            class="
-              block p-2 pl-10 w-80 text-sm border rounded-lg
-              text-gray-900 border-gray-300 bg-gray-50 
-              focus:ring-blue-500 focus:border-blue-500 
-              dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-              dark:focus:ring-blue-500 dark:focus:border-blue-500
-            "
-            placeholder="Gyorskeresés"
-            v-model="store.quickSearchQueryPhrase"
-            @input="store.jumpToFirstPage()"
-            >
+          <button 
+              type="button" 
+              @click="showConfigModal()"
+              class="
+                px-3 py-2 mx-2
+                font-medium rounded-lg text-sm 
+                text-white bg-blue-700 hover:bg-blue-800 
+                focus:ring-4 focus:ring-blue-300 focus:outline-none 
+                dark:bg-blue-600 dark:hover:bg-blue-700 
+                dark:focus:ring-blue-800
+              ">
+              <WrenchScrewdriverIcon class="h-4 w-4 text-gray-100" />
+            </button>
         </div>
       </div>
       <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -132,19 +165,20 @@
                   @click="store.toggleAllSelection()"
                   class="
                     w-4 h-4 border-double border-4 rounded
-                    text-blue-600 bg-gray-100 border-gray-300 
-                    focus:ring-blue-500 focus:ring-2 
+                    text-fuchsia-600 bg-gray-100 border-gray-300 
+                    focus:ring-fuchsia-500 focus:ring-2 
                     dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600
-                    dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800"
+                    dark:focus:ring-fuchsia-600 dark:focus:ring-offset-gray-800"
                     >
                 <label for="checkbox-all-search" class="sr-only">checkbox</label>
               </div>
             </th>
-            <th scope="col" class="px-6 py-3">
-              Original
-            </th>
-            <th scope="col" class="px-6 py-3">
-              Translated
+            <th 
+              scope="col" 
+              class="px-2.5 py-3"
+              v-for="(colDef,colName) of store.currDictVisibleCols" v-bind:key="colName"
+            >
+              {{colName}}
             </th>
             <th scope="col" class="px-6 py-3">
               &nbsp;
@@ -153,8 +187,8 @@
         </thead>
         <tbody>
           <tr
-            v-for="(item, index) in store.onePageOfFilteredEntries" 
-            v-bind:key="index" 
+            v-for="(item, rowIndex) in store.onePageOfFilteredEntries" 
+            v-bind:key="item.idx" 
             class="
               border-b
               
@@ -165,65 +199,65 @@
                 hover:bg-gray-200
                 dark:bg-gray-900 dark:border-gray-700 
                 dark:hover:bg-gray-600
-              `]: index % 2 === 0,
+              `]: rowIndex % 2 === 0,
               [`
                 bg-gray-100
                 hover:bg-gray-200
                 dark:bg-gray-800 dark:border-gray-700 
                 dark:hover:bg-gray-600
-              `]: index % 2 !== 0,
+              `]: rowIndex % 2 !== 0,
               }"
             >
-            <td class="w-4 px-4 py-2">
+            <td class="w-4 pl-4 pr-2 py-2">
               <div class="flex items-center">
-                <input id="select-row-checkbox" type="checkbox"
-                  @click="toggleRowSelection(index,$event)"
-                  :checked="store.selectedIndices.has(index)"
+                <input type="checkbox"
+                  @click="toggleRowSelection(item.idx,$event)"
+                  :checked="store.selectedIndices.has(item.idx)"
                   class="
-                    w-4 h-4 rounded 
-                    text-blue-600 bg-gray-100 border-gray-300 
-                    focus:ring-blue-500 focus:ring-2 
+                    select-row-checkbox w-4 h-4 rounded 
+                    text-fuchsia-600 bg-gray-100 border-gray-300 
+                    focus:ring-fuchsia-500 focus:ring-2 
                     dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600
-                    dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800
+                    dark:focus:ring-fuchsia-600 dark:focus:ring-offset-gray-800
                   ">
+                  <button 
+                    type="button" 
+                    @click="showDetailsModal()"
+                    class="
+                      px-2 py-2 ml-4 mr-1
+                      font-medium rounded-lg text-sm 
+                      text-white bg-blue-700 hover:bg-blue-800 
+                      focus:ring-4 focus:ring-blue-300 focus:outline-none 
+                      dark:bg-blue-600 dark:hover:bg-blue-700 
+                      dark:focus:ring-blue-800
+                    ">
+                    <Bars3Icon class="h-4 w-4 text-gray-100" />
+                  </button>
                 <label for="select-row-checkbox" class="sr-only">Sor kiválasztása</label>
               </div>
             </td>
-            <td scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-gray-100">
-              {{item.original}}
+            <td scope="row" class="px-2.5 py-2 font-medium text-gray-900 dark:text-gray-100" v-for="(colDef,colName) of store.currDictVisibleCols" v-bind:key="colName" :class="colDef?.tailwindClasses ?? ``">
+              <MeaningForestViewer v-if="colDef.isMeaningForestCol" :raw-val="item.val.translated" :display-cols-as-raw-string="store.displayColsAsRawString" />
+              <div v-else>{{item.val[colName]}}</div>
             </td>
             <td class="
               px-6 py-2 max-w-40 font-medium 
               text-gray-800 
               dark:text-gray-200
             ">
-              {{item.translated}}
-            </td>
-            <td class="px-6 py-2 flex items-center">
-              <button 
-                type="button" 
-                @click="showDetailsModal()"
-                class="
-                  px-2 py-2 
-                  font-medium rounded-lg text-sm 
-                  text-white bg-blue-700 hover:bg-blue-800 
-                  focus:ring-4 focus:ring-blue-300 focus:outline-none 
-                  dark:bg-blue-600 dark:hover:bg-blue-700 
-                  dark:focus:ring-blue-800
-                ">
-                <Bars3Icon class="h-4 w-4 text-gray-100" />
-              </button>
+              <!---{{item.val.translated}}-->
+              
             </td>
           </tr>
         </tbody>
       </table>
-      <nav class="flex items-center justify-between pt-4" aria-label="Table navigation">
+      <nav class="flex items-center justify-between py-3 px-2" aria-label="Table navigation">
         <span class="text-sm font-normal text-gray-500 dark:text-gray-400"> Lapméret: <span
             class="font-semibold text-gray-900 dark:text-white">
         <select 
           id="pagesize" 
           class="
-            w-20 p-2 mb-6 text-sm border rounded-lg 
+            w-20 p-2 text-sm border rounded-lg 
             text-gray-900 border-gray-300 bg-gray-50 
             focus:ring-blue-500 focus:border-blue-500 
             dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white
@@ -246,19 +280,20 @@
               @click="store.jumpToFirstPage();scrollToTableTop()"
               :disabled="store.isFirstPage"
               class="
-                px-3 py-2 
+                px-3.5 py-2.5 
                 leading-tight border
               "
               :class="{
                 [`
                   cursor-not-allowed 
-                  text-gray-300 dark:text-gray-700
+                  bg-gray-50 border-gray-300 text-gray-300 
+                  dark:text-gray-700 dark:bg-gray-900 dark:border-gray-700
                 `]: store.isFirstPage, 
                 [`
-                 bg-white border-gray-300 text-gray-500 
+                 bg-gray-50 border-gray-300 text-gray-500 
                  hover:bg-gray-100 hover:text-gray-700 
                  dark:bg-gray-800 dark:border-gray-700 
-                 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white
+                 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white
                 `]: !store.isFirstPage,
               }"
               >&#x23EE;</button>
@@ -269,18 +304,19 @@
               aria-hidden="true"
               @click="store.jumpToPreviousPage();scrollToTableTop()"
               :disabled="store.isFirstPage"
-              class="px-3 py-2 leading-tight border"
+              class="px-3.5 py-2.5 leading-tight border"
               :class="{
                 [`
                   cursor-not-allowed 
-                  text-gray-300 dark:text-gray-700
+                  bg-gray-50 border-gray-300 text-gray-300 
+                  dark:text-gray-700 dark:bg-gray-900 dark:border-gray-700
                 `]: store.isFirstPage, 
                 [`
-                 bg-white border-gray-300 text-gray-500 
+                 bg-gray-50 border-gray-300 text-gray-500 
                  hover:bg-gray-100 hover:text-gray-700 
                  dark:bg-gray-800 dark:border-gray-700 
-                 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white
-                 `]: !store.isFirstPage,
+                 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white
+                `]: !store.isFirstPage,
               }"
               >&#x23F4;</button>
           </li>
@@ -288,7 +324,7 @@
             <input 
               aria-current="page"
               class="
-                px-3 py-2 w-16 
+                px-3 py-2.5 w-16 
                 leading-tight border border-dashed 
               "
               v-model='store.currentPageInputForTwoWayBinding' 
@@ -312,17 +348,18 @@
               aria-hidden="true"
               @click="store.jumpToNextPage();scrollToTableTop()"
               :disabled="store.isLastPage"
-              class="px-3 py-2 leading-tight border"
+              class="px-3.5 py-2.5 leading-tight border"
               :class="{
                 [`
                   cursor-not-allowed 
-                  text-gray-300 dark:text-gray-700
+                  bg-gray-50 border-gray-300 text-gray-300 
+                  dark:text-gray-700 dark:bg-gray-900 dark:border-gray-700
                 `]: store.isLastPage, 
                 [`
-                 bg-white border-gray-300 text-gray-500 
+                 bg-gray-50 border-gray-300 text-gray-500 
                  hover:bg-gray-100 hover:text-gray-700 
                  dark:bg-gray-800 dark:border-gray-700 
-                 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white
+                 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white
                 `]: !store.isLastPage,
               }"
               >&#x23F5;</button>
@@ -333,17 +370,18 @@
               aria-hidden="true"
               @click="store.jumpToLastPage();scrollToTableTop()"
               :disabled="store.isLastPage"
-              class="px-3 py-2 leading-tight border"
+              class="px-3.5 py-2.5 leading-tight border"
               :class="{
                 [`
                   cursor-not-allowed 
-                  text-gray-300 dark:text-gray-700
+                  bg-gray-50 border-gray-300 text-gray-300 
+                  dark:text-gray-700 dark:bg-gray-900 dark:border-gray-700
                 `]: store.isLastPage, 
                 [`
-                 bg-white border-gray-300 text-gray-500 
+                 bg-gray-50 border-gray-300 text-gray-500 
                  hover:bg-gray-100 hover:text-gray-700 
                  dark:bg-gray-800 dark:border-gray-700 
-                 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white
+                 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white
                 `]: !store.isLastPage,
               }"
               >&#x23ED;</button>
@@ -354,7 +392,7 @@
   </div>
   <Modal size="7xl" v-if="isDetailsModalShown" @close="closeDetailsModal()">
         <template #header>
-          <div class="flex items-center text-lg">
+          <div class="flex items-center text-lg text-gray-700 dark:text-gray-300">
             Terms of Service
           </div>
         </template>
@@ -377,19 +415,45 @@
           </div>
         </template>
       </Modal>
+      <Modal size="5xl" v-if="isConfigModalShown" @close="closeConfigModal()">
+        <template #header>
+          <div class="flex items-center text-lg text-gray-700 dark:text-gray-300">
+            Táblázat beállításai
+          </div>
+        </template>
+        <template #body>
+          <TableConfiguration />
+        </template>
+        <template #footer>
+          <div class="flex justify-between">
+            <div>
+              <button @click="closeConfigModal()" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
+                Bezárás
+              </button>
+            </div>
+            <div>
+              
+            </div>
+          </div>
+        </template>
+      </Modal>
+
   
 </template>
 
 <script setup lang="ts">
 import { Dropdown, Modal, } from 'flowbite-vue'
-import { Bars3Icon, ChevronDownIcon, CloudArrowDownIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/solid'
+import { Bars3Icon, ChevronDownIcon, CloudArrowDownIcon, MagnifyingGlassIcon, WrenchScrewdriverIcon } from '@heroicons/vue/24/solid'
 import { useDictStore } from '@/stores/dict'
-import { onMounted, ref } from 'vue';
+import { Ref, onMounted, ref } from 'vue';
+import MeaningForestViewer from '@/components/meaning-forest/MeaningForestViewer.vue';
+import TableConfiguration from '@/components/datatable/TableConfiguration.vue';
 
 const store = useDictStore()
 
 async function executeBackendSearch() {
-  await store.refreshEntries()
+  await store.refreshEntries(backendSearchQuery.value, customSortComparison.value)
+  store.selectedIndices.clear()
   store.jumpToFirstPage()
 }
 
@@ -411,17 +475,29 @@ const toggleRowSelection = (index: number, $event: Event) => {
 
 
 const isDetailsModalShown = ref(false)
+const isConfigModalShown = ref(false)
 function closeDetailsModal() {
   isDetailsModalShown.value = false
 }
 function showDetailsModal() {
   isDetailsModalShown.value = true
 }
+function closeConfigModal() {
+  isConfigModalShown.value = false
+}
+function showConfigModal() {
+  isConfigModalShown.value = true
+}
 
 // initialize components based on data attribute selectors
 onMounted(async () => {
   await store.refreshDictMetas()
 })
+
+const backendSearchQuery: Ref<string> = ref(``)
+const customSortComparison: Ref<string> = ref(``)
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+
+</style>

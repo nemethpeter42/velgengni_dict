@@ -153,7 +153,7 @@ export class MeaningForest{
 		}
 	
 		const transformStarsToSpecialLabels = (str: string, escapedPositions: Set<number>) => {
-			for(let i = str.length-1; i <= 0; --i){
+			for(let i = str.length-1; i >= 0; --i){
 				if (str[i]===`*` && str[i-1]===`*` && str[i-2]===`*`) {
 					if (!escapedPositions.has(i-2)){
 						str = `${str.substring(0, i-2)}(1!)${str.substring(i+1)}`;
@@ -178,8 +178,7 @@ export class MeaningForest{
 			let outsideSections: Array<string> = [``]
 			let insideSections: Array<string> = [``]
 			let isInsideComment = false;
-			
-			str = transformStarsToSpecialLabels(str, escapedPositions)
+			str = transformStarsToSpecialLabels(str, escapedPositions);
 			for(let i=0; i < str.length; ++i){
 				if (isInsideComment!==true){
 					if(!escapedPositions.has(i) && str[i] === openingSymbol){ 
@@ -250,7 +249,7 @@ export class MeaningForest{
 								let res = new MeaningLeaf();
 								res.labels=e.labels;
 								res.notes=e.notes;
-								res.val=unesc(e.rawNextLevel)
+								res.val=unesc(e.rawNextLevel).trim()
 								return res;
 							})
 						return res;
