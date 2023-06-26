@@ -103,15 +103,13 @@ const startExampleDbThreadsAndReadDicts = async (): Promise<void> => {
 					const workbook = XLSX.read(buffer);
 					const sheetName = workbook.SheetNames[0];
 					const main = XLSX.utils.sheet_to_json<Record<string, string>>(workbook.Sheets[sheetName], { raw: true, defval: ``, });
-					const meta = DictDescription.fromJson(descFileRawContent); // JSON.parse(descFileRawContent) as DictDescription
-					if (main[0]) {
-						const colsInDict = Object.keys(main[0]);
-						for (const col of colsInDict) {
-							if (!Object.keys(meta.cols).includes(col)) {
-								meta.cols[col] = {
-									tailwindClasses: ``,
-								} as ColumnDefinition;
-							}
+					const colsInDict = Object.keys(main[0] ?? {});
+					const meta = DictDescription.fromJson(descFileRawContent, colsInDict.includes(`translated`)); // JSON.parse(descFileRawContent) as DictDescription
+					for (const col of colsInDict) {
+						if (!Object.keys(meta.cols).includes(col)) {
+							meta.cols[col] = {
+								tailwindClasses: ``,
+							} as ColumnDefinition;
 						}
 					}
 					dicts[dictName] = {main, meta,}

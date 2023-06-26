@@ -1,141 +1,18 @@
 <template>
   <div class="max-w-7xl m-auto home-page">
-    <div class="flex flex-wrap ">
-      <div class="m-2"> 
-        <label for="command" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Keresési parancs:</label>
-        <textarea 
-          id="command" 
-          rows="3" 
-          class="
-            block p-2.5 w-96 text-sm rounded-lg resize-none
-            text-gray-900 bg-gray-50
-            border border-gray-300 
-            focus:ring-blue-500 focus:border-blue-500 
-            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
-            dark:focus:ring-blue-500 dark:focus:border-blue-500 
-          " 
-          placeholder='Pl. e.original.trim().toLowerCase().includes(`cat`)'
-          v-model="backendSearchQuery"
-        ></textarea>
-      </div>
-      <div class="m-2">
-        <label for="command" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Szótár:</label>
-        <select 
-          id="dictName" 
-          class="
-            w-80 p-2 text-sm border rounded-lg 
-            text-gray-900 border-gray-300 bg-gray-50 
-            focus:ring-blue-500 focus:border-blue-500 
-            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white
-            dark:focus:ring-blue-500 dark:focus:border-blue-500
-          "
-        >
-          <option 
-            v-for="val in Object.keys(store.dictQueriesWithMeta)" 
-            v-bind:key="val" 
-            :selected="store.dictNameOnForm===val" 
-            @click="store.setDictNameOnForm(val);"
-            >{{val}}</option>
-        </select>
-      </div>
-      <div class="m-2"> 
-        <label for="command" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Rendezési függvény:</label>
-        <textarea 
-          id="command" 
-          rows="3" 
-          class="
-            block p-2.5 w-96 text-sm rounded-lg resize-none
-            text-gray-900 bg-gray-50
-            border border-gray-300 
-            focus:ring-blue-500 focus:border-blue-500 
-            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
-            dark:focus:ring-blue-500 dark:focus:border-blue-500 
-          " 
-          placeholder='Pl. -1*a.original.localeCompare(b.original, `es`)'
-          v-model="customSortComparison"
-        ></textarea>
-      </div>
-    </div>
-
-    <button 
-      class="
-        m-1 mr-2 mb-2 px-5 py-2.5 font-medium rounded-full text-sm text-center 
-        text-white bg-blue-700 
-        hover:bg-blue-800 
-        focus:outline-none focus:ring-4 focus:ring-blue-300 
-        dark:bg-blue-600 
-        dark:hover:bg-blue-700 
-        dark:focus:ring-blue-800
-      "
-      @click=" executeBackendSearch()"
-    >Keresés</button>
+    <DictFilterPanel />
     <div class="shadow-md sm:rounded-lg" id="datatable-table-top-anchor">
       <div class="flex flex-wrap items-center justify-between bg-gray-50 dark:bg-gray-900">
         <div class="my-1.5">
           
+          <DictBulkActions />
           
-          <dropdown text="Tömeges műv.">
-            <template #trigger>
-              <button 
-                id="dropdownActionButton" 
-                class="
-                  px-3 py-1.5 mx-2
-                  inline-flex items-center font-medium rounded-lg text-sm  
-                  text-gray-500 bg-white 
-                  border border-gray-300 
-                  focus:outline-none focus:ring-4 focus:ring-gray-200
-                  hover:bg-gray-100 
-                  dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 
-                  dark:hover:bg-gray-700 dark:hover:border-gray-600 
-                  dark:focus:ring-gray-700
-                "
-                type="button">
-                <span class="sr-only">Tömeges műveletek</span>
-                Tömeges műv.
-                <ChevronDownIcon class="w-3 h-3 ml-2" />
-              </button>
-            </template>
-            <ul class="
-              overflow-hidden w-48 rounded-lg text-sm font-medium border 
-              text-gray-900 bg-white border-gray-200 
-              dark:bg-gray-700 dark:border-gray-600 dark:text-white
-              ">
-              <li class="
-                block px-4 py-2 inline-flex items-center w-full border-b cursor-pointer
-                border-gray-200 
-                hover:bg-gray-100 hover:text-blue-700 
-                focus:outline-none focus:ring-2 focus:text-blue-700 
-                dark:border-gray-600 
-                dark:hover:bg-gray-600 dark:hover:text-white 
-                dark:focus:ring-gray-500 dark:focus:text-white
-                ">
-                <div class="mr-2"><CloudArrowDownIcon class="w-4 h-4 fill-current" /></div> Interaktív HTML export
-              </li>
-            </ul>
-          </dropdown>
         </div>
         <div class="flex my-1.5">
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
-              <MagnifyingGlassIcon class="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true"/>
-            </div>
-            <label for="table-search" class="sr-only">Gyorskeresés</label>
-            <input 
-              type="text"  
-              id="table-search-users"
-              class="
-                block p-2 pl-7 ml-2 w-80 text-sm border rounded-lg
-                text-gray-900 border-gray-300 bg-gray-50 
-                focus:ring-blue-500 focus:border-blue-500 
-                dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                dark:focus:ring-blue-500 dark:focus:border-blue-500
-              "
-              placeholder="Gyorskeresés"
-              v-model="store.quickSearchQueryPhrase"
-              @input="store.jumpToFirstPage()"
-              >
-              
-          </div>
+          <QuickSearch 
+            v-model="store.quickSearchQueryPhrase"
+            @input="store.jumpToPage(`FIRST`);"
+          />
           <button 
               type="button" 
               @click="showConfigModal()"
@@ -252,141 +129,36 @@
         </tbody>
       </table>
       <nav class="flex items-center justify-between py-3 px-2" aria-label="Table navigation">
-        <span class="text-sm font-normal text-gray-500 dark:text-gray-400"> Lapméret: <span
+        <div class="text-sm font-normal text-gray-500 dark:text-gray-400"> 
+          Lapméret: <span
             class="font-semibold text-gray-900 dark:text-white">
-        <select 
-          id="pagesize" 
-          class="
-            w-20 p-2 text-sm border rounded-lg 
-            text-gray-900 border-gray-300 bg-gray-50 
-            focus:ring-blue-500 focus:border-blue-500 
-            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white
-            dark:focus:ring-blue-500 dark:focus:border-blue-500
-          "
-        >
-          <option 
-            v-for="val in store.resultsPerPageOptions" 
-            v-bind:key="val" 
-            :selected="store.resultsPerPage===val" 
-            @click="setResultsPerPage(val);store.jumpToFirstPage();scrollToTableTop();"
-            >{{val}}</option>
-        </select>
-        </span></span>
-        <ul class="inline-flex items-center -space-x-px">
-          <li>
-            <span class="sr-only">First</span>
-            <button 
-              aria-hidden="true"
-              @click="store.jumpToFirstPage();scrollToTableTop()"
-              :disabled="store.isFirstPage"
+            <select 
+              id="pagesize" 
               class="
-                px-3.5 py-2.5 
-                leading-tight border
+                w-20 p-2 text-sm border rounded-lg 
+                text-gray-900 border-gray-300 bg-gray-50 
+                focus:ring-blue-500 focus:border-blue-500 
+                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white
+                dark:focus:ring-blue-500 dark:focus:border-blue-500
               "
-              :class="{
-                [`
-                  cursor-not-allowed 
-                  bg-gray-50 border-gray-300 text-gray-300 
-                  dark:text-gray-700 dark:bg-gray-900 dark:border-gray-700
-                `]: store.isFirstPage, 
-                [`
-                 bg-gray-50 border-gray-300 text-gray-500 
-                 hover:bg-gray-100 hover:text-gray-700 
-                 dark:bg-gray-800 dark:border-gray-700 
-                 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white
-                `]: !store.isFirstPage,
-              }"
-              >&#x23EE;</button>
-          </li>
-          <li>
-            <span class="sr-only">Previous</span>
-            <button
-              aria-hidden="true"
-              @click="store.jumpToPreviousPage();scrollToTableTop()"
-              :disabled="store.isFirstPage"
-              class="px-3.5 py-2.5 leading-tight border"
-              :class="{
-                [`
-                  cursor-not-allowed 
-                  bg-gray-50 border-gray-300 text-gray-300 
-                  dark:text-gray-700 dark:bg-gray-900 dark:border-gray-700
-                `]: store.isFirstPage, 
-                [`
-                 bg-gray-50 border-gray-300 text-gray-500 
-                 hover:bg-gray-100 hover:text-gray-700 
-                 dark:bg-gray-800 dark:border-gray-700 
-                 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white
-                `]: !store.isFirstPage,
-              }"
-              >&#x23F4;</button>
-          </li>
-          <li class="z-10">
-            <input 
-              aria-current="page"
-              class="
-                px-3 py-2.5 w-16 
-                leading-tight border border-dashed 
-              "
-              v-model='store.currentPageInputForTwoWayBinding' 
-              :class="{ 
-                [`
-                  text-blue-600 border-blue-300 bg-blue-50 
-                  hover:bg-blue-100 hover:text-blue-700 
-                  dark:text-white dark:border-gray-700 dark:bg-gray-700   
-                `]: store.currentPageInputField.valid,
-                [`
-                  text-red-600 border-red-300 bg-red-50 
-                  hover:bg-red-100 hover:text-red-700 
-                  dark:text-white dark:border-red-700 dark:bg-red-700   
-                `]: !store.currentPageInputField.valid,
-              }"
-              >
-          </li>
-          <li>
-            <span class="sr-only">Next</span>
-            <button 
-              aria-hidden="true"
-              @click="store.jumpToNextPage();scrollToTableTop()"
-              :disabled="store.isLastPage"
-              class="px-3.5 py-2.5 leading-tight border"
-              :class="{
-                [`
-                  cursor-not-allowed 
-                  bg-gray-50 border-gray-300 text-gray-300 
-                  dark:text-gray-700 dark:bg-gray-900 dark:border-gray-700
-                `]: store.isLastPage, 
-                [`
-                 bg-gray-50 border-gray-300 text-gray-500 
-                 hover:bg-gray-100 hover:text-gray-700 
-                 dark:bg-gray-800 dark:border-gray-700 
-                 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white
-                `]: !store.isLastPage,
-              }"
-              >&#x23F5;</button>
-          </li>
-          <li>
-            <span class="sr-only">Last</span>
-            <button 
-              aria-hidden="true"
-              @click="store.jumpToLastPage();scrollToTableTop()"
-              :disabled="store.isLastPage"
-              class="px-3.5 py-2.5 leading-tight border"
-              :class="{
-                [`
-                  cursor-not-allowed 
-                  bg-gray-50 border-gray-300 text-gray-300 
-                  dark:text-gray-700 dark:bg-gray-900 dark:border-gray-700
-                `]: store.isLastPage, 
-                [`
-                 bg-gray-50 border-gray-300 text-gray-500 
-                 hover:bg-gray-100 hover:text-gray-700 
-                 dark:bg-gray-800 dark:border-gray-700 
-                 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white
-                `]: !store.isLastPage,
-              }"
-              >&#x23ED;</button>
-          </li>
-        </ul>
+            >
+              <option 
+                v-for="val in store.resultsPerPageOptions" 
+                v-bind:key="val" 
+                :selected="store.resultsPerPage===val" 
+                @click="setResultsPerPage(val);store.jumpToPage(`FIRST`);scrollToTableTop();"
+                >{{val}}</option>
+            </select>
+          </span>
+        </div>
+        <DtPagination 
+          @jumpToPage="(pageJumpType: PageJumpType) => {store.jumpToPage(pageJumpType); scrollToTableTop();}" 
+          :isFirstPage="store.isFirstPage"
+          :isLastPage="store.isLastPage" 
+          v-model="store.currentPageInputForTwoWayBinding"
+          :isGivenInputAValidPage="store.currentPageInputField.valid"  
+          >
+        </DtPagination>
       </nav>
     </div>
   </div>
@@ -442,20 +214,20 @@
 </template>
 
 <script setup lang="ts">
-import { Dropdown, Modal, } from 'flowbite-vue'
-import { Bars3Icon, ChevronDownIcon, CloudArrowDownIcon, MagnifyingGlassIcon, WrenchScrewdriverIcon } from '@heroicons/vue/24/solid'
+import { Modal, } from 'flowbite-vue'
+import DtPagination from '../components/datatable/DtPagination.vue'
+import { Bars3Icon, WrenchScrewdriverIcon } from '@heroicons/vue/24/solid'
 import { useDictStore } from '@/stores/dict'
-import { Ref, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import MeaningForestViewer from '@/components/meaning-forest/MeaningForestViewer.vue';
 import TableConfiguration from '@/components/datatable/TableConfiguration.vue';
+//eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { PageJumpType } from '@/frontend_models/PageJumpType';
+import DictFilterPanel from '@/components/datatable/filter-panel/DictFilterPanel.vue';
+import DictBulkActions from '@/components/datatable/DictBulkActions.vue';
+import QuickSearch from '@/components/datatable/QuickSearch.vue';
 
 const store = useDictStore()
-
-async function executeBackendSearch() {
-  await store.refreshEntries(backendSearchQuery.value, customSortComparison.value)
-  store.selectedIndices.clear()
-  store.jumpToFirstPage()
-}
 
 async function setResultsPerPage(val: number){
   await store.setResultsPerPage(val)
@@ -494,8 +266,8 @@ onMounted(async () => {
   await store.refreshDictMetas()
 })
 
-const backendSearchQuery: Ref<string> = ref(``)
-const customSortComparison: Ref<string> = ref(``)
+
+
 </script>
 
 <style lang="scss">

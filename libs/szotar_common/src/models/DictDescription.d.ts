@@ -3,5 +3,5 @@ export declare class DictDescription {
     originalCol: string;
     idCol: string;
     cols: Record<string, ColumnDefinition>;
-    static fromJson(json: string): DictDescription;
+    static fromJson(json: string, translatedColExistsInDict?: boolean): DictDescription;
 }

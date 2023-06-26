@@ -4,7 +4,7 @@ export class DictDescription {
     originalCol: string = ``;
     idCol: string = ``;
     cols: Record<string, ColumnDefinition> = {};
-    static fromJson(json: string): DictDescription {
+    static fromJson(json: string, translatedColExistsInDict: boolean = false): DictDescription {
         const res = new DictDescription();
         const jsonSourceValues = JSON.parse(json) as DictDescription;
         res.originalCol = jsonSourceValues?.originalCol ?? `original`;
@@ -17,7 +17,7 @@ export class DictDescription {
                 isUsedInTrExampleSearch: true,
             }
         }
-        if (!Object.keys(res.cols).some(key => res.cols[key]?.isMeaningForestCol) && Object.keys(res.cols).includes(`translated`)) {
+        if (!Object.keys(res.cols).some(key => res.cols[key]?.isMeaningForestCol) && !Object.keys(res.cols).includes(`translated`) && translatedColExistsInDict) {
             res.cols[`translated`] = {
                 isVisible: true,
                 tailwindClasses: `w-80`,

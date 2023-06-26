@@ -1,0 +1,1 @@
+export type PageJumpType = `FIRST` | `PREVIOUS` | `NEXT` | `LAST`

@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { Dict } from '../../../libs/szotar_common/src/models/Dict.js';
 import { DictDescription } from "../../../libs/szotar_common/src/models/DictDescription.js";
 import { ColumnDefinition } from "../../../libs/szotar_common/src/models/ColumnDefinition.js";
+import { PageJumpType } from "@/frontend_models/PageJumpType.js";
 
 export const useDictStore = defineStore('dict', () => {
     //const entries: Ref<Record<string, string>[]> = ref([]);
@@ -28,7 +29,7 @@ export const useDictStore = defineStore('dict', () => {
     const lastDictQueryResult = computed(() => dictQueriesWithMeta.value[dictNameUsedInLastQuery.value])
 
     const refreshDictMetas = async () => {
-        console.log(`DEBUG getDictMetas egyszer lefut`)
+        //console.log(`DEBUG getDictMetas egyszer lefut`)
         try {
             const res = await (await fetch(`http://localhost:3035/meta`, {
                 headers: {
@@ -101,7 +102,7 @@ export const useDictStore = defineStore('dict', () => {
             currentPageInputField.value.val = value;
         },
     })
-
+    /*
     const jumpToNextPage = () => currentPageInputForTwoWayBinding.value = ''+(currentPageOneIncremented.value+1);
     
     const jumpToPreviousPage = () => currentPageInputForTwoWayBinding.value = ''+(currentPageOneIncremented.value-1);
@@ -109,6 +110,19 @@ export const useDictStore = defineStore('dict', () => {
     const jumpToFirstPage = () => currentPageInputForTwoWayBinding.value = ''+1;
     
     const jumpToLastPage = () => currentPageInputForTwoWayBinding.value = ''+totalPageCount.value;
+    */
+    const jumpToPage = (pageJumpType: PageJumpType) => {
+        if (pageJumpType === `FIRST`) {
+            currentPageInputForTwoWayBinding.value = ''+1;
+        } else if (pageJumpType === `PREVIOUS`) {
+            currentPageInputForTwoWayBinding.value = ''+(currentPageOneIncremented.value-1);
+        } else if (pageJumpType === `NEXT`) {
+            currentPageInputForTwoWayBinding.value = ''+(currentPageOneIncremented.value+1);
+        } else if (pageJumpType === `LAST`) {
+            currentPageInputForTwoWayBinding.value = ''+totalPageCount.value;
+        }
+            
+    }
     
     const isFirstPage: Ref<boolean> = computed(() => currentPage.value===0);
     
@@ -209,10 +223,7 @@ export const useDictStore = defineStore('dict', () => {
         quickSearchQueryPhrase,
         filteredEntries,
         resultsPerPageOptions,
-        jumpToNextPage,
-        jumpToFirstPage,
-        jumpToPreviousPage,
-        jumpToLastPage,
+        jumpToPage,
         isFirstPage,
         isLastPage,
         onePageOfFilteredEntries,
