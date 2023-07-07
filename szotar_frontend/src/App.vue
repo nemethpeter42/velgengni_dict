@@ -1,11 +1,17 @@
 <template>
-<div class="bg-gray-50 dark:bg-indigo-950 min-h-screen">
+<div class="bg-cyan-50 dark:bg-indigo-950 min-h-screen">
   <nav class="m-auto text-center">
     <router-link 
       class="font-bold" 
       :class="route.name===`home` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
       to="/"
       >Home
+    </router-link> |
+    <router-link 
+      class="font-bold" 
+      :class="route.name===`examples` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
+      to="/examples"
+      >Examples
     </router-link> |
     <router-link 
       class="font-bold" 

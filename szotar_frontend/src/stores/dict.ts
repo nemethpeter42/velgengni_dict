@@ -4,6 +4,7 @@ import { Dict } from '../../../libs/szotar_common/src/models/Dict.js';
 import { DictDescription } from "../../../libs/szotar_common/src/models/DictDescription.js";
 import { ColumnDefinition } from "../../../libs/szotar_common/src/models/ColumnDefinition.js";
 import { PageJumpType } from "@/frontend_models/PageJumpType.js";
+import { FilteredEntry } from "@/frontend_models/FilteredEntry.js";
 
 export const useDictStore = defineStore('dict', () => {
     //const entries: Ref<Record<string, string>[]> = ref([]);
@@ -18,6 +19,7 @@ export const useDictStore = defineStore('dict', () => {
 
 
     const dictNameOnForm = ref(``)
+    
     const setDictNameOnForm = async(val: string) => {
         dictNameOnForm.value = val;
     }
@@ -51,6 +53,7 @@ export const useDictStore = defineStore('dict', () => {
         }
     }
 
+
     const refreshEntries = async (backendSearchQuery: string, customSortComparison: string) => {
         try {
             const res = await (await fetch(`http://localhost:3035/dict`, {
@@ -75,6 +78,7 @@ export const useDictStore = defineStore('dict', () => {
     const quickSearchQueryPhrase: Ref<string> = ref(``)
 
     const currentPage = ref(0);
+
     const currentPageOneIncremented = computed({
         get: ():number => currentPage.value + 1,
         set: (value: number) => currentPage.value = value - 1,
@@ -102,15 +106,7 @@ export const useDictStore = defineStore('dict', () => {
             currentPageInputField.value.val = value;
         },
     })
-    /*
-    const jumpToNextPage = () => currentPageInputForTwoWayBinding.value = ''+(currentPageOneIncremented.value+1);
-    
-    const jumpToPreviousPage = () => currentPageInputForTwoWayBinding.value = ''+(currentPageOneIncremented.value-1);
 
-    const jumpToFirstPage = () => currentPageInputForTwoWayBinding.value = ''+1;
-    
-    const jumpToLastPage = () => currentPageInputForTwoWayBinding.value = ''+totalPageCount.value;
-    */
     const jumpToPage = (pageJumpType: PageJumpType) => {
         if (pageJumpType === `FIRST`) {
             currentPageInputForTwoWayBinding.value = ''+1;
@@ -134,6 +130,21 @@ export const useDictStore = defineStore('dict', () => {
 
     const setResultsPerPage = async (num: number) => resultsPerPage.value = num;
 
+    const sortCol = ref(``)
+
+    const sortAscending = ref(true)
+
+    const toggleSort = (colName: string) => {
+        if (sortCol.value !== colName) {
+            sortCol.value = colName
+            sortAscending.value = true
+        } else if (sortCol.value === colName && sortAscending.value === true) { 
+            sortAscending.value = false
+        } else if (sortCol.value === colName && sortAscending.value === false) { 
+            sortCol.value = ``
+        }
+    }
+
     const filteredEntries = computed(() => {
         let res
         if (quickSearchQueryPhrase.value!==``) {
@@ -148,7 +159,12 @@ export const useDictStore = defineStore('dict', () => {
         } else {
             res = lastDictQueryResult.value?.main?.map((e,i)=>({idx:i,val:e,}));
         }
-        return res ?? [];
+        const typeSafeResult = res ?? []
+        const sortedResult: FilteredEntry[] = 
+            sortCol.value!==`` ? 
+            typeSafeResult.sort((a,b) => (sortAscending.value ? 1 : -1) * (a.val[sortCol.value].toLowerCase() > b.val[sortCol.value].toLowerCase() ? 1 : -1)): 
+            typeSafeResult;
+        return sortedResult
     })
 
     const onePageOfFilteredEntries = computed(()=>
@@ -191,7 +207,9 @@ export const useDictStore = defineStore('dict', () => {
     }
 
     const displayColsAsRawString = ref(false)
-
+    
+    const displayRowNumbers = ref(false)
+    
     const currDictCols = computed(() => (dictQueriesWithMeta.value[dictNameUsedInLastQuery.value]?.meta?.cols ?? {}))
 
     const currDictVisibleCols: ComputedRef<Record<string, ColumnDefinition>> = computed(() => Object.fromEntries(Object.entries(currDictCols.value).filter(e=>e[1]?.isVisible)))
@@ -246,5 +264,9 @@ export const useDictStore = defineStore('dict', () => {
         toggleVisibility,
         toggleQuickSearchEnabled,
         currDictColsUsedInQuickSearch,
+        toggleSort,
+        sortCol,
+        sortAscending,
+        displayRowNumbers,
     }
   })

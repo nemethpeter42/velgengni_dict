@@ -6,7 +6,7 @@
           <label for="command" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Keresési parancs:</label>
           <textarea 
             id="command" 
-            rows="3" 
+            rows="2" 
             class="
               block p-2.5 w-96 text-sm rounded-lg resize-none
               text-gray-900 bg-gray-50
@@ -15,9 +15,10 @@
               dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
               dark:focus:ring-blue-500 dark:focus:border-blue-500 
             " 
-            placeholder='Pl. e.original.trim().toLowerCase().includes(`cat`)'
+            placeholder='Keresési parancs'
             v-model="backendSearchQuery"
           ></textarea>
+          <div class="text-gray-600 dark:text-gray-400 text-sm my-1">Pl.&nbsp; e.original.trim().toLowerCase().includes(`cat`)</div>
         </div>
         <div class="m-2">
           <label for="command" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Szótár:</label>
@@ -43,7 +44,7 @@
           <label for="command" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Rendezési függvény:</label>
           <textarea 
             id="command" 
-            rows="3" 
+            rows="2" 
             class="
               block p-2.5 w-96 text-sm rounded-lg resize-none
               text-gray-900 bg-gray-50
@@ -52,9 +53,10 @@
               dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
               dark:focus:ring-blue-500 dark:focus:border-blue-500 
             " 
-            placeholder='Pl. -1*a.original.localeCompare(b.original, `es`)'
+            placeholder='Rendezési függvény'
             v-model="customSortComparison"
           ></textarea>
+          <div class="text-gray-600 dark:text-gray-400 text-sm my-1">Pl.&nbsp; -1*a.original.localeCompare(b.original, `es`)</div>
         </div>
       </div>
 

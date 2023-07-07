@@ -3,4 +3,5 @@ export declare class ColumnDefinition {
     tailwindClasses: string;
     isMeaningForestCol?: boolean;
     isUsedInTrExampleSearch?: boolean;
+    isTrExamplePairCol?: boolean;
 }

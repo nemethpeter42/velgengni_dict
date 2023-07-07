@@ -140,6 +140,17 @@ app.get('/list', (req, res) =>  {
 	res.json(wordList)
 });
 
+app.get('/tr_example_languages', (req, res) =>  {
+	const result = []
+	for (const l1 of Object.keys(exampleSourceFiles)) {
+		for (const l2 of Object.keys(exampleSourceFiles[l1])) {
+			result.push({lang1:l2,lang2:l1,})
+			result.push({lang1:l1,lang2:l2,})
+		}
+	}
+	res.json(result)
+})
+
 app.post('/find', (req, res) =>  {
 	try {
 		//console.log(req)

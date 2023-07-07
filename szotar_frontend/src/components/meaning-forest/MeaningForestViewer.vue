@@ -2,7 +2,7 @@
     <div v-if="displayColsAsRawString">
         {{ rawVal }}
     </div>
-    <div v-else-if="parseResult.isValid">
+    <div v-else-if="parseResult.isValid" class="pt-1">
         <ul class="list-disc lvl1-item">
             <li class="mb-1.5" v-for="(lvl1, lvl1Index) in parseResult.val.val" v-bind:key="lvl1Index">
                 <ul 
