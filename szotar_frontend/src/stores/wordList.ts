@@ -2,20 +2,78 @@ import { ComputedRef, Ref, WritableComputedRef, computed, ref } from "vue"
 import { defineStore } from 'pinia'
 import { PageJumpType } from "@/frontend_models/PageJumpType.js";
 import { FilteredEntry } from "@/frontend_models/FilteredEntry.js";
+import { useTranslationExampleStore } from "./translationExample";
+import { SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition";
 
 export const useWordListStore = defineStore('wordList', () => {
-    
+    const trExampleStore = useTranslationExampleStore()
+
     const wordList : Ref<string[][]>= ref([]);
-
-    const languagePairs: Ref<{lang1: string, lang2: string,}[]> = ref([])
-
-    const currLang1: Ref<string> = ref(``)
-
-    const currLang2: Ref<string> = ref(``)
 
     const currentIdx: Ref<number> = ref(-1)
 
-    const setCurrentIdx = (idx: number) => currentIdx.value = idx;
+    const currEntry: ComputedRef<string[]> = computed(() => {
+        return wordList.value[currentIdx.value] ?? []
+    })
+
+    const lang1Phrases: ComputedRef<string[]> = computed(
+        () => currEntry.value.
+            filter(e=> !(e.trim().startsWith(`<`) && e.trim().endsWith(`>`))).
+            map(e=>e.trim()).
+            filter(e=>e!==``)
+    )
+
+    const lang1PhrasesWithoutParentheses = computed(
+        () => lang1Phrases.value.
+            map(e => e.
+                replaceAll(/\[[^\]]*\]/g,'').
+                replaceAll(/\([^)]*\)/g,'').
+                replaceAll(/\{[^}]*\}/g,'')
+            )  
+    )
+    
+    const lang2PhrasesRaw: ComputedRef<string[]> = computed(
+        () => currEntry.value.
+            filter(e=> e.trim().startsWith(`<`) && e.trim().endsWith(`>`)).
+            map(e=>e.substring(1,e.length-1))
+    )     
+    const lang2Phrases: ComputedRef<string[]> = computed( 
+        () => lang2PhrasesRaw.value.
+            map(
+                e => 
+                    e.
+                        replaceAll(/\[[^\]]*\]/g,'').
+                        replaceAll(/\([^)]*\)/g,'').
+                        replaceAll(/\{[^}]*\}/g,'').
+                        split(`;`).join(`,`).
+                        split(`/`).join(`,`).
+                        split(`\\`).join(``).
+                        split(`,`)
+            ).
+            flat().
+            map(e=>e.trim()).
+            filter(e=>e!==``)
+      )
+
+    const isTheFirstWordActive = computed(()=>currentIdx.value===0)
+    
+    const isTheLastWordActive = computed(()=>currentIdx.value===wordList.value.length - 1)
+
+    const setCurrentIdx = async (idx: number) => {
+        currentIdx.value = idx;
+        isAllQuickAccessBtnVisible.value = false;
+        await trExampleStore.resetBigFilter(lang2PhrasesRaw.value.join(`; `));
+        const words = lang1PhrasesWithoutParentheses.value[0]?.split(` `) ?? []
+        const conditions = words.map(
+            expression => ({
+              expression, 
+              onlyWithSpaceDotOrCommaSuffix: false,//TODO config fuggo
+              onlyWithSpacePrefix: false, //TODO config fuggo
+            } as SearchCondition))
+          await trExampleStore.resetSearchConditions(conditions)
+          await trExampleStore.refreshExampleList(trExampleStore.exampleFindReq, false)
+       
+    }
 
     const refreshWordList = async () => {
         //console.log(`DEBUG getDictMetas egyszer lefut`)
@@ -34,23 +92,6 @@ export const useWordListStore = defineStore('wordList', () => {
         }
     };
 
-
-    const refreshLanguagePairs = async () => {
-        //console.log(`DEBUG getDictMetas egyszer lefut`)
-        try {
-            const res = await (await fetch(`http://localhost:3035/tr_example_languages`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                method: `GET`, 
-            })).json() as {lang1: string, lang2: string,}[];
-            languagePairs.value = res;
-            
-        } catch(error) {
-            console.log(error);
-        }
-    };
 
     const quickSearchQueryPhrase: Ref<string> = ref(``)
 
@@ -126,13 +167,33 @@ export const useWordListStore = defineStore('wordList', () => {
         let res
         if (quickSearchQueryPhrase.value!==``) {
             res = wordList.value?.
-                map((e,i)=>({idx:i,val:{'word': e.join(`\t`),},})).
+                map(
+                    (e,i)=>
+                        ({
+                            idx:i,
+                            val:{'word': e.join(`\t`),},
+                        })
+                ).
                 filter(
-                    e=> e.val?.word?.toLowerCase().
-                        includes(quickSearchQueryPhrase.value.toLowerCase())
+                    e=> 
+                        quickSearchQueryPhrase.value.
+                        toLowerCase().
+                        split(`,`).
+                        map(e=>e.trim()).
+                        some( 
+                            phrase =>
+                                (e.val?.word?.toLowerCase() ?? ``).
+                                includes(phrase)
+                        )
                 );
         } else {
-            res = wordList.value?.map((e,i)=>({idx:i,val:{'word': e.join(`\t`),},}));
+            res = wordList.value?.map(
+                (e,i)=>
+                    ({
+                        idx:i,
+                        val:{'word': e.join(`\t`),},
+                    })
+            );
         }
         const typeSafeResult = res ?? []
         const sortedResult: FilteredEntry[] = 
@@ -162,12 +223,17 @@ export const useWordListStore = defineStore('wordList', () => {
         }
     })
 
+    const isAllQuickAccessBtnVisible = ref(false)
+    
 
 
+    refreshWordList().then(function() {
+        setCurrentIdx(0);
+    })
+    
     return {
         wordList,
         refreshWordList,
-        refreshLanguagePairs,
         jumpToPage,
         isFirstPage,
         isLastPage,
@@ -185,8 +251,13 @@ export const useWordListStore = defineStore('wordList', () => {
         quickSearchQueryPhrase,
         currentIdx,
         setCurrentIdx,
-        languagePairs,
-        currLang1,
-        currLang2,
+        isAllQuickAccessBtnVisible,
+        isTheFirstWordActive,
+        isTheLastWordActive,
+        currEntry,
+        lang1Phrases,
+        lang1PhrasesWithoutParentheses,
+        lang2Phrases,
+        lang2PhrasesRaw,
     }
 });

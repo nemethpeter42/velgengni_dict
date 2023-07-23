@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl m-auto examples-page">
+  <div class="max-w-5xl m-auto examples-page">
     <StandaloneTrExampleFilterPanel />
     <TrExampleDatatable />
   </div>

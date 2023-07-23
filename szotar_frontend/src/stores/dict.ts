@@ -150,14 +150,36 @@ export const useDictStore = defineStore('dict', () => {
         if (quickSearchQueryPhrase.value!==``) {
             res = lastDictQueryResult.value?.
                 main?.
-                map((e,i)=>({idx:i,val:e,})).
+                map(
+                    (e,i)=>
+                        ({
+                            idx:i,
+                            val:e,
+                        })
+                ).
                 filter(
                     e=>Object.keys(currDictColsUsedInQuickSearch.value).
-                        some(key => (e.val[key]?.toString().toLowerCase() ?? ``).
-                        includes(quickSearchQueryPhrase.value.toLowerCase()))
+                        some(
+                            key => 
+                                quickSearchQueryPhrase.value.
+                                toLowerCase().
+                                split(`,`).
+                                map(e=>e.trim()).
+                                some( 
+                                    phrase =>
+                                        (e.val[key]?.toString().toLowerCase() ?? ``).
+                                        includes(phrase)
+                                )
+                            )
                 );
         } else {
-            res = lastDictQueryResult.value?.main?.map((e,i)=>({idx:i,val:e,}));
+            res = lastDictQueryResult.value?.main?.map(
+                (e,i)=>
+                    ({
+                        idx:i,
+                        val:e,
+                    })
+            );
         }
         const typeSafeResult = res ?? []
         const sortedResult: FilteredEntry[] = 

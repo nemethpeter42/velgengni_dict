@@ -146,8 +146,8 @@ import DictBulkActions from '@/components/datatable/DictBulkActions.vue';
 import QuickSearch from '@/components/datatable/QuickSearch.vue';
 import PageSizeInput from './PageSizeInput.vue';
 import HeaderOfColumns from './HeaderOfColumns.vue';
-import ShowConfigModalButton from '../buttons/ShowConfigModalButton.vue';
-import ShowDetailsModalButton from '../buttons/ShowDetailsModalButton.vue';
+import ShowConfigModalButton from '../input-fields/ShowConfigModalButton.vue';
+import ShowDetailsModalButton from '../input-fields/ShowDetailsModalButton.vue';
 import DatatableBody from './DatatableBody.vue';
 
 const store = useDictStore()

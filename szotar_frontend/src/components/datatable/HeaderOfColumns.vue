@@ -2,7 +2,7 @@
   <thead class="
     text-xs uppercase
     text-gray-700 bg-gray-100 
-    dark:bg-gray-700 dark:text-gray-400
+    dark:bg-gray-600 dark:text-gray-300
     ">
     <tr>
       <th scope="col" class="p-4">
@@ -17,8 +17,8 @@
               w-4 h-4 border-double border-4 rounded
               text-fuchsia-600 bg-gray-100 border-gray-300 
               focus:ring-fuchsia-500 focus:ring-2 
-              dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600
-              dark:focus:ring-fuchsia-600 dark:focus:ring-offset-gray-800"
+              dark:ring-offset-gray-700 dark:bg-gray-600 dark:border-gray-500
+              dark:focus:ring-fuchsia-600 dark:focus:ring-offset-gray-700"
               >
           <label for="checkbox-all-search" class="sr-only">checkbox</label>
         </div>

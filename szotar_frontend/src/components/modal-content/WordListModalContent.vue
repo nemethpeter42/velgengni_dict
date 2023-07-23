@@ -60,7 +60,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import SelectWordButton from '@/components/buttons/SelectWordButton.vue'
+  import SelectWordButton from '@/components/input-fields/SelectWordButton.vue'
   import DtPagination from '../datatable/DtPagination.vue';
   import PageSizeInput from '../datatable/PageSizeInput.vue';
   //eslint-disable-next-line @typescript-eslint/no-unused-vars

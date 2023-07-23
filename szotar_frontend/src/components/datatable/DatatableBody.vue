@@ -11,13 +11,13 @@
         [`
           bg-gray-50 
           hover:bg-gray-200
-          dark:bg-gray-900 dark:border-gray-700 
+          dark:bg-gray-800 dark:border-gray-600 
           dark:hover:bg-gray-600
         `]: rowIndex % 2 === 0,
         [`
           bg-gray-100
           hover:bg-gray-200
-          dark:bg-gray-800 dark:border-gray-700 
+          dark:bg-gray-700 dark:border-gray-700 
           dark:hover:bg-gray-600
         `]: rowIndex % 2 !== 0,
         }"
@@ -41,7 +41,7 @@
       </td>
       <td 
         scope="row" 
-        class="px-2.5 py-1.5 font-medium text-gray-900 dark:text-gray-100" 
+        class="px-2.5 py-1.5 font-medium text-gray-900 dark:text-gray-200" 
         v-for="(colDef,colName) of (props.columnDefinitions as Record<string, ColumnDefinition>)" 
         v-bind:key="colName" 
         :class="colDef?.tailwindClasses ?? ``"
@@ -51,6 +51,17 @@
           :raw-val="item.val.translated" 
           :displayColsAsRawString="props.displayColsAsRawString" 
           />
+        <div v-else-if="colDef.isTrExamplePairCol && !props.displayColsAsRawString" >
+          <div>
+            <strong
+              v-html="highlightTrExamples(item.val[colName]?.split(`\t`)?.at(0) ?? ``)"
+            ></strong>
+          </div>
+          <div
+            v-html="highlightTrExamples(item.val[colName]?.split(`\t`)?.at(1) ?? ``)"
+          >
+          </div>
+        </div>
         <div v-else>{{item.val[colName]}}</div>
       </td>
       <td class="
@@ -69,10 +80,65 @@
   
   import MeaningForestViewer from '@/components/meaning-forest/MeaningForestViewer.vue';
   import { ColumnDefinition } from '../../../../libs/szotar_common/src/models/ColumnDefinition';
-
+  import * as sanitizeHtml from 'sanitize-html';
 
   import { defineProps, defineEmits } from 'vue';
   import { FilteredEntry } from '@/frontend_models/FilteredEntry';
+import { HighlightDefinition } from '@/frontend_models/HighlightDefinition';
+
+  type PositionPair = {start: number, end: number}
+
+  const getHtmlTagAreas = (str: string): PositionPair[] => {
+    const res = []
+    let pos = 0
+    let currStart = -1
+    while (pos < str.length){
+      if (currStart===-1 && str[pos]===`<`) {
+        currStart = pos
+      } else if (currStart!==-1 && str[pos]===`>`) {
+        res.push({start: currStart, end: pos,});
+        currStart=-1;
+      }
+      pos++;
+    }
+    return res
+  }
+
+  const encloseIntoTagsInHtml = (html: string, from: string, tagOpen: string, tagClose: string) => {
+    //html = html.split(`<`).join(`&lt;`)
+    //html = html.split(`>`).join(`&gt;`)
+    const tagAreas = getHtmlTagAreas(html)
+    for (let i = html.length-1; i>=0; i--) {
+      if (html.substring(i, i + from.length).toLowerCase() === from.toLowerCase() && !tagAreas.some(pair => pair.start<=i && i<=pair.end)) {
+        html = html.substring(0, i) + tagOpen + html.substring(i, i + from.length) + tagClose + html.substring(i + from.length)
+      }
+    }
+    return html
+  }
+
+  const highlightTrExamples = (dirtyHtml: string): string => {
+    dirtyHtml = dirtyHtml.split(`<`).join(`&lt;`)
+    dirtyHtml = dirtyHtml.split(`>`).join(`&gt;`)
+    const highlightedTextsDescendingLengthOrder = [
+      ...props.highlightedTexts ?? []
+    ].sort((a,b) => a.val.length > b.val.length ? -1 : 1)
+    for(const highlightedText of highlightedTextsDescendingLengthOrder) {
+      dirtyHtml = encloseIntoTagsInHtml(
+        dirtyHtml,
+        highlightedText.val,
+        `<span style="${highlightedText.style}">`,
+        `</span>`)
+    }
+    const cleanHtml = sanitizeHtml.default(dirtyHtml, {
+      allowedTags: [ `b`, `i`, `em`, `strong`, `span` ],
+      allowedAttributes: {
+        'span': [`style`],
+      },
+    });
+    return cleanHtml
+  }
+
+
   defineEmits(['toggleRowSelection']);
     
   const props = defineProps({  
@@ -81,5 +147,6 @@
     columnDefinitions: { type: Object, required: true, },
     displayColsAsRawString: {type: Boolean, required: false,},
     disableRowSelectionCheckbox: {type: Boolean, required: false,},
+    highlightedTexts: {type: Array<HighlightDefinition>, required: false,},
   });
-</script>@/frontend_models/FilteredEntry
+</script>
