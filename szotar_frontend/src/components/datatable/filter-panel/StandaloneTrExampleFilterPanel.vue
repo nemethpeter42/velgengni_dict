@@ -33,7 +33,7 @@
       <button 
         id="prevWordBtn"
         class="
-          m-1 mr-2 mb-2 px-5 py-2.5 font-medium rounded-full text-sm text-center 
+          m-1 mr-2 mb-1 px-5 py-2.5 font-medium rounded-full text-sm text-center 
           focus:outline-none focus:ring-4 focus:ring-orange-300 
           dark:focus:ring-orange-800
         "
@@ -65,7 +65,7 @@
       <button 
         id="nextWordBtn"
         class="
-          m-1 mr-2 mb-2 px-5 py-2.5 font-medium rounded-full text-sm text-center 
+          m-1 mr-2 mb-1 px-5 py-2.5 font-medium rounded-full text-sm text-center 
           focus:outline-none focus:ring-4 focus:ring-orange-300 
           dark:focus:ring-orange-800
         "
@@ -99,7 +99,7 @@
       <button 
         id="wordListModalOpenBtn"
         class="
-          m-1 mr-2 mb-2 px-5 py-2.5 font-medium rounded-full text-sm text-center 
+          m-1 mr-2 mb-1 px-5 py-2.5 font-medium rounded-full text-sm text-center 
           text-white bg-orange-500 
           hover:bg-orange-600 
           focus:outline-none focus:ring-4 focus:ring-orange-300 
@@ -132,7 +132,7 @@
       <label 
         for="view-mode-highlight-only" 
         class="
-          w-full py-1 m-2 text-sm font-medium select-none 
+          w-full py-1 m-1.5 text-sm font-medium select-none 
           text-gray-900 
           dark:text-gray-300
         ">
@@ -160,7 +160,7 @@
         <label 
         for="view-mode-filter" 
         class="
-          w-full py-1 m-2 text-sm font-medium select-none 
+          w-full py-1 m-1.5 text-sm font-medium select-none 
           text-gray-900 
           dark:text-gray-300
         ">
@@ -188,7 +188,7 @@
         <label 
         for="view-mode-inverted-filter" 
         class="
-          w-full py-1 m-2 text-sm font-medium select-none 
+          w-full py-1 m-1.5 text-sm font-medium select-none 
           text-gray-900 
           dark:text-gray-300
         ">
@@ -211,14 +211,14 @@
       />
   </div>
   <div class="flex flex-wrap">
-    <div class="m-2">
+    <div class="m-1">
       <TrExampleResultLimit 
         :options="[1000,3000,10000,20000]" 
         :currently-selected="trExampleStore.exampleFindReq.resultLimit" 
         @input="async (val: number) => {trExampleStore.setResultLimitForQuery(val);}"
         />  
     </div>
-    <div class="m-2">
+    <div class="m-1">
       <span class="text-sm font-normal text-gray-500 dark:text-gray-400">Nyelvpár: </span><Dropdown>
           <template #trigger>
             <button 
@@ -369,12 +369,7 @@
     </div>
   </div>
 
-  <div 
-    v-if="wordListStore.currentIdx !== -1" 
-    class="text-gray-800 dark:text-gray-200 font-bold text-lg mb-4 mx-2"
-    >
-    {{ wordListStore.wordList[wordListStore.currentIdx]?.join(`; `) }}
-  </div>
+ 
   <div v-if="isWordListModalShown">
       <div class="bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40"></div>
       <div id="defaultModal"  tabindex="-1" aria-hidden="true" :class="{flex: isWordListModalShown, hidden: !isWordListModalShown,}" class="fixed top-0 left-0 right-0 z-50 w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center">
@@ -434,6 +429,7 @@
       } as SearchCondition))
     await trExampleStore.resetSearchConditions(conditions)
     await trExampleStore.refreshExampleList(trExampleStore.exampleFindReq, selection.isInverseSearch)
+    trExampleStore.jumpToPage(`FIRST`)
   }
   
 </script>

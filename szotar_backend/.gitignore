@@ -4,3 +4,4 @@ dicts/*
 backup/*
 example_source_dbs/*
 node_modules
+config.json

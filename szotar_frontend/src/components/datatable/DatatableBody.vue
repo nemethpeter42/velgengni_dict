@@ -9,14 +9,14 @@
       "
       :class="{
         [`
-          bg-gray-50 
-          hover:bg-gray-200
+          bg-gray-100 
+          hover:bg-gray-300
           dark:bg-gray-800 dark:border-gray-600 
           dark:hover:bg-gray-600
         `]: rowIndex % 2 === 0,
         [`
-          bg-gray-100
-          hover:bg-gray-200
+          bg-gray-200
+          hover:bg-gray-300
           dark:bg-gray-700 dark:border-gray-700 
           dark:hover:bg-gray-600
         `]: rowIndex % 2 !== 0,
@@ -30,10 +30,10 @@
             :checked="props.selectedIndices.has(item.idx)"
             class="
               select-row-checkbox w-4 h-4 rounded 
-              text-fuchsia-600 bg-gray-100 border-gray-300 
+              text-fuchsia-600 bg-gray-200 border-gray-400 
               focus:ring-fuchsia-500 focus:ring-2 
-              dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600
-              dark:focus:ring-fuchsia-600 dark:focus:ring-offset-gray-800
+              dark:ring-offset-gray-700 dark:bg-gray-600 dark:border-gray-500
+              dark:focus:ring-fuchsia-600 dark:focus:ring-offset-gray-700
             ">
             <slot name="rowLevelButtons" :idx="item.idx"></slot>
           <label for="select-row-checkbox" class="sr-only">Sor kiválasztása</label>

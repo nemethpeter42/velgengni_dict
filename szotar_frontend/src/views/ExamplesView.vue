@@ -1,7 +1,11 @@
 <template>
-  <div class="max-w-5xl m-auto examples-page">
-    <StandaloneTrExampleFilterPanel />
-    <TrExampleDatatable />
+  <div class="examples-page">
+    <div class="max-w-6xl mx-auto">
+      <StandaloneTrExampleFilterPanel />
+    </div>
+    <div class="max-w-5xl mx-auto pt-2 pb-3">
+      <TrExampleDatatable />
+    </div>
   </div>
     
     

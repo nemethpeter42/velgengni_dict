@@ -1,4 +1,16 @@
 <template>
+  <div 
+    v-if="wordListStore.currentIdx !== -1" 
+    class="text-gray-800 dark:text-gray-200 font-bold text-lg mb-4 mx-2"
+    >
+    {{ wordListStore.wordList[wordListStore.currentIdx]?.join(`; `) }}
+  </div>
+  <div 
+    v-if="wordListStore.currentIdx !== -1" 
+    class="m-1"
+  >
+    <TrExampleStats />
+  </div>
   <div class="shadow-md sm:rounded-lg" id="datatable-table-top-anchor">
     <div class="flex flex-wrap items-center justify-between border-t-2 border-x-2 border-cyan-200 dark:border-indigo-900 sm:rounded-t-lg">
       <div class="my-1.5">
@@ -8,8 +20,8 @@
       </div>
       <div class="flex my-1.5">
         <QuickSearch 
-          v-model="store.quickSearchQueryPhrase"
-          @input="store.jumpToPage(`FIRST`);"
+          v-model="trExampleStore.quickSearchQueryPhrase"
+          @input="trExampleStore.jumpToPage(`FIRST`);"
         />
       </div>
     </div>
@@ -17,19 +29,19 @@
       
       <HeaderOfColumns 
         :cols="{example: {isVisible: true,isTrExamplePairCol:true,}}"
-        :isAllSelected="store.isAllSelected"
-        :sortCol="store.sortCol"
-        :sortAscending="store.sortAscending"
-        @toggleSort="(colName: string) => store.toggleSort(colName)"
-        @toggleAllSelection="store.toggleAllSelection()"
+        :isAllSelected="trExampleStore.isAllSelected"
+        :sortCol="trExampleStore.sortCol"
+        :sortAscending="trExampleStore.sortAscending"
+        @toggleSort="(colName: string) => trExampleStore.toggleSort(colName)"
+        @toggleAllSelection="trExampleStore.toggleAllSelection()"
       />
       
       <DatatableBody
-        :onePageOfEntries="store.onePageOfFilteredEntries"
+        :onePageOfEntries="trExampleStore.onePageOfFilteredEntries"
         :columnDefinitions="{example: {isVisible: true,isTrExamplePairCol:true,}}"
         :displayColsAsRawString="false"
-        :selectedIndices="store.selectedIndices"
-        :highlightedTexts="store.phrasesUsedInHighlight"
+        :selectedIndices="trExampleStore.selectedIndices"
+        :highlightedTexts="trExampleStore.phrasesUsedInHighlight"
         @toggleRowSelection="(idx: number,$event: Event) => toggleRowSelection(idx,$event)"
       >
         <template #rowLevelButtons="{idx,}">
@@ -52,16 +64,16 @@
       aria-label="Table navigation"
       >
       <PageSizeInput 
-        :options="store.resultsPerPageOptions" 
-        :currently-selected="store.resultsPerPage"
-        @input="(val: number) => {store.setResultsPerPage(val);store.jumpToPage(`FIRST`);scrollToTableTop();}"
+        :options="trExampleStore.resultsPerPageOptions" 
+        :currently-selected="trExampleStore.resultsPerPage"
+        @input="(val: number) => {trExampleStore.setResultsPerPage(val);trExampleStore.jumpToPage(`FIRST`);scrollToTableTop();}"
         />
       <DtPagination 
-        @jumpToPage="(pageJumpType: PageJumpType) => {store.jumpToPage(pageJumpType); scrollToTableTop();}" 
-        :isFirstPage="store.isFirstPage"
-        :isLastPage="store.isLastPage" 
-        v-model="store.currentPageInputForTwoWayBinding"
-        :isGivenInputAValidPage="store.currentPageInputField.valid"  
+        @jumpToPage="(pageJumpType: PageJumpType) => {trExampleStore.jumpToPage(pageJumpType); scrollToTableTop();}" 
+        :isFirstPage="trExampleStore.isFirstPage"
+        :isLastPage="trExampleStore.isLastPage" 
+        v-model="trExampleStore.currentPageInputForTwoWayBinding"
+        :isGivenInputAValidPage="trExampleStore.currentPageInputField.valid"  
         >
       </DtPagination>
     </nav>
@@ -79,8 +91,11 @@ import PageSizeInput from './PageSizeInput.vue';
 import HeaderOfColumns from './HeaderOfColumns.vue';
 import DatatableBody from './DatatableBody.vue';
 import { useTranslationExampleStore } from '@/stores/translationExample';
+import { useWordListStore } from '@/stores/wordList';
+import TrExampleStats from './TrExampleStats.vue';
 
-const store = useTranslationExampleStore()
+const trExampleStore = useTranslationExampleStore()
+const wordListStore = useWordListStore()
 
 
 
@@ -92,7 +107,7 @@ const scrollToTableTop = (): void => {
 //const log = (param: any) => console.log(param)
 
 const toggleRowSelection = (index: number, $event: Event) => {
-  ($event?.target as HTMLInputElement)?.checked ? store.selectedIndices.add(index): store.selectedIndices.delete(index)
+  ($event?.target as HTMLInputElement)?.checked ? trExampleStore.selectedIndices.add(index): trExampleStore.selectedIndices.delete(index)
 } 
 
 // initialize components based on data attribute selectors

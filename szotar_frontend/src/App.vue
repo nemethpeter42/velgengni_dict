@@ -35,6 +35,20 @@
       <SunIcon class="w-5 h-5" :class="{'hidden':darkMode,}"></SunIcon>
     </button>
 
+    <button 
+      id="theme-toggle" 
+      type="button" 
+      class="
+        ml-2 border-4 rounded-lg text-sm px-1.5 py-1.5
+        text-gray-500 border-gray-200 
+        hover:bg-gray-100 
+        focus:outline-none focus:ring-4 focus:ring-gray-200 
+        dark:text-gray-400 dark:border-gray-600 
+        dark:hover:bg-gray-700 
+        dark:focus:ring-gray-700">
+      <CloudArrowUpIcon class="w-5 h-5" />
+    </button>
+
   </nav>
   <router-view />
 </div>
@@ -43,7 +57,7 @@
 <script setup lang="ts">
   import { WritableComputedRef, computed, onMounted, ref } from 'vue'
   import { initFlowbite } from 'flowbite'
-  import { MoonIcon, SunIcon } from '@heroicons/vue/24/solid'
+  import { CloudArrowUpIcon, MoonIcon, SunIcon } from '@heroicons/vue/24/solid'
 import { useRoute } from 'vue-router';
 
 

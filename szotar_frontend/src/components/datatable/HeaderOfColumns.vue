@@ -1,7 +1,7 @@
 <template>
   <thead class="
     text-xs uppercase
-    text-gray-700 bg-gray-100 
+    text-gray-800 bg-gray-200 
     dark:bg-gray-600 dark:text-gray-300
     ">
     <tr>
@@ -15,7 +15,7 @@
             @click="$emit(`toggleAllSelection`)"
             class="
               w-4 h-4 border-double border-4 rounded
-              text-fuchsia-600 bg-gray-100 border-gray-300 
+              text-fuchsia-600 bg-gray-200 border-gray-400 
               focus:ring-fuchsia-500 focus:ring-2 
               dark:ring-offset-gray-700 dark:bg-gray-600 dark:border-gray-500
               dark:focus:ring-fuchsia-600 dark:focus:ring-offset-gray-700"

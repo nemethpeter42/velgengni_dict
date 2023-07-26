@@ -15,6 +15,7 @@ import { Dict } from '../libs/szotar_common/src/models/Dict.js';
 import { flattenTwoDimArray } from '../libs/szotar_common/src/helpers/flattenTwoDimArray.js';
 import { DictDescription } from '../libs/szotar_common/src/models/DictDescription.js';
 import { ColumnDefinition } from '../libs/szotar_common/src/models/ColumnDefinition.js';
+import { BackendConfig } from '../libs/szotar_common/src/models/BackendConfig.js';
 const __dirname = path.resolve();
 XLSX.set_fs(fsPromises);
 
@@ -33,6 +34,9 @@ const exampleSourceFiles: ExampleSourcesByLangPairs = {
 		},
 	},
 }
+
+const configFileRawContent = await fsPromises.readFile(`./config.json`, {encoding: `utf8`,}) 
+const config = JSON.parse(configFileRawContent) as BackendConfig
 
 const app = express()
 app.use(cors())
@@ -141,13 +145,28 @@ app.get('/list', (req, res) =>  {
 });
 
 app.get('/tr_example_languages', (req, res) =>  {
-	const result = []
+	let result = []
 	for (const l1 of Object.keys(exampleSourceFiles)) {
 		for (const l2 of Object.keys(exampleSourceFiles[l1])) {
 			result.push({lang1:l2,lang2:l1,})
 			result.push({lang1:l1,lang2:l2,})
 		}
 	}
+	const defaultLangPairExists = 
+		result.filter(e=>
+			e.lang1 !== `` && 
+			e.lang1 === config.defaultTrExampleLang1 &&
+			e.lang2 !== `` &&
+			e.lang2 === config.defaultTrExampleLang2
+		).length > 0;
+	
+	if (defaultLangPairExists) {
+		result = [
+			{lang1: config.defaultTrExampleLang1, lang2: config.defaultTrExampleLang2,},
+			...result.filter(e => !(e.lang1 === config.defaultTrExampleLang1 && e.lang2 === config.defaultTrExampleLang2)),
+		]
+	}
+
 	res.json(result)
 })
 
@@ -265,15 +284,21 @@ export interface Sheet2JSONOpts extends DateNFOption {
 
 
 app.get('/meta', async (req, res) =>  {
-	res.send(
-		Object.keys(dicts).
-			map(
-				key=> ({
-					name: key, 
-					meta: dicts[key].meta,
-				})
-			)
+	let result = Object.keys(dicts).
+		map(
+			key=> ({
+				name: key, 
+				meta: dicts[key].meta,
+			})
 		);
+	if ((config.defaultDictionary ?? ``) !== ``) {
+		result = [
+			...result.filter(e=>e.name===config.defaultDictionary),
+			...result.filter(e=>e.name!==config.defaultDictionary),
+		]
+	}
+	res.send(result)
+		
 });
 
 app.post('/dict', async (req, res) =>  {

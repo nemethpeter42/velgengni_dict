@@ -16,6 +16,7 @@ export const useTranslationExampleStore = defineStore('translationExample', () =
 
   const setFilteringMode =  (val: FilteringModeOpts) => {
     filteringMode.value = val
+    jumpToPage(`FIRST`)
   }
 
   const isQueryLangHighlightedSeparately = ref(true)
@@ -75,6 +76,7 @@ export const useTranslationExampleStore = defineStore('translationExample', () =
         map(e=>e.trim()).
         filter(e=>e!==``).
         map(e=>e.split(`_`).join(` `))
+    jumpToPage(`FIRST`);
   }
 
   const resetBigFilter = async (val: string | undefined) => {
@@ -182,7 +184,7 @@ export const useTranslationExampleStore = defineStore('translationExample', () =
     `background-color: rgba(255, 255,   0, 0.35);`, // sarga
     
     `background-color: rgba(0,   204, 153, 0.50);`, // turkizeszold
-    `background-color: rgba(255,   0, 255, 0.50);`, // rozsa-magenta
+    `background-color: rgba(255,   0, 255, 0.40);`, // rozsa-magenta
     `background-color: rgba(128,   0, 255, 0.45);`, // lila
     `background-color: rgba(0,     0, 255, 0.50);`, // sotetkek
     `background-color: rgba(204, 153,   0, 0.50);`, // vilagosbarna
@@ -344,10 +346,7 @@ export const useTranslationExampleStore = defineStore('translationExample', () =
     exampleFindReq.value.lang2 = val
   }
 
-  refreshLanguagePairs().then(function () {
-    setLang1(languagePairs.value[0]?.lang1 ?? ``)
-    setLang2(languagePairs.value[0]?.lang2 ?? ``)
-  })
+  
 
   const resetSearchConditions = async(conditions: SearchCondition[]) => {
     exampleFindReq.value.conditions = conditions;
@@ -394,6 +393,7 @@ export const useTranslationExampleStore = defineStore('translationExample', () =
     isQueryLangHighlightedSeparately,
     isQueryLangHighlightedJoined,
     isResultLangHighlited,
+    filteredEntries,
 }
 
 });
