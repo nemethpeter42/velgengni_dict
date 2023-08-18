@@ -84,7 +84,8 @@ export const useTranslationExampleStore = defineStore('translationExample', () =
       (val ?? ``).
         replaceAll(/\[[^\]]*\]/g,'').
         replaceAll(/\([^)]*\)/g,'').
-        replaceAll(/\{[^}]*\}/g,'')
+        replaceAll(/\{[^}]*\}/g,'').
+        split(`*`).join(``)
     executeBigFilterQuery()
   }
 
@@ -106,6 +107,7 @@ export const useTranslationExampleStore = defineStore('translationExample', () =
         body: JSON.stringify(exampleFindReq),
       })).json() as ExampleArrayWithBackendLimit;
       exampleList.value = res.entries;
+      jumpToPage(`FIRST`)
         
     } catch(error) {
       console.log(error);

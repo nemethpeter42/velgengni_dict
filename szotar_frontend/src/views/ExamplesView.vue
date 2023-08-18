@@ -1,6 +1,6 @@
 <template>
   <div class="examples-page">
-    <div class="max-w-6xl mx-auto">
+    <div class="mx-auto">
       <StandaloneTrExampleFilterPanel />
     </div>
     <div class="max-w-5xl mx-auto pt-2 pb-3">

@@ -10,7 +10,7 @@
       dark:border-blue-600 dark:hover:border-blue-700 
       dark:focus:ring-blue-800
     ">
-    <CheckBadgeIcon class="h-5 w-5 text-gray-300" />
+    <CheckBadgeIcon class="h-5 w-5 text-gray-400 dark:text-gray-600" />
   </button>
 </template>
 <script setup lang="ts">

@@ -69,7 +69,7 @@ export const useDictStore = defineStore('dict', () => {
         }),
       })).json()
       dictNameUsedInLastQuery.value = dictNameOnForm.value
-      dictQueriesWithMeta.value[dictNameUsedInLastQuery.value].main = res as Record<string, string>[]
+      dictQueriesWithMeta.value[dictNameUsedInLastQuery.value].main = [...(res as Record<string, string>[])]
     } catch(error) {
       console.log(error)
     }
@@ -254,6 +254,10 @@ export const useDictStore = defineStore('dict', () => {
       colDef.isUsedInTrExampleSearch = !colDef.isUsedInTrExampleSearch;
     }
   }
+
+  (async () => {
+    await refreshDictMetas()
+  })()
 
   return {  
     refreshEntries,

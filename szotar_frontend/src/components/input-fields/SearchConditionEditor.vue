@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex flex-wrap" v-for="(item, index) in modelValue" :key="index">
+    <div class="flex flex-wrap lg:flex-nowrap" v-for="(item, index) in modelValue" :key="index">
       <div class="flex items-center m-2">
         <input 
           :id="`prefix-space-checkbox-${index + 1}`"

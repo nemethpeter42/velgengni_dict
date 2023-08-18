@@ -138,7 +138,7 @@
 <script setup lang="ts">
 import DtPagination from '@/components/datatable/DtPagination.vue'
 import { useDictStore } from '@/stores/dict'
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import TableConfiguration from '@/components/modal-content/TableConfiguration.vue';
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PageJumpType } from '@/frontend_models/PageJumpType';
@@ -182,11 +182,6 @@ function closeConfigModal() {
 function showConfigModal() {
   isConfigModalShown.value = true
 }
-
-// initialize components based on data attribute selectors
-onMounted(async () => {
-  await store.refreshDictMetas()
-})
 
 
 </script>

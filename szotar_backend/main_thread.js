@@ -112,7 +112,7 @@ const startExampleDbThreadsAndReadDicts = async () => {
     app.listen(app.get(`port`));
 });
 app.get('/', (req, res) => {
-    res.sendFile(`${__dirname}/opensubtitles_db_szokereso_frontend.html`);
+    res.sendFile(`${__dirname}/opensubtitles_db_szokereso_regi_frontend.html`);
 });
 app.get('/list', (req, res) => {
     res.json(wordList);

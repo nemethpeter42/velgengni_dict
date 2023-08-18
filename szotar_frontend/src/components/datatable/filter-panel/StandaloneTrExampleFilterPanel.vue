@@ -1,269 +1,281 @@
 <template>
-  
-  <div class="flex m-1 max-w-3xl">
-    <input 
-      id="big-filter-input" 
-      class="
-        flex-1
-        px-3 py-2 mx-1
-        shadow-sm border block text-sm rounded-lg
-        bg-gray-50 text-gray-900 border-gray-300 
-        focus:ring-blue-500 focus:border-blue-500  
-        dark:shadow-sm-light dark:placeholder-gray-400 
-        dark:bg-gray-700 dark:text-white dark:border-gray-600 
-        dark:focus:ring-blue-500 dark:focus:border-blue-500
-      " 
-      style="max-width: 48rem;"
-      placeholder="Nagy szűrő"
-      v-model="trExampleStore.bigFilterCurrVal"
-      v-on:keyup.enter="trExampleStore.executeBigFilterQuery()"
+  <div
+    class="
+        flex max-w-[90rem] m-auto flex-col 
+        lg:flex-row
+      "
+    >
+    <div 
+      class="lg:grow-0 lg:pr-1 lg:border-r-4 border-gray-200 dark:border-gray-800 border-dashed"
       >
-      <button 
-        class="flex-0 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-1.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        @click="trExampleStore.executeBigFilterQuery()"
-        > 
-        <ArrowSmallRightIcon  class="w-6 h-6 fill-current"/>
-      </button>
-    
-  </div>
-    
-  
-  <div class="flex flex-wrap items-center">
-    <div class="">
-      <button 
-        id="prevWordBtn"
-        class="
-          m-1 mr-2 mb-1 px-5 py-2.5 font-medium rounded-full text-sm text-center 
-          focus:outline-none focus:ring-4 focus:ring-orange-300 
-          dark:focus:ring-orange-800
-        "
-        @click=" 
-          async () => 
-            {
-              if(!wordListStore.isTheFirstWordActive){
-                wordListStore.setCurrentIdx(wordListStore.currentIdx-1);
-              }
+      <div class="flex m-1 max-w-3xl">
+        <input 
+          id="big-filter-input" 
+          class="
+            flex-1
+            px-3 py-2 mx-1
+            shadow-sm border block text-sm rounded-lg
+            bg-gray-50 text-gray-900 border-gray-300 
+            focus:ring-blue-500 focus:border-blue-500  
+            dark:shadow-sm-light dark:placeholder-gray-400 
+            dark:bg-gray-700 dark:text-white dark:border-gray-600 
+            dark:focus:ring-blue-500 dark:focus:border-blue-500
+          " 
+          style="max-width: 48rem;"
+          placeholder="Nagy szűrő"
+          v-model="trExampleStore.bigFilterCurrVal"
+          v-on:keyup.enter="trExampleStore.executeBigFilterQuery()"
+          >
+          <button 
+            class="flex-0 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-1.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            @click="trExampleStore.executeBigFilterQuery()"
+            > 
+            <ArrowSmallRightIcon  class="w-6 h-6 fill-current"/>
+          </button>
+        
+      </div>
+        
+      <div class="flex flex-wrap items-center">
+        <div class="">
+          <button 
+            id="prevWordBtn"
+            class="
+              m-1 mr-2 mb-1 px-5 py-2.5 font-medium rounded-full text-sm text-center 
+              focus:outline-none focus:ring-4 focus:ring-orange-300 
+              dark:focus:ring-orange-800
+            "
+            @click=" 
+              async () => 
+                {
+                  if(!wordListStore.isTheFirstWordActive){
+                    wordListStore.setCurrentIdx(wordListStore.currentIdx-1);
+                  }
+                }"
+            :class="{
+              [`
+                text-gray-500
+                bg-orange-400 
+                dark:bg-orange-800 
+                cursor-not-allowed
+              `]: wordListStore.isTheFirstWordActive,
+              [`
+                text-gray-100
+                bg-orange-500 
+                hover:bg-orange-600 
+                dark:bg-orange-600 
+                dark:hover:bg-orange-700 
+              `]: !wordListStore.isTheFirstWordActive,
             }"
-        :class="{
-          [`
-            text-gray-500
-            bg-orange-400 
-            dark:bg-orange-800 
-            cursor-not-allowed
-          `]: wordListStore.isTheFirstWordActive,
-          [`
-            text-gray-100
-            bg-orange-500 
-            hover:bg-orange-600 
-            dark:bg-orange-600 
-            dark:hover:bg-orange-700 
-          `]: !wordListStore.isTheFirstWordActive,
-        }"
-      >Előző</button>
-    </div>
-    <div class="">
-      <button 
-        id="nextWordBtn"
-        class="
-          m-1 mr-2 mb-1 px-5 py-2.5 font-medium rounded-full text-sm text-center 
-          focus:outline-none focus:ring-4 focus:ring-orange-300 
-          dark:focus:ring-orange-800
-        "
-        @click=" 
-          async () => 
-            {
-              if(!wordListStore.isTheLastWordActive){
-                wordListStore.setCurrentIdx(wordListStore.currentIdx+1);
-              }
+          >Előző</button>
+        </div>
+        <div class="">
+          <button 
+            id="nextWordBtn"
+            class="
+              m-1 mr-2 mb-1 px-5 py-2.5 font-medium rounded-full text-sm text-center 
+              focus:outline-none focus:ring-4 focus:ring-orange-300 
+              dark:focus:ring-orange-800
+            "
+            @click=" 
+              async () => 
+                {
+                  if(!wordListStore.isTheLastWordActive){
+                    wordListStore.setCurrentIdx(wordListStore.currentIdx+1);
+                  }
+                }"
+            :class="{
+              [`
+                text-gray-500
+                bg-orange-400 
+                dark:bg-orange-800 
+                cursor-not-allowed
+              `]: wordListStore.isTheLastWordActive,
+              [`
+                text-gray-100
+                bg-orange-500 
+                hover:bg-orange-600 
+                dark:bg-orange-600 
+                dark:hover:bg-orange-700 
+              `]: !wordListStore.isTheLastWordActive,
             }"
-        :class="{
-          [`
-            text-gray-500
-            bg-orange-400 
-            dark:bg-orange-800 
-            cursor-not-allowed
-          `]: wordListStore.isTheLastWordActive,
-          [`
-            text-gray-100
-            bg-orange-500 
-            hover:bg-orange-600 
-            dark:bg-orange-600 
-            dark:hover:bg-orange-700 
-          `]: !wordListStore.isTheLastWordActive,
-        }"
 
 
-      >Következő</button>
-    </div>
-    <div class="">
-      <button 
-        id="wordListModalOpenBtn"
-        class="
-          m-1 mr-2 mb-1 px-5 py-2.5 font-medium rounded-full text-sm text-center 
-          text-white bg-orange-500 
-          hover:bg-orange-600 
-          focus:outline-none focus:ring-4 focus:ring-orange-300 
-          dark:bg-orange-600 
-          dark:hover:bg-orange-700 
-          dark:focus:ring-orange-800
-        "
-        @click=" showWordListModal()"
-      >Szóválasztó</button>
-    </div>
+          >Következő</button>
+        </div>
+        <div class="">
+          <button 
+            id="wordListModalOpenBtn"
+            class="
+              m-1 mr-2 mb-1 px-5 py-2.5 font-medium rounded-full text-sm text-center 
+              text-white bg-orange-500 
+              hover:bg-orange-600 
+              focus:outline-none focus:ring-4 focus:ring-orange-300 
+              dark:bg-orange-600 
+              dark:hover:bg-orange-700 
+              dark:focus:ring-orange-800
+            "
+            @click=" showWordListModal()"
+          >Szóválasztó</button>
+        </div>
 
-    <div 
-      @click="trExampleStore.setFilteringMode(`MARK_ONLY`)"
-      class="
-        flex items-center px-5 border rounded h-fit
-        border-gray-200 
-        dark:border-gray-700
-      ">
-      <input 
-        :checked="trExampleStore.filteringMode === `MARK_ONLY`" 
-        id="view-mode-highlight-only" 
-        type="radio" 
-        class="
-          w-4 h-4 
-          text-blue-600 bg-gray-100 border-gray-300 
-          focus:ring-blue-500 focus:ring-2
-          dark:bg-gray-700 dark:border-gray-600
-          dark:focus:ring-blue-600 dark:ring-offset-gray-800 
-        ">
-      <label 
-        for="view-mode-highlight-only" 
-        class="
-          w-full py-1 m-1.5 text-sm font-medium select-none 
-          text-gray-900 
-          dark:text-gray-300
-        ">
-        Csak kiemelés
-      </label>
-    </div>
-    <div
-      @click="trExampleStore.setFilteringMode(`FILTER`)"
-      class="
-        flex items-center px-5 border rounded h-fit
-        border-gray-200 
-        dark:border-gray-700
-      ">
-      <input 
-        :checked="trExampleStore.filteringMode === `FILTER`" 
-        id="view-mode-filter" 
-        type="radio" 
-        class="
-          w-4 h-4 
-          text-blue-600 bg-gray-100 border-gray-300 
-          focus:ring-blue-500 focus:ring-2
-          dark:bg-gray-700 dark:border-gray-600
-          dark:focus:ring-blue-600 dark:ring-offset-gray-800 
-        ">
-        <label 
-        for="view-mode-filter" 
-        class="
-          w-full py-1 m-1.5 text-sm font-medium select-none 
-          text-gray-900 
-          dark:text-gray-300
-        ">
-        Szűrés
-      </label>
-    </div>
-    <div 
-      @click="trExampleStore.setFilteringMode(`INVERSE_FILTER`)"
-      class="
-        flex items-center px-3 border rounded h-fit
-        border-gray-200 
-        dark:border-gray-700
-      ">
-      <input 
-        :checked="trExampleStore.filteringMode === `INVERSE_FILTER`" 
-        id="view-mode-inverted-filter" 
-        type="radio" 
-        class="
-          w-4 h-4 
-          text-blue-600 bg-gray-100 border-gray-300 
-          focus:ring-blue-500 focus:ring-2
-          dark:bg-gray-700 dark:border-gray-600
-          dark:focus:ring-blue-600 dark:ring-offset-gray-800 
-        ">
-        <label 
-        for="view-mode-inverted-filter" 
-        class="
-          w-full py-1 m-1.5 text-sm font-medium select-none 
-          text-gray-900 
-          dark:text-gray-300
-        ">
-        Inverz szűrés
-      </label>
-    </div>
-  </div>
-  <div>
-    <GeneratedQuickAccessBtnList 
-      :generator="Array.isArray(wordListStore.wordList) && wordListStore.currentIdx !== -1 ? wordListStore.wordList[wordListStore.currentIdx] : []"  
-      :defaultNumOfDisplayedItems="10" 
-      @quickAccessSelected="(selection: QuickAccessSelectionResult) => handleQuickAccessSelected(selection)" 
-      :isAllDisplayed="wordListStore.isAllQuickAccessBtnVisible"
-      @displayAll="wordListStore.isAllQuickAccessBtnVisible = true"
-    />
-  </div>
-  <div>
-    <SearchConditionEditor 
-      v-model="trExampleStore.exampleFindReq.conditions" 
-      />
-  </div>
-  <div class="flex flex-wrap">
-    <div class="m-1">
-      <TrExampleResultLimit 
-        :options="[1000,3000,10000,20000]" 
-        :currently-selected="trExampleStore.exampleFindReq.resultLimit" 
-        @input="async (val: number) => {trExampleStore.setResultLimitForQuery(val);}"
-        />  
-    </div>
-    <div class="m-1">
-      <span class="text-sm font-normal text-gray-500 dark:text-gray-400">Nyelvpár: </span><Dropdown>
-          <template #trigger>
-            <button 
-              id="dropdownLangPair" 
-              class="
-                px-3 py-1.5 mx-2
-                inline-flex items-center font-medium rounded-lg text-sm  
-                text-gray-500 bg-white 
-                border border-gray-300 
-                focus:outline-none focus:ring-4 focus:ring-gray-200
-                hover:bg-gray-100 
-                dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 
-                dark:hover:bg-gray-700 dark:hover:border-gray-600 
-                dark:focus:ring-gray-700
-              "
-              type="button">
-              {{`${trExampleStore.exampleFindReq.lang1} - ${trExampleStore.exampleFindReq.lang2}`}}
-              <ChevronDownIcon class="w-3 h-3 ml-2" />
-            </button>
-          </template>
-          <ul class="
-            overflow-hidden w-48 rounded-lg text-sm font-medium border 
-            text-gray-900 bg-white border-gray-200 
-            dark:bg-gray-700 dark:border-gray-600 dark:text-white
+        <div 
+          @click="trExampleStore.setFilteringMode(`MARK_ONLY`)"
+          class="
+            flex items-center px-5 border rounded h-fit
+            border-gray-200 
+            dark:border-gray-700
+          ">
+          <input 
+            :checked="trExampleStore.filteringMode === `MARK_ONLY`" 
+            id="view-mode-highlight-only" 
+            type="radio" 
+            class="
+              w-4 h-4 
+              text-blue-600 bg-gray-100 border-gray-300 
+              focus:ring-blue-500 focus:ring-2
+              dark:bg-gray-700 dark:border-gray-600
+              dark:focus:ring-blue-600 dark:ring-offset-gray-800 
             ">
-            <li 
-              v-for="(item, index) in trExampleStore.languagePairs"
-              :key="index"
-              @click="trExampleStore.setLang1(item.lang1);trExampleStore.setLang2(item.lang2)"
-              class="
-                block px-4 py-2 inline-flex items-center w-full border-b cursor-pointer
-                border-gray-200 
-                hover:bg-gray-100 hover:text-blue-700 
-                focus:outline-none focus:ring-2 focus:text-blue-700 
-                dark:border-gray-600 
-                dark:hover:bg-gray-600 dark:hover:text-white 
-                dark:focus:ring-gray-500 dark:focus:text-white
-              ">
-              <div class="mr-2"><FlagIcon class="w-4 h-4 fill-current" /></div> {{`${item.lang1} - ${item.lang2}`}}
-            </li>
-          </ul>
-        </Dropdown>
+          <label 
+            for="view-mode-highlight-only" 
+            class="
+              w-full py-1 m-1.5 text-sm font-medium select-none 
+              text-gray-900 
+              dark:text-gray-300
+            ">
+            Csak kiemelés
+          </label>
+        </div>
+        <div
+          @click="trExampleStore.setFilteringMode(`FILTER`)"
+          class="
+            flex items-center px-5 border rounded h-fit
+            border-gray-200 
+            dark:border-gray-700
+          ">
+          <input 
+            :checked="trExampleStore.filteringMode === `FILTER`" 
+            id="view-mode-filter" 
+            type="radio" 
+            class="
+              w-4 h-4 
+              text-blue-600 bg-gray-100 border-gray-300 
+              focus:ring-blue-500 focus:ring-2
+              dark:bg-gray-700 dark:border-gray-600
+              dark:focus:ring-blue-600 dark:ring-offset-gray-800 
+            ">
+            <label 
+            for="view-mode-filter" 
+            class="
+              w-full py-1 m-1.5 text-sm font-medium select-none 
+              text-gray-900 
+              dark:text-gray-300
+            ">
+            Szűrés
+          </label>
+        </div>
+        <div 
+          @click="trExampleStore.setFilteringMode(`INVERSE_FILTER`)"
+          class="
+            flex items-center px-3 border rounded h-fit
+            border-gray-200 
+            dark:border-gray-700
+          ">
+          <input 
+            :checked="trExampleStore.filteringMode === `INVERSE_FILTER`" 
+            id="view-mode-inverted-filter" 
+            type="radio" 
+            class="
+              w-4 h-4 
+              text-blue-600 bg-gray-100 border-gray-300 
+              focus:ring-blue-500 focus:ring-2
+              dark:bg-gray-700 dark:border-gray-600
+              dark:focus:ring-blue-600 dark:ring-offset-gray-800 
+            ">
+            <label 
+            for="view-mode-inverted-filter" 
+            class="
+              w-full py-1 m-1.5 text-sm font-medium select-none 
+              text-gray-900 
+              dark:text-gray-300
+            ">
+            Inverz szűrés
+          </label>
+        </div>
+      </div>
+      <div>
+        <GeneratedQuickAccessBtnList 
+          :generator="Array.isArray(wordListStore.wordList) && wordListStore.currentIdx !== -1 ? wordListStore.wordList[wordListStore.currentIdx] : []"  
+          :defaultNumOfDisplayedItems="10" 
+          @quickAccessSelected="(selection: QuickAccessSelectionResult) => handleQuickAccessSelected(selection)" 
+          :isAllDisplayed="wordListStore.isAllQuickAccessBtnVisible"
+          @displayAll="wordListStore.isAllQuickAccessBtnVisible = true"
+        />
+      </div>
+
+    </div>
+    <div class="lg:grow lg:ml-3">
+      <div>
+        <SearchConditionEditor 
+          v-model="trExampleStore.exampleFindReq.conditions" 
+          />
+      </div>
+      <div class="flex flex-wrap">
+        <div class="m-1">
+          <TrExampleResultLimit 
+            :options="[1000,3000,10000,20000]" 
+            :currently-selected="trExampleStore.exampleFindReq.resultLimit" 
+            @input="async (val: number) => {trExampleStore.setResultLimitForQuery(val);}"
+            />  
+        </div>
+        <div class="m-1">
+          <span class="text-sm font-normal text-gray-500 dark:text-gray-400">Nyelvpár: </span><Dropdown>
+              <template #trigger>
+                <button 
+                  id="dropdownLangPair" 
+                  class="
+                    px-3 py-1.5 mx-2
+                    inline-flex items-center font-medium rounded-lg text-sm  
+                    text-gray-500 bg-white 
+                    border border-gray-300 
+                    focus:outline-none focus:ring-4 focus:ring-gray-200
+                    hover:bg-gray-100 
+                    dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 
+                    dark:hover:bg-gray-700 dark:hover:border-gray-600 
+                    dark:focus:ring-gray-700
+                  "
+                  type="button">
+                  {{`${trExampleStore.exampleFindReq.lang1} - ${trExampleStore.exampleFindReq.lang2}`}}
+                  <ChevronDownIcon class="w-3 h-3 ml-2" />
+                </button>
+              </template>
+              <ul class="
+                overflow-hidden w-48 rounded-lg text-sm font-medium border 
+                text-gray-900 bg-white border-gray-200 
+                dark:bg-gray-700 dark:border-gray-600 dark:text-white
+                ">
+                <li 
+                  v-for="(item, index) in trExampleStore.languagePairs"
+                  :key="index"
+                  @click="trExampleStore.setLang1(item.lang1);trExampleStore.setLang2(item.lang2)"
+                  class="
+                    block px-4 py-2 inline-flex items-center w-full border-b cursor-pointer
+                    border-gray-200 
+                    hover:bg-gray-100 hover:text-blue-700 
+                    focus:outline-none focus:ring-2 focus:text-blue-700 
+                    dark:border-gray-600 
+                    dark:hover:bg-gray-600 dark:hover:text-white 
+                    dark:focus:ring-gray-500 dark:focus:text-white
+                  ">
+                  <div class="mr-2"><FlagIcon class="w-4 h-4 fill-current" /></div> {{`${item.lang1} - ${item.lang2}`}}
+                </li>
+              </ul>
+            </Dropdown>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="flex flex-wrap">
+  <div class="flex flex-wrap max-w-6xl m-auto">
 
     <div class="m-1">
       <button 

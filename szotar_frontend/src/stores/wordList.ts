@@ -63,7 +63,7 @@ export const useWordListStore = defineStore('wordList', () => {
     currentIdx.value = idx;
     isAllQuickAccessBtnVisible.value = false;
     await trExampleStore.resetBigFilter(lang2PhrasesRaw.value.join(`; `));
-    const words = lang1PhrasesWithoutParentheses.value[0]?.split(` `) ?? []
+    const words = lang1PhrasesWithoutParentheses.value[0]?.split(` `).filter(e=>e.trim()!==``) ?? []
     const conditions = words.map(
       expression => ({
         expression, 
@@ -74,8 +74,9 @@ export const useWordListStore = defineStore('wordList', () => {
     await trExampleStore.resetSearchConditions(conditions)
     await trExampleStore.refreshExampleList(trExampleStore.exampleFindReq, false)
     trExampleStore.jumpToPage(`FIRST`);
-    trExampleStore.setFilteringMode(`MARK_ONLY`)
-    
+    trExampleStore.setFilteringMode(`MARK_ONLY`);
+    trExampleStore.quickSearchQueryPhrase = ``;
+    quickSearchQueryPhrase.value = ``;
   }
 
   const refreshWordList = async () => {
@@ -228,12 +229,13 @@ export const useWordListStore = defineStore('wordList', () => {
 
   const isAllQuickAccessBtnVisible = ref(false);
   
-  trExampleStore.refreshLanguagePairs().then(async function () {
+  (async () => {
+    await trExampleStore.refreshLanguagePairs()
     trExampleStore.setLang1(trExampleStore.languagePairs[0]?.lang1 ?? ``);
     trExampleStore.setLang2(trExampleStore.languagePairs[0]?.lang2 ?? ``);
     await refreshWordList();
     setCurrentIdx(0);
-  })
+  })()
   
   return {
     wordList,

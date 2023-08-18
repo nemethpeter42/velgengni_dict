@@ -104,13 +104,16 @@ import { HighlightDefinition } from '@/frontend_models/HighlightDefinition';
     return res
   }
 
-  const encloseIntoTagsInHtml = (html: string, from: string, tagOpen: string, tagClose: string) => {
+  const encloseIntoTagsInHtml = (html: string, textToEnclose: string, tagOpen: string, tagClose: string) => {
     //html = html.split(`<`).join(`&lt;`)
     //html = html.split(`>`).join(`&gt;`)
+    const variants = new Set([textToEnclose,textToEnclose.replaceAll(/a$/gi,`á`).replaceAll(/e$/gi,`é`)])
     const tagAreas = getHtmlTagAreas(html)
-    for (let i = html.length-1; i>=0; i--) {
-      if (html.substring(i, i + from.length).toLowerCase() === from.toLowerCase() && !tagAreas.some(pair => pair.start<=i && i<=pair.end)) {
-        html = html.substring(0, i) + tagOpen + html.substring(i, i + from.length) + tagClose + html.substring(i + from.length)
+    for (const variant of variants){
+      for (let i = html.length-1; i>=0; i--) {
+        if (html.substring(i, i + variant.length).toLowerCase() === variant.toLowerCase() && !tagAreas.some(pair => pair.start<=i && i<=pair.end)) {
+          html = html.substring(0, i) + tagOpen + html.substring(i, i + variant.length) + tagClose + html.substring(i + variant.length)
+        }
       }
     }
     return html
