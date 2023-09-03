@@ -82,7 +82,7 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
   import { QuickAccessSelectionResult } from '@/frontend_models/QuickAccessSelectionResult';
   import { defineProps, defineEmits, computed } from 'vue';
   defineEmits<{

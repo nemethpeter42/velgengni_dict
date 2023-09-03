@@ -13,6 +13,6 @@
     <Bars3Icon class="h-4 w-4 text-gray-100" />
   </button>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
   import { Bars3Icon } from '@heroicons/vue/24/solid'
 </script>

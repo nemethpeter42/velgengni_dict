@@ -88,7 +88,7 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
   import { SearchCondition } from '../../../../libs/szotar_common/src/models/SearchCondition';
   import RemoveConditionButton from './RemoveConditionButton.vue';
   import { defineProps, defineEmits } from 'vue';

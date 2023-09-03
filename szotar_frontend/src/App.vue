@@ -54,7 +54,7 @@
 </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
   import { WritableComputedRef, computed, onMounted, ref } from 'vue'
   import { initFlowbite } from 'flowbite'
   import { CloudArrowUpIcon, MoonIcon, SunIcon } from '@heroicons/vue/24/solid'

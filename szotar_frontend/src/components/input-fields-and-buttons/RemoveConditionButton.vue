@@ -12,6 +12,6 @@
     <TrashIcon class="h-6 w-6 text-gray-100" />
   </button>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
   import { TrashIcon } from '@heroicons/vue/24/solid'
 </script>

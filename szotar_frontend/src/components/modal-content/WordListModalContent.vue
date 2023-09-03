@@ -59,7 +59,7 @@
       
   </div>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
   import SelectWordButton from '@/components/input-fields/SelectWordButton.vue'
   import DtPagination from '../datatable/DtPagination.vue';
   import PageSizeInput from '../datatable/PageSizeInput.vue';

@@ -76,7 +76,7 @@
   </tbody>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
   
   import MeaningForestViewer from '@/components/meaning-forest/MeaningForestViewer.vue';
   import { ColumnDefinition } from '../../../../libs/szotar_common/src/models/ColumnDefinition';

@@ -47,7 +47,7 @@
     </tr>
   </thead>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
 
   import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/24/solid'
   import { defineProps, defineEmits } from 'vue';

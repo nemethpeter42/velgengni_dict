@@ -22,7 +22,7 @@
     </span>
   </div>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
   import { defineProps, defineEmits } from 'vue';
   defineEmits([`input`]);
   const props = defineProps({

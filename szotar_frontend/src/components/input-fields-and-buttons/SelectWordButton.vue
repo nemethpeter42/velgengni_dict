@@ -13,7 +13,7 @@
     <CheckBadgeIcon class="h-5 w-5 text-gray-400 dark:text-gray-600" />
   </button>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
   import { CheckBadgeIcon, } from '@heroicons/vue/24/solid'
   import { defineProps, defineEmits } from 'vue';
   defineEmits([`wordSelected`,]);

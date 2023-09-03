@@ -11,7 +11,7 @@
     
 </template>
   
-<script setup lang="ts">
+<script lang="ts" setup>
 import TrExampleDatatable from '@/components/datatable/TrExampleDatatable.vue';
 import StandaloneTrExampleFilterPanel from '@/components/datatable/filter-panel/StandaloneTrExampleFilterPanel.vue';
 import { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';

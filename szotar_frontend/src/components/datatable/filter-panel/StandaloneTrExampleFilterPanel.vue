@@ -316,7 +316,7 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
   import { ref, defineProps } from 'vue';
   import WordListModalContent from '@/components/modal-content/WordListModalContent.vue'
   import {useWordListStore,} from '@/stores/wordList'

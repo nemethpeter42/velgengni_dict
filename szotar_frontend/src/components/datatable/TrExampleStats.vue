@@ -28,7 +28,7 @@
     </span>
   </div>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
   import { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';
 import { useTranslationExampleStore } from '@/stores/translationExample';
   import { SparklesIcon, } from '@heroicons/vue/24/solid'

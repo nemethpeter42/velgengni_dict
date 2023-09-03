@@ -39,7 +39,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
   import { defineProps, defineEmits } from 'vue';
   import { MagnifyingGlassIcon, TrashIcon, } from '@heroicons/vue/24/solid'
   defineEmits(['update:modelValue']);

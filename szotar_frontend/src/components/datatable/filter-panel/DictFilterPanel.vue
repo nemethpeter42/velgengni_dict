@@ -75,7 +75,7 @@
 
   </div>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useDictStore } from '@/stores/dict';
 import { Ref, ref } from 'vue';
 

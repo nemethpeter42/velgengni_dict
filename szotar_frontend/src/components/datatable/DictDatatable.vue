@@ -135,7 +135,7 @@
 
   </div>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
 import DtPagination from '@/components/datatable/DtPagination.vue'
 import { useDictStore } from '@/stores/dict'
 import { ref } from 'vue';

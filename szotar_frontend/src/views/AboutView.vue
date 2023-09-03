@@ -46,7 +46,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 
 import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
 import { Modal } from 'flowbite-vue'

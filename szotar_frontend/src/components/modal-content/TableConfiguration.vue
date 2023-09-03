@@ -112,7 +112,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
   import { useDictStore } from '@/stores/dict';
   const store = useDictStore()
 </script>
