@@ -8,115 +8,42 @@
     <div 
       class="lg:grow-0 lg:pr-1 lg:border-r-4 border-gray-200 dark:border-gray-800 border-dashed"
       >
-      <div class="flex m-1 max-w-3xl">
-        <input 
-          id="big-filter-input" 
-          class="
-            flex-1
-            px-3 py-2 mx-1
-            shadow-sm border block text-sm rounded-lg
-            bg-gray-50 text-gray-900 border-gray-300 
-            focus:ring-blue-500 focus:border-blue-500  
-            dark:shadow-sm-light dark:placeholder-gray-400 
-            dark:bg-gray-700 dark:text-white dark:border-gray-600 
-            dark:focus:ring-blue-500 dark:focus:border-blue-500
-          " 
-          style="max-width: 48rem;"
-          placeholder="Nagy szűrő"
-          v-model="trExampleStore.bigFilterCurrVal"
-          v-on:keyup.enter="trExampleStore.executeBigFilterQuery()"
-          >
-          <button 
-            class="flex-0 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-1.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            @click="trExampleStore.executeBigFilterQuery()"
-            > 
-            <ArrowSmallRightIcon  class="w-6 h-6 fill-current"/>
-          </button>
-        
-      </div>
+      <BigFilterInput
+        v-model="trExampleStore.bigFilterCurrVal"
+        @goButtonClicked="trExampleStore.executeBigFilterQuery()"
+      />
+      
         
       <div class="flex flex-wrap items-center">
-        <div class="">
-          <button 
-            id="prevWordBtn"
-            class="
-              m-1 mr-2 mb-1 px-5 py-2.5 font-medium rounded-full text-sm text-center 
-              focus:outline-none focus:ring-4 focus:ring-orange-300 
-              dark:focus:ring-orange-800
-            "
-            @click=" 
-              async () => 
-                {
-                  if(!wordListStore.isTheFirstWordActive){
-                    wordListStore.setCurrentIdx(wordListStore.currentIdx-1);
-                  }
-                }"
-            :class="{
-              [`
-                text-gray-500
-                bg-orange-400 
-                dark:bg-orange-800 
-                cursor-not-allowed
-              `]: wordListStore.isTheFirstWordActive,
-              [`
-                text-gray-100
-                bg-orange-500 
-                hover:bg-orange-600 
-                dark:bg-orange-600 
-                dark:hover:bg-orange-700 
-              `]: !wordListStore.isTheFirstWordActive,
-            }"
-          >Előző</button>
-        </div>
-        <div class="">
-          <button 
-            id="nextWordBtn"
-            class="
-              m-1 mr-2 mb-1 px-5 py-2.5 font-medium rounded-full text-sm text-center 
-              focus:outline-none focus:ring-4 focus:ring-orange-300 
-              dark:focus:ring-orange-800
-            "
-            @click=" 
-              async () => 
-                {
-                  if(!wordListStore.isTheLastWordActive){
-                    wordListStore.setCurrentIdx(wordListStore.currentIdx+1);
-                  }
-                }"
-            :class="{
-              [`
-                text-gray-500
-                bg-orange-400 
-                dark:bg-orange-800 
-                cursor-not-allowed
-              `]: wordListStore.isTheLastWordActive,
-              [`
-                text-gray-100
-                bg-orange-500 
-                hover:bg-orange-600 
-                dark:bg-orange-600 
-                dark:hover:bg-orange-700 
-              `]: !wordListStore.isTheLastWordActive,
-            }"
-
-
-          >Következő</button>
-        </div>
-        <div class="">
-          <button 
-            id="wordListModalOpenBtn"
-            class="
-              m-1 mr-2 mb-1 px-5 py-2.5 font-medium rounded-full text-sm text-center 
-              text-white bg-orange-500 
-              hover:bg-orange-600 
-              focus:outline-none focus:ring-4 focus:ring-orange-300 
-              dark:bg-orange-600 
-              dark:hover:bg-orange-700 
-              dark:focus:ring-orange-800
-            "
-            @click=" showWordListModal()"
-          >Szóválasztó</button>
-        </div>
+        <WordListPrevNextButton 
+          text="Előző" 
+          id="prevWordBtn"
+          :isDisabled="wordListStore.isTheFirstWordActive" 
+          @click=" 
+            async () => 
+              {
+                if(!wordListStore.isTheFirstWordActive){
+                  wordListStore.setCurrentIdx(wordListStore.currentIdx-1);
+                }
+              }"
+          />
+        <WordListPrevNextButton 
+          text="Következő" 
+          id="nextWordBtn"
+          :isDisabled="wordListStore.isTheLastWordActive" 
+          @click=" 
+            async () => 
+              {
+                if(!wordListStore.isTheLastWordActive){
+                  wordListStore.setCurrentIdx(wordListStore.currentIdx+1);
+                }
+              }"
+          />
+        <WordListPrevNextButton 
+          text="Szóválasztó" 
+          id="wordListModalOpenBtn"
+          @click=" showWordListModal()"
+          />
 
         <div 
           @click="trExampleStore.setFilteringMode(`MARK_ONLY`)"
@@ -278,34 +205,14 @@
   <div class="flex flex-wrap max-w-6xl m-auto">
 
     <div class="m-1">
-      <button 
-        id="executeSearchButton"
-        class="
-          m-1 mr-2 mb-2 px-5 py-2.5 font-medium rounded-full text-sm text-center 
-          text-white bg-blue-700 
-          hover:bg-blue-800 
-          focus:outline-none focus:ring-4 focus:ring-blue-300 
-          dark:bg-blue-600 
-          dark:hover:bg-blue-700 
-          dark:focus:ring-blue-800
-        "
+      <ExampleSearchButton
         @click=" trExampleStore.refreshExampleList(trExampleStore.exampleFindReq, false)"
-        >Keresés</button>
-      <button 
-        id="executeSearchAltLangButton"
-        class="
-          m-1 mr-2 mb-2 px-5 py-2.5 font-medium rounded-full text-sm text-center
-          text-gray-900 bg-white 
-          border border-gray-200 
-          hover:bg-gray-100 hover:text-blue-700 
-          focus:outline-none focus:z-10 focus:ring-4 focus:ring-gray-200 
-          dark:bg-gray-800 dark:text-gray-400 
-          dark:border-gray-600 
-          dark:hover:text-white dark:hover:bg-gray-700
-          dark:focus:ring-gray-700 
-          "
-          @click=" trExampleStore.refreshExampleList(trExampleStore.exampleFindReq, true)"
-        >Másik nyelv</button>
+      />
+      <ExampleSearchAltLangButton
+        @click=" trExampleStore.refreshExampleList(trExampleStore.exampleFindReq, true)"
+      />
+      
+      
     </div>
     <div class="flex items-center m-1">
       <span class="text-sm font-normal text-gray-500 dark:text-gray-400">Kiemelés:&nbsp;</span>
@@ -326,7 +233,7 @@
       <label 
         for="is-query-lang-highligted-separately" 
         class="
-          ml-2 text-sm font-medium 
+          ml-2 text-sm font-medium select-none
           text-gray-900 
           dark:text-gray-300
         ">
@@ -335,11 +242,11 @@
     </div>
     <div class="flex items-center m-1"> 
       <input 
-        id="is-query-lang-highligted-separately"
+        id="is-query-lang-highligted-joined"
         type="checkbox" 
         v-model="trExampleStore.isQueryLangHighlightedJoined"
         class="
-          w-4 h-4 rounded 
+          w-4 h-4 rounded
           text-blue-600 bg-gray-100 border-gray-300
           focus:ring-2 
           focus:ring-blue-500 
@@ -349,7 +256,7 @@
       <label 
         for="is-query-lang-highligted-joined" 
         class="
-          ml-2 text-sm font-medium 
+          ml-2 text-sm font-medium select-none
           text-gray-900 
           dark:text-gray-300
         ">
@@ -358,7 +265,7 @@
     </div>
     <div class="flex items-center m-1"> 
       <input 
-        id="is-query-lang-highligted-separately"
+        id="is-query-lang-highligted"
         type="checkbox" 
         v-model="trExampleStore.isResultLangHighlited"
         class="
@@ -370,9 +277,9 @@
           dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800 
         ">
       <label 
-        for="is-result-lang-highligted-joined" 
+        for="is-result-lang-highligted" 
         class="
-          ml-2 text-sm font-medium 
+          ml-2 text-sm font-medium select-none
           text-gray-900 
           dark:text-gray-300
         ">
@@ -410,19 +317,27 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, defineProps } from 'vue';
   import WordListModalContent from '@/components/modal-content/WordListModalContent.vue'
   import {useWordListStore,} from '@/stores/wordList'
   import { Dropdown, } from 'flowbite-vue'
-  import { ArrowSmallRightIcon, ChevronDownIcon, FlagIcon, } from '@heroicons/vue/24/solid'
+  import { ChevronDownIcon, FlagIcon, } from '@heroicons/vue/24/solid'
   import TrExampleResultLimit from '@/components/input-fields/TrExampleResultLimit.vue';
+  import ExampleSearchButton from '@/components/input-fields/ExampleSearchButton.vue';
   import { useTranslationExampleStore } from '@/stores/translationExample';
   import SearchConditionEditor from '@/components/input-fields/SearchConditionEditor.vue';
   import GeneratedQuickAccessBtnList from '@/components/input-fields/GeneratedQuickAccessBtnList.vue';
+  import BigFilterInput from '@/components/input-fields/BigFilterInput.vue';
   import { QuickAccessSelectionResult } from '@/frontend_models/QuickAccessSelectionResult';
   import { SearchCondition } from '../../../../../libs/szotar_common/src/models/SearchCondition';
+import ExampleSearchAltLangButton from '@/components/input-fields/ExampleSearchAltLangButton.vue';
+import WordListPrevNextButton from '@/components/input-fields/WordListPrevNextButton.vue';
+  const props = defineProps({  
+      storeId: {type: String, required: true,},
+  })
+
   const wordListStore = useWordListStore()
-  const trExampleStore = useTranslationExampleStore()
+  const trExampleStore = useTranslationExampleStore(props.storeId)
   
   const isWordListModalShown = ref(false)
   function closeWordListModal() {

@@ -9,7 +9,7 @@
     v-if="wordListStore.currentIdx !== -1" 
     class="m-1"
   >
-    <TrExampleStats />
+    <TrExampleStats :storeId="props.storeId" />
   </div>
   <div class="shadow-md sm:rounded-lg" id="datatable-table-top-anchor">
     <div class="flex flex-wrap items-center justify-between border-t-2 border-x-2 border-cyan-200 dark:border-indigo-900 sm:rounded-t-lg">
@@ -82,7 +82,7 @@
 </template>
 <script setup lang="ts">
 import DtPagination from '@/components/datatable/DtPagination.vue'
-import { onMounted } from 'vue';
+import { onMounted, defineProps } from 'vue';
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PageJumpType } from '@/frontend_models/PageJumpType';
 import DictBulkActions from '@/components/datatable/DictBulkActions.vue';
@@ -93,8 +93,13 @@ import DatatableBody from './DatatableBody.vue';
 import { useTranslationExampleStore } from '@/stores/translationExample';
 import { useWordListStore } from '@/stores/wordList';
 import TrExampleStats from './TrExampleStats.vue';
+import { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';
 
-const trExampleStore = useTranslationExampleStore()
+const props = defineProps({  
+    storeId: {type: String, required: true,},
+})
+
+const trExampleStore = useTranslationExampleStore(props.storeId)
 const wordListStore = useWordListStore()
 
 

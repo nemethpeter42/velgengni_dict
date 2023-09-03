@@ -9,9 +9,10 @@
       v-for="(item, index) of store.phrasesUsedInHighlight" 
       :key="index"
       class="phrase-stat-container cursor-pointer"
-      @click="
+      @click="$event => {
         store.quickSearchQueryPhrase = [store.quickSearchQueryPhrase, item.val].filter(e=>e.trim()!==``).join(`, `)
-      "
+        store.jumpToPage(`FIRST`)
+      }"
     >
       <SparklesIcon class="w-4 h-4 inline mr-1" :style="item.style" />
       <span class="stat-key">{{ item.val }}</span>:
@@ -28,11 +29,14 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { useTranslationExampleStore } from '@/stores/translationExample';
+  import { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';
+import { useTranslationExampleStore } from '@/stores/translationExample';
   import { SparklesIcon, } from '@heroicons/vue/24/solid'
-import { computed } from 'vue';
-
-  const store = useTranslationExampleStore()
+import { computed, defineProps } from 'vue';
+  const props = defineProps({  
+      storeId: {type: String, required: true,},
+  })
+  const store = useTranslationExampleStore(props.storeId)
 
   const countExamplesContainingThePhrase = (phrase: string): number => {
     return store.filteredEntries.filter(e=>{
