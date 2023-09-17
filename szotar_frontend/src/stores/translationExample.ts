@@ -7,6 +7,7 @@ import { PageJumpType } from "@/frontend_models/PageJumpType.js";
 import { FilteredEntry } from "@/frontend_models/FilteredEntry.js";
 import { SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition.js";
 import { HighlightDefinition } from "@/frontend_models/HighlightDefinition.js";
+import { LanguagePair } from "@/frontend_models/LanguagePair.js";
 
 export const useTranslationExampleStore = (id: string) => { 
   const store =  defineStore(`translationExample-${id}`, () => {
@@ -26,7 +27,7 @@ export const useTranslationExampleStore = (id: string) => {
 
     const isResultLangHighlited = ref(true)
 
-    const languagePairs: Ref<{lang1: string, lang2: string,}[]> = ref([])
+    const languagePairs: Ref<LanguagePair[]> = ref([])
 
     const refreshLanguagePairs = async () => {
       try {
@@ -36,7 +37,7 @@ export const useTranslationExampleStore = (id: string) => {
             'Content-Type': 'application/json'
           },
           method: `GET`, 
-        })).json() as {lang1: string, lang2: string,}[];
+        })).json() as LanguagePair[];
         languagePairs.value = res;
           
       } catch(error) {

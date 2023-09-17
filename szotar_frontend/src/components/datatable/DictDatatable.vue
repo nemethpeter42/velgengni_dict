@@ -76,7 +76,15 @@
     
     <div v-if="isDetailsModalShown">
       <div class="bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40"></div>
-      <div id="defaultModal"  tabindex="-1" aria-hidden="true" :class="{flex: isDetailsModalShown, hidden: !isDetailsModalShown,}" class="fixed top-0 left-0 right-0 z-50 w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center">
+      <div 
+        id="detailsModal"  
+        data-backdrop-for="detailsModal"
+        @click="$event => detailsModalBackdrop($event)"
+        tabindex="-1" 
+        aria-hidden="true" 
+        :class="{flex: isDetailsModalShown, hidden: !isDetailsModalShown,}" 
+        class="fixed top-0 left-0 right-0 z-50 w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center"
+        >
         <div class="relative w-full max-w-5xl max-h-full">
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
@@ -86,7 +94,7 @@
             </div>
             <!-- Modal body -->
             <div class="p-6 space-y-6">
-              <TableConfiguration />
+              <DictEntryDetailsModalContent />
             </div>
             <div class="flex justify-between p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
               <div>
@@ -105,7 +113,15 @@
 
     <div v-if="isConfigModalShown">
       <div class="bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40"></div>
-      <div id="defaultModal"  tabindex="-1" aria-hidden="true" :class="{flex: isConfigModalShown, hidden: !isConfigModalShown,}" class="fixed top-0 left-0 right-0 z-50 w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center">
+      <div 
+        id="configModal"  
+        data-backdrop-for="configModal"
+        @click="$event => configModalBackdrop($event)"
+        tabindex="-1" 
+        aria-hidden="true" 
+        :class="{flex: isConfigModalShown, hidden: !isConfigModalShown,}" 
+        class="fixed top-0 left-0 right-0 z-50 w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center"
+        >
         <div class="relative w-full max-w-5xl max-h-full">
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
@@ -146,9 +162,10 @@ import DictBulkActions from '@/components/datatable/DictBulkActions.vue';
 import QuickSearch from '@/components/datatable/QuickSearch.vue';
 import PageSizeInput from './PageSizeInput.vue';
 import HeaderOfColumns from './HeaderOfColumns.vue';
-import ShowConfigModalButton from '../input-fields/ShowConfigModalButton.vue';
-import ShowDetailsModalButton from '../input-fields/ShowDetailsModalButton.vue';
+import ShowConfigModalButton from '../input-fields-and-buttons/ShowConfigModalButton.vue';
+import ShowDetailsModalButton from '../input-fields-and-buttons/ShowDetailsModalButton.vue';
 import DatatableBody from './DatatableBody.vue';
+import DictEntryDetailsModalContent from '../modal-content/DictEntryDetailsModalContent.vue';
 
 const store = useDictStore()
 
@@ -165,6 +182,11 @@ const toggleRowSelection = (index: number, $event: Event) => {
   ($event?.target as HTMLInputElement)?.checked ? store.selectedIndices.add(index): store.selectedIndices.delete(index)
 } 
 
+//TODO 
+// ideovel sajat modal komponenst letrehozni, 
+// mert a flowbyte-vue komponense annyira rossz volt 
+// (ablkmeret-csokkentesnel tulfut), 
+// hogy helyette ide kiteritettem
 
 const isDetailsModalShown = ref(false)
 function closeDetailsModal() {
@@ -183,5 +205,23 @@ function showConfigModal() {
   isConfigModalShown.value = true
 }
 
+function detailsModalBackdrop($event: any) {
+  const attributes = 
+    [...$event?.originalTarget?.attributes]?.
+      map(e=>({name: e.name, value: e.value})) as {name: string, value: string}[];
+  if (attributes.filter(e=>e.name===`data-backdrop-for`,`detailsModal`).length > 0) {
+    isDetailsModalShown.value = false
+  }
+  $event.stopPropagation();
+}
 
+function configModalBackdrop($event: any) {
+  const attributes = 
+    [...$event?.originalTarget?.attributes]?.
+      map(e=>({name: e.name, value: e.value})) as {name: string, value: string}[];
+  if (attributes.filter(e=>e.name===`data-backdrop-for`,`configModal`).length > 0) {
+    isConfigModalShown.value = false
+  }
+  $event.stopPropagation();
+}
 </script>

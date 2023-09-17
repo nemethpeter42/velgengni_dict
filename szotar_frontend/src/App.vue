@@ -1,5 +1,16 @@
 <template>
 <div class="bg-cyan-50 dark:bg-indigo-950 min-h-screen">
+  <button 
+    title="Save modifications"
+      class="
+      fixed z-90 top-1 left-5 w-9 h-9 rounded-full drop-shadow-lg 
+      flex justify-center items-center text-2xl 
+      hover:drop-shadow-2xl "
+      :class="
+        todoIsDirty ? 
+        `text-white bg-red-700 hover:bg-red-800` : 
+        `text-white bg-blue-700 hover:bg-blue-800`"
+      ><ArrowUpOnSquareStackIcon class="h-6 w-6" /></button>
   <nav class="m-auto text-center">
     <router-link 
       class="font-bold" 
@@ -57,7 +68,7 @@
 <script lang="ts" setup>
   import { WritableComputedRef, computed, onMounted, ref } from 'vue'
   import { initFlowbite } from 'flowbite'
-  import { CloudArrowUpIcon, MoonIcon, SunIcon } from '@heroicons/vue/24/solid'
+  import { CloudArrowUpIcon, MoonIcon, SunIcon, ArrowUpOnSquareStackIcon } from '@heroicons/vue/24/solid'
 import { useRoute } from 'vue-router';
 
 
@@ -91,7 +102,7 @@ import { useRoute } from 'vue-router';
 
   const route = useRoute()
 
-  
+  const todoIsDirty = ref()
 
 </script>
 

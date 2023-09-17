@@ -21,10 +21,14 @@
     <span class="text-blue-800 dark:text-blue-300">
       <!-- TODO ezeket vmi normalis helyre, backendrol lekerdezve megcsinalni-->
       &nbsp;
+      <a :href="`https://www.google.com/search?q=${urlPhrase}+site%3A*.de&amp;tbm=isch`" target="_blank">google</a> &nbsp;
+      <a :href="`https://en.wiktionary.org/wiki/${urlPhrase}#German`" target="_blank">wiktionary</a> &nbsp;
+      <!--
       <a :href="`https://www.google.com/search?q=${urlPhrase}+site%3A*.es&amp;tbm=isch`" target="_blank">google</a> &nbsp;
       <a :href="`https://en.wiktionary.org/wiki/${urlPhrase}#Spanish`" target="_blank">wiktionary</a> &nbsp;
       <a :href="`https://hu.wiktionary.org/wiki/${urlPhrase}#Spanyol`" target="_blank">wik_hu</a> &nbsp;
       <a :href="`https://www.collinsdictionary.com/dictionary/spanish-english/${urlPhrase}`" target="_blank">collins</a>
+      -->
     </span>
   </div>
 </template>

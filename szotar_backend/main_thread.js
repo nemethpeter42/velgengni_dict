@@ -9,6 +9,7 @@ import * as fsPromises from 'fs/promises';
 import path from 'path';
 import { flattenTwoDimArray } from '../libs/szotar_common/src/helpers/flattenTwoDimArray.js';
 import { DictDescription } from '../libs/szotar_common/src/models/DictDescription.js';
+import savedExamplesRouter from './routes/saved_examples.js';
 const __dirname = path.resolve();
 XLSX.set_fs(fsPromises);
 const exampleSourceFiles = {
@@ -30,6 +31,7 @@ app.use(cors());
 app.use(express.json());
 const portNum = process.env.PORT || 3035;
 app.set(`port`, portNum);
+app.use(`/saved_examples`, savedExamplesRouter);
 let wordList = fs.
     readFileSync(`word_list.txt`).
     //readFileSync(`word_list_nemet_ideigl.txt`).

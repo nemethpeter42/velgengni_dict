@@ -17,7 +17,7 @@
         <label 
           :for="`prefix-space-checkbox-${index + 1}`" 
           class="
-            ml-2 text-sm font-medium 
+            ml-2 text-sm font-medium select-none
             text-gray-900 
             dark:text-gray-300
           ">
@@ -56,7 +56,7 @@
         <label 
           :for="`postfix-space-checkbox-${index + 1}`" 
           class="
-            ml-2 text-sm font-medium 
+            ml-2 text-sm font-medium select-none
             text-gray-900 
             dark:text-gray-300
           ">

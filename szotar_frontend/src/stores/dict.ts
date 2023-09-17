@@ -255,6 +255,10 @@ export const useDictStore = defineStore('dict', () => {
     }
   }
 
+  const entryDetailsActiveTab = ref(2);
+  
+  const setEntryDetailsActiveTab = (val : number) => entryDetailsActiveTab.value = val;
+
   (async () => {
     await refreshDictMetas()
   })()
@@ -293,5 +297,7 @@ export const useDictStore = defineStore('dict', () => {
     sortCol,
     sortAscending,
     displayRowNumbers,
+    entryDetailsActiveTab,
+    setEntryDetailsActiveTab,
   }
 })

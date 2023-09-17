@@ -45,90 +45,28 @@
           @click=" showWordListModal()"
           />
 
-        <div 
+        <FilteringModeOption 
+          :is-checked="trExampleStore.filteringMode === `MARK_ONLY`" 
+          label-text="Csak kiemelés"
+          id-value="view-mode-mark-only"
           @click="trExampleStore.setFilteringMode(`MARK_ONLY`)"
-          class="
-            flex items-center px-5 border rounded h-fit
-            border-gray-200 
-            dark:border-gray-700
-          ">
-          <input 
-            :checked="trExampleStore.filteringMode === `MARK_ONLY`" 
-            id="view-mode-highlight-only" 
-            type="radio" 
-            class="
-              w-4 h-4 
-              text-blue-600 bg-gray-100 border-gray-300 
-              focus:ring-blue-500 focus:ring-2
-              dark:bg-gray-700 dark:border-gray-600
-              dark:focus:ring-blue-600 dark:ring-offset-gray-800 
-            ">
-          <label 
-            for="view-mode-highlight-only" 
-            class="
-              w-full py-1 m-1.5 text-sm font-medium select-none 
-              text-gray-900 
-              dark:text-gray-300
-            ">
-            Csak kiemelés
-          </label>
-        </div>
-        <div
+         />
+         
+        <FilteringModeOption 
+          :is-checked="trExampleStore.filteringMode === `FILTER`" 
+          :label-text="`\u00A0\u00A0Szűrés\u00A0\u00A0`"
+          id-value="view-mode-filter"
           @click="trExampleStore.setFilteringMode(`FILTER`)"
-          class="
-            flex items-center px-5 border rounded h-fit
-            border-gray-200 
-            dark:border-gray-700
-          ">
-          <input 
-            :checked="trExampleStore.filteringMode === `FILTER`" 
-            id="view-mode-filter" 
-            type="radio" 
-            class="
-              w-4 h-4 
-              text-blue-600 bg-gray-100 border-gray-300 
-              focus:ring-blue-500 focus:ring-2
-              dark:bg-gray-700 dark:border-gray-600
-              dark:focus:ring-blue-600 dark:ring-offset-gray-800 
-            ">
-            <label 
-            for="view-mode-filter" 
-            class="
-              w-full py-1 m-1.5 text-sm font-medium select-none 
-              text-gray-900 
-              dark:text-gray-300
-            ">
-            Szűrés
-          </label>
-        </div>
-        <div 
+         />
+
+         <FilteringModeOption 
+          :is-checked="trExampleStore.filteringMode === `INVERSE_FILTER`" 
+          label-text="Inverz szűrés"
+          id-value="view-mode-inverted-filter"
           @click="trExampleStore.setFilteringMode(`INVERSE_FILTER`)"
-          class="
-            flex items-center px-3 border rounded h-fit
-            border-gray-200 
-            dark:border-gray-700
-          ">
-          <input 
-            :checked="trExampleStore.filteringMode === `INVERSE_FILTER`" 
-            id="view-mode-inverted-filter" 
-            type="radio" 
-            class="
-              w-4 h-4 
-              text-blue-600 bg-gray-100 border-gray-300 
-              focus:ring-blue-500 focus:ring-2
-              dark:bg-gray-700 dark:border-gray-600
-              dark:focus:ring-blue-600 dark:ring-offset-gray-800 
-            ">
-            <label 
-            for="view-mode-inverted-filter" 
-            class="
-              w-full py-1 m-1.5 text-sm font-medium select-none 
-              text-gray-900 
-              dark:text-gray-300
-            ">
-            Inverz szűrés
-          </label>
-        </div>
+         />
+
+        
       </div>
       <div>
         <GeneratedQuickAccessBtnList 
@@ -156,48 +94,17 @@
             />  
         </div>
         <div class="m-1">
-          <span class="text-sm font-normal text-gray-500 dark:text-gray-400">Nyelvpár: </span><Dropdown>
-              <template #trigger>
-                <button 
-                  id="dropdownLangPair" 
-                  class="
-                    px-3 py-1.5 mx-2
-                    inline-flex items-center font-medium rounded-lg text-sm  
-                    text-gray-500 bg-white 
-                    border border-gray-300 
-                    focus:outline-none focus:ring-4 focus:ring-gray-200
-                    hover:bg-gray-100 
-                    dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 
-                    dark:hover:bg-gray-700 dark:hover:border-gray-600 
-                    dark:focus:ring-gray-700
-                  "
-                  type="button">
-                  {{`${trExampleStore.exampleFindReq.lang1} - ${trExampleStore.exampleFindReq.lang2}`}}
-                  <ChevronDownIcon class="w-3 h-3 ml-2" />
-                </button>
-              </template>
-              <ul class="
-                overflow-hidden w-48 rounded-lg text-sm font-medium border 
-                text-gray-900 bg-white border-gray-200 
-                dark:bg-gray-700 dark:border-gray-600 dark:text-white
-                ">
-                <li 
-                  v-for="(item, index) in trExampleStore.languagePairs"
-                  :key="index"
-                  @click="trExampleStore.setLang1(item.lang1);trExampleStore.setLang2(item.lang2)"
-                  class="
-                    block px-4 py-2 inline-flex items-center w-full border-b cursor-pointer
-                    border-gray-200 
-                    hover:bg-gray-100 hover:text-blue-700 
-                    focus:outline-none focus:ring-2 focus:text-blue-700 
-                    dark:border-gray-600 
-                    dark:hover:bg-gray-600 dark:hover:text-white 
-                    dark:focus:ring-gray-500 dark:focus:text-white
-                  ">
-                  <div class="mr-2"><FlagIcon class="w-4 h-4 fill-current" /></div> {{`${item.lang1} - ${item.lang2}`}}
-                </li>
-              </ul>
-            </Dropdown>
+          <LanguagePairDropdown 
+              :toggleBtnText="`${trExampleStore.exampleFindReq.lang1} - ${trExampleStore.exampleFindReq.lang2}`"
+              :languagePairs="trExampleStore.languagePairs"
+              idOfToggleBtn="dropdownLangPairToggleBtn"
+              idOfOptionList="dropdownLangPairOptions"
+              @optionSelected="(lang1: string, lang2: string) => {
+                trExampleStore.setLang1(lang1);
+                trExampleStore.setLang2(lang2);
+              }"
+            />
+           
         </div>
       </div>
     </div>
@@ -217,81 +124,35 @@
     <div class="flex items-center m-1">
       <span class="text-sm font-normal text-gray-500 dark:text-gray-400">Kiemelés:&nbsp;</span>
     </div>
-    <div class="flex items-center m-1"> 
-      <input 
-        id="is-query-lang-highligted-separately"
-        type="checkbox" 
-        v-model="trExampleStore.isQueryLangHighlightedSeparately"
-        class="
-          w-4 h-4 rounded 
-          text-blue-600 bg-gray-100 border-gray-300
-          focus:ring-2 
-          focus:ring-blue-500 
-          dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600
-          dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800 
-        ">
-      <label 
-        for="is-query-lang-highligted-separately" 
-        class="
-          ml-2 text-sm font-medium select-none
-          text-gray-900 
-          dark:text-gray-300
-        ">
-        forrásnyelv külön
-      </label>
-    </div>
-    <div class="flex items-center m-1"> 
-      <input 
-        id="is-query-lang-highligted-joined"
-        type="checkbox" 
-        v-model="trExampleStore.isQueryLangHighlightedJoined"
-        class="
-          w-4 h-4 rounded
-          text-blue-600 bg-gray-100 border-gray-300
-          focus:ring-2 
-          focus:ring-blue-500 
-          dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600
-          dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800 
-        ">
-      <label 
-        for="is-query-lang-highligted-joined" 
-        class="
-          ml-2 text-sm font-medium select-none
-          text-gray-900 
-          dark:text-gray-300
-        ">
-        forrásnyelv egyben
-      </label>
-    </div>
-    <div class="flex items-center m-1"> 
-      <input 
-        id="is-query-lang-highligted"
-        type="checkbox" 
-        v-model="trExampleStore.isResultLangHighlited"
-        class="
-          w-4 h-4 rounded 
-          text-blue-600 bg-gray-100 border-gray-300
-          focus:ring-2 
-          focus:ring-blue-500 
-          dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600
-          dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800 
-        ">
-      <label 
-        for="is-result-lang-highligted" 
-        class="
-          ml-2 text-sm font-medium select-none
-          text-gray-900 
-          dark:text-gray-300
-        ">
-        célnyelv
-      </label>
-    </div>
+    <HighlightModeOption 
+      v-model="trExampleStore.isQueryLangHighlightedSeparately"
+      idValue="is-query-lang-highligted-separately"
+      labelText="forrásnyelv külön"
+    />
+    <HighlightModeOption 
+      v-model="trExampleStore.isQueryLangHighlightedJoined"
+      idValue="is-query-lang-highligted-joined"
+      labelText="forrásnyelv egyben"
+    />
+    <HighlightModeOption 
+      v-model="trExampleStore.isResultLangHighlited"
+      idValue="is-result-lang-highligted"
+      labelText="célnyelv"
+    />
   </div>
 
  
   <div v-if="isWordListModalShown">
       <div class="bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40"></div>
-      <div id="defaultModal"  tabindex="-1" aria-hidden="true" :class="{flex: isWordListModalShown, hidden: !isWordListModalShown,}" class="fixed top-0 left-0 right-0 z-50 w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center">
+      <div 
+        id="wordListModal"  
+        data-backdrop-for="wordListModal"
+        @click="$event => wordListModalBackdrop($event)"
+        tabindex="-1" 
+        aria-hidden="true" 
+        :class="{flex: isWordListModalShown, hidden: !isWordListModalShown,}" 
+        class="fixed top-0 left-0 right-0 z-50 w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center"
+        >
         <div class="relative w-full max-w-5xl max-h-full">
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <!-- Modal body -->
@@ -320,18 +181,19 @@
   import { ref, defineProps } from 'vue';
   import WordListModalContent from '@/components/modal-content/WordListModalContent.vue'
   import {useWordListStore,} from '@/stores/wordList'
-  import { Dropdown, } from 'flowbite-vue'
-  import { ChevronDownIcon, FlagIcon, } from '@heroicons/vue/24/solid'
-  import TrExampleResultLimit from '@/components/input-fields/TrExampleResultLimit.vue';
-  import ExampleSearchButton from '@/components/input-fields/ExampleSearchButton.vue';
+  import TrExampleResultLimit from '@/components/input-fields-and-buttons/TrExampleResultLimit.vue';
+  import ExampleSearchButton from '@/components/input-fields-and-buttons/ExampleSearchButton.vue';
   import { useTranslationExampleStore } from '@/stores/translationExample';
-  import SearchConditionEditor from '@/components/input-fields/SearchConditionEditor.vue';
-  import GeneratedQuickAccessBtnList from '@/components/input-fields/GeneratedQuickAccessBtnList.vue';
-  import BigFilterInput from '@/components/input-fields/BigFilterInput.vue';
+  import SearchConditionEditor from '@/components/input-fields-and-buttons/SearchConditionEditor.vue';
+  import GeneratedQuickAccessBtnList from '@/components/input-fields-and-buttons/GeneratedQuickAccessBtnList.vue';
+  import BigFilterInput from '@/components/input-fields-and-buttons/BigFilterInput.vue';
   import { QuickAccessSelectionResult } from '@/frontend_models/QuickAccessSelectionResult';
   import { SearchCondition } from '../../../../../libs/szotar_common/src/models/SearchCondition';
-import ExampleSearchAltLangButton from '@/components/input-fields/ExampleSearchAltLangButton.vue';
-import WordListPrevNextButton from '@/components/input-fields/WordListPrevNextButton.vue';
+  import ExampleSearchAltLangButton from '@/components/input-fields-and-buttons/ExampleSearchAltLangButton.vue';
+  import WordListPrevNextButton from '@/components/input-fields-and-buttons/WordListPrevNextButton.vue';
+  import FilteringModeOption from '@/components/input-fields-and-buttons/FilteringModeOption.vue';
+  import HighlightModeOption from '@/components/input-fields-and-buttons/HighlightModeOption.vue';
+import LanguagePairDropdown from '@/components/input-fields-and-buttons/LanguagePairDropdown.vue';
   const props = defineProps({  
       storeId: {type: String, required: true,},
   })
@@ -343,8 +205,19 @@ import WordListPrevNextButton from '@/components/input-fields/WordListPrevNextBu
   function closeWordListModal() {
     isWordListModalShown.value = false
   }
+
   function showWordListModal() {
     isWordListModalShown.value = true
+  }
+  
+  function wordListModalBackdrop($event: any) {
+    const attributes = 
+      [...$event?.originalTarget?.attributes]?.
+        map(e=>({name: e.name, value: e.value})) as {name: string, value: string}[];
+    if (attributes.filter(e=>e.name===`data-backdrop-for`,`wordListModal`).length > 0) {
+      isWordListModalShown.value = false
+    }
+    $event.stopPropagation();
   }
 
   const handleQuickAccessSelected = async (selection: QuickAccessSelectionResult) => {
@@ -358,5 +231,5 @@ import WordListPrevNextButton from '@/components/input-fields/WordListPrevNextBu
     await trExampleStore.refreshExampleList(trExampleStore.exampleFindReq, selection.isInverseSearch)
     trExampleStore.jumpToPage(`FIRST`)
   }
-  
+
 </script>
