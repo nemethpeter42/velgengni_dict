@@ -96,6 +96,7 @@ export const useTranslationExampleStore = (id: string) => {
     const exampleList: Ref<Example[]> = ref([]);
 
     const refreshExampleList = async (exampleFindReqParam: ExampleFindReq, isInverseSearch?: boolean) => {
+      selectedIndices.value.clear();
       exampleList.value = []
       const exampleFindReq: ExampleFindReq = JSON.parse(JSON.stringify(exampleFindReqParam))
       exampleFindReq.searchInSecondParamLanguage = isInverseSearch
@@ -296,11 +297,15 @@ export const useTranslationExampleStore = (id: string) => {
             );
         }
         const typeSafeResult = res ?? []
-        const sortedResult: FilteredEntry[] = 
+        const sortedResult = 
             sortCol.value!==`` ? 
-            typeSafeResult.sort((a,b) => (sortAscending.value ? 1 : -1) * (a.val.example?.toLowerCase() > b.val.example?.toLowerCase() ? 1 : -1)): 
+            typeSafeResult.sort(
+              (a,b) => 
+                (sortAscending.value ? 1 : -1) * (a.val.example?.toLowerCase() > b.val.example?.toLowerCase() ? 1 : -1)
+            ): 
             typeSafeResult;
-        return sortedResult
+        const finalResult: FilteredEntry[] = sortedResult.map((e,i)=> ({idx:e.idx, val:e.val, sortedIdx:i,}))
+        return finalResult
     })
 
     const onePageOfFilteredEntries = computed(()=>

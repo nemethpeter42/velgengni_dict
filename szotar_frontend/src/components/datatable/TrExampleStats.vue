@@ -36,7 +36,7 @@
   import { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';
 import { useTranslationExampleStore } from '@/stores/translationExample';
   import { SparklesIcon, } from '@heroicons/vue/24/solid'
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
   const props = defineProps({  
       storeId: {type: String, required: true,},
   })

@@ -25,18 +25,18 @@
       </th>
       <th 
         scope="col" 
-        class="px-2.5 py-3"
-        v-for="(colDef,colName) of props.cols" v-bind:key="colName"
-        @click="$emit(`toggleSort`,colName)"
+        class="px-2.5 py-3 cursor-default select-none"
+        v-for="col of props.columnDefinitions" v-bind:key="col.colName"
+        @click="$emit(`toggleSort`,col.colName)"
       >
         <div class="flex">
-        {{colName}}
+        {{col.colName}}
         <ChevronUpIcon 
-          v-if="props.sortCol===colName && props.sortAscending" 
+          v-if="props.sortCol===col.colName && props.sortAscending" 
           class="w-3 h-3 ml-1.5" 
           />
         <ChevronDownIcon 
-          v-if="props.sortCol===colName && !props.sortAscending" 
+          v-if="props.sortCol===col.colName && !props.sortAscending" 
           class="w-3 h-3 ml-1.5" 
           />
         </div>
@@ -50,14 +50,18 @@
 <script lang="ts" setup>
 
   import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/24/solid'
-  import { defineProps, defineEmits } from 'vue';
+import { ComputedRef, computed } from 'vue';
+import { ColumnDefinition } from '../../../../libs/szotar_common/src/models/ColumnDefinition';
+import { ColumnDefinitionArrayForm } from '@/frontend_models/ColumnDefinitionArrayForm';
+  
   defineEmits([`toggleSort`, `toggleAllSelection`,]);
     
   const props = defineProps({
-      cols: {type: Object, required: true,},
+      columnDefinitions: {type: Array<ColumnDefinitionArrayForm>, required: true,},
       isAllSelected: { type: Boolean, required: true, },
       sortCol: { type: String, required: true, },
       sortAscending: {type: Boolean, required: true,},
       disableAllSelection: {type: Boolean, required: false,},
   });
+
 </script>

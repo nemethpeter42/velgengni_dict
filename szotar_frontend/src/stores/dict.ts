@@ -5,6 +5,9 @@ import { DictDescription } from "../../../libs/szotar_common/src/models/DictDesc
 import { ColumnDefinition } from "../../../libs/szotar_common/src/models/ColumnDefinition.js";
 import { PageJumpType } from "@/frontend_models/PageJumpType.js";
 import { FilteredEntry } from "@/frontend_models/FilteredEntry.js";
+import { useTranslationExampleStore } from "./translationExample";
+import { TrExampleStoreType } from "@/frontend_models/TrExampleStoreTypes";
+import { ColumnDefinitionArrayForm } from "@/frontend_models/ColumnDefinitionArrayForm.js";
 
 export const useDictStore = defineStore('dict', () => {
   //const entries: Ref<Record<string, string>[]> = ref([]);
@@ -16,7 +19,8 @@ export const useDictStore = defineStore('dict', () => {
     count.value++
   }
   */
-
+  
+  const trExampleStore = useTranslationExampleStore(TrExampleStoreType.DICT_MODAL)
 
   const dictNameOnForm = ref(``)
   
@@ -53,6 +57,13 @@ export const useDictStore = defineStore('dict', () => {
     }
   }
 
+  const currentIdx = ref(-1)
+
+  const setCurrentIdx = async (idx: number) => {
+    currentIdx.value = idx;
+    //TODO wordList.ts-bol atepiteni
+  }
+
 
   const refreshEntries = async (backendSearchQuery: string, customSortComparison: string) => {
     try {
@@ -70,6 +81,24 @@ export const useDictStore = defineStore('dict', () => {
       })).json()
       dictNameUsedInLastQuery.value = dictNameOnForm.value
       dictQueriesWithMeta.value[dictNameUsedInLastQuery.value].main = [...(res as Record<string, string>[])]
+      const currSourceLang = 
+        dictQueriesWithMeta.value[dictNameUsedInLastQuery.value].meta.sourceLang
+      const currTargetLang = 
+        dictQueriesWithMeta.value[dictNameUsedInLastQuery.value].meta.targetLang
+      const pairExists = 
+        trExampleStore.languagePairs.filter(
+          e => e.lang1===currSourceLang && e.lang2===currTargetLang
+         ).length > 0
+      if (
+        currSourceLang.trim() !== `` && 
+        currTargetLang.trim() !== `` &&
+        pairExists
+      ) {
+        trExampleStore.setLang1(currSourceLang)
+        trExampleStore.setLang2(currTargetLang)
+      }
+      setCurrentIdx(-1)
+
     } catch(error) {
       console.log(error)
     }
@@ -181,11 +210,15 @@ export const useDictStore = defineStore('dict', () => {
       );
     }
     const typeSafeResult = res ?? []
-    const sortedResult: FilteredEntry[] = 
+    const sortedResult = 
       sortCol.value!==`` ? 
-      typeSafeResult.sort((a,b) => (sortAscending.value ? 1 : -1) * (a.val[sortCol.value].toLowerCase() > b.val[sortCol.value].toLowerCase() ? 1 : -1)): 
+      typeSafeResult.sort(
+        (a,b) => 
+          (sortAscending.value ? 1 : -1) * (a.val[sortCol.value].toLowerCase() > b.val[sortCol.value].toLowerCase() ? 1 : -1)
+      ): 
       typeSafeResult;
-    return sortedResult
+    const finalResult: FilteredEntry[] = sortedResult.map((e,i)=> ({idx:e.idx, val:e.val, sortedIdx:i,}))
+    return finalResult
   })
 
   const onePageOfFilteredEntries = computed(()=>
@@ -230,10 +263,23 @@ export const useDictStore = defineStore('dict', () => {
   const displayColsAsRawString = ref(false)
   
   const displayRowNumbers = ref(false)
-  
-  const currDictCols = computed(() => (dictQueriesWithMeta.value[dictNameUsedInLastQuery.value]?.meta?.cols ?? {}))
 
-  const currDictVisibleCols: ComputedRef<Record<string, ColumnDefinition>> = computed(() => Object.fromEntries(Object.entries(currDictCols.value).filter(e=>e[1]?.isVisible)))
+  const currDict = 
+    computed(() => dictQueriesWithMeta.value[dictNameUsedInLastQuery.value]);
+  
+  const currDictCols = 
+    computed(() => (dictQueriesWithMeta.value[dictNameUsedInLastQuery.value]?.meta?.cols ?? {}))
+
+  const currDictColsAsSortedArray: ComputedRef<ColumnDefinitionArrayForm[]> = 
+    computed(
+      () => 
+        Object.entries(currDictCols.value).
+          map(e=> ({colName: e[0], colDef: e[1],}) ).
+          sort((a,b)=>(a.colDef?.sequence ?? 99) > (b.colDef?.sequence ?? 99) ? 1 : -1)
+    );
+
+  const currDictVisibleCols: ComputedRef<ColumnDefinitionArrayForm[]> = 
+    computed(() => currDictColsAsSortedArray.value.filter(e=>e.colDef?.isVisible))
   
   const currDictColsUsedInQuickSearch: ComputedRef<Record<string, ColumnDefinition>> = computed(() => Object.fromEntries(Object.entries(currDictCols.value).filter(e=>e[1]?.isUsedInTrExampleSearch)))
   
@@ -259,7 +305,41 @@ export const useDictStore = defineStore('dict', () => {
   
   const setEntryDetailsActiveTab = (val : number) => entryDetailsActiveTab.value = val;
 
-  (async () => {
+  const isTheFirstEntryActive = computed(()=>currentIdx.value===0);
+  
+  const isTheLastEntryActive = computed(()=>currentIdx.value===filteredEntries.value.length - 1);
+
+  const isAllQuickAccessBtnVisible = ref(false);
+
+  const entryInTrExampleModalFormat: ComputedRef<string[]> = computed(()=>{
+    if (Array.isArray(filteredEntries.value) && currentIdx.value !== -1 ){
+      const entry = filteredEntries.value[currentIdx.value]
+      const originalCol = currDict.value.meta.originalCol
+      const res = currDictColsAsSortedArray.value.
+        filter(
+          e=>
+            e.colName === originalCol || 
+            e.colDef.isMeaningForestCol ||
+            e.colDef.isUsedInTrExampleSearch
+        ).
+        map(
+          e=>
+            e.colDef.isMeaningForestCol ? 
+            `<${entry?.val[e.colName].split(`>`).join(``).split(`<`).join(``)}>` :
+            entry?.val[e.colName].split(`>`).join(``).split(`<`).join(``)
+        ).
+        filter(e=>e.split(`>`).join(``).split(`<`).join(``).trim() !== ``);
+      return res
+    } else {
+      return []
+    }
+  })
+
+  // eslint-disable-next-line @typescript-eslint/no-extra-semi
+  ;(async () => {
+    await trExampleStore.refreshLanguagePairs()
+    trExampleStore.setLang1(trExampleStore.languagePairs[0]?.lang1 ?? ``);
+    trExampleStore.setLang2(trExampleStore.languagePairs[0]?.lang2 ?? ``);
     await refreshDictMetas()
   })()
 
@@ -289,6 +369,7 @@ export const useDictStore = defineStore('dict', () => {
     setDictNameOnForm,
     displayColsAsRawString,
     currDictCols,
+    currDictColsAsSortedArray,
     currDictVisibleCols,
     toggleVisibility,
     toggleQuickSearchEnabled,
@@ -299,5 +380,13 @@ export const useDictStore = defineStore('dict', () => {
     displayRowNumbers,
     entryDetailsActiveTab,
     setEntryDetailsActiveTab,
+    currentIdx,
+    setCurrentIdx,
+    isTheFirstEntryActive,
+    isTheLastEntryActive,
+    isAllQuickAccessBtnVisible,
+    entryInTrExampleModalFormat,
+    currDict,
+
   }
 })

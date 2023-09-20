@@ -23,7 +23,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { defineProps, defineEmits } from 'vue';
   defineEmits([`input`]);
   const props = defineProps({
     options: {type: Array<number>, required: true,},

@@ -27,7 +27,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { defineProps, defineEmits, } from 'vue';
   defineEmits(['click']);
   
   const props = defineProps({  

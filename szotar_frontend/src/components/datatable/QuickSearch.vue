@@ -40,7 +40,6 @@
 </template>
 
 <script lang="ts" setup>
-  import { defineProps, defineEmits } from 'vue';
   import { MagnifyingGlassIcon, TrashIcon, } from '@heroicons/vue/24/solid'
   defineEmits(['update:modelValue']);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

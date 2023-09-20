@@ -20,7 +20,7 @@
       <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         
         <HeaderOfColumns 
-          :cols="store.currDictVisibleCols"
+          :columnDefinitions="store.currDictVisibleCols"
           :isAllSelected="store.isAllSelected"
           :sortCol="store.sortCol"
           :sortAscending="store.sortAscending"
@@ -35,9 +35,9 @@
           :selectedIndices="store.selectedIndices"
           @toggleRowSelection="(idx: number,$event: Event) => toggleRowSelection(idx,$event)"
         >
-         <template #rowLevelButtons="{idx,}">
+         <template #rowLevelButtons="{idx,sortedIdx,}">
             <ShowDetailsModalButton 
-              @click="showDetailsModal(idx)"
+              @click="showDetailsModal(sortedIdx)"
               />
             <span 
               v-if="store.displayRowNumbers"
@@ -85,14 +85,8 @@
         :class="{flex: isDetailsModalShown, hidden: !isDetailsModalShown,}" 
         class="fixed top-0 left-0 right-0 z-50 w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center"
         >
-        <div class="relative w-full max-w-5xl max-h-full">
+        <div class="relative w-full max-w-7xl max-h-full">
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-            <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
-              <div class="flex items-center text-lg text-gray-700 dark:text-gray-300">
-                Elem részletei
-              </div>
-            </div>
-            <!-- Modal body -->
             <div class="p-6 space-y-6">
               <DictEntryDetailsModalContent />
             </div>
@@ -194,6 +188,7 @@ function closeDetailsModal() {
 }
 function showDetailsModal(idx: number) {
   console.log(`TODO showDetailsModal ${idx}`)
+  store.setCurrentIdx(idx)
   isDetailsModalShown.value = true
 }
 

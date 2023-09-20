@@ -1,7 +1,8 @@
 export declare class ColumnDefinition {
     isVisible?: boolean;
-    tailwindClasses: string;
+    tailwindClasses?: string;
     isMeaningForestCol?: boolean;
     isUsedInTrExampleSearch?: boolean;
     isTrExamplePairCol?: boolean;
+    sequence?: number;
 }

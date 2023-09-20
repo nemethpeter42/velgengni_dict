@@ -56,9 +56,9 @@ export const useWordListStore = defineStore('wordList', () => {
       filter(e=>e!==``)
   )
 
-  const isTheFirstWordActive = computed(()=>currentIdx.value===0)
+  const isTheFirstEntryActive = computed(()=>currentIdx.value===0)
   
-  const isTheLastWordActive = computed(()=>currentIdx.value===wordList.value.length - 1)
+  const isTheLastEntryActive = computed(()=>currentIdx.value===wordList.value.length - 1)
 
   const setCurrentIdx = async (idx: number) => {
     currentIdx.value = idx;
@@ -201,11 +201,15 @@ export const useWordListStore = defineStore('wordList', () => {
       );
     }
     const typeSafeResult = res ?? []
-    const sortedResult: FilteredEntry[] = 
+    const sortedResult = 
       sortCol.value!==`` ? 
-      typeSafeResult.sort((a,b) => (sortAscending.value ? 1 : -1) * (a.val.word.toLowerCase() > b.val.word.toLowerCase() ? 1 : -1)): 
+      typeSafeResult.sort(
+        (a,b) => 
+          (sortAscending.value ? 1 : -1) * (a.val.word.toLowerCase() > b.val.word.toLowerCase() ? 1 : -1)
+      ): 
       typeSafeResult;
-    return sortedResult
+    const finalResult: FilteredEntry[] = sortedResult.map((e,i)=> ({idx:e.idx, val:e.val, sortedIdx:i,}))
+    return finalResult
   })
 
   const onePageOfFilteredEntries = computed(()=>
@@ -259,8 +263,8 @@ export const useWordListStore = defineStore('wordList', () => {
     currentIdx,
     setCurrentIdx,
     isAllQuickAccessBtnVisible,
-    isTheFirstWordActive,
-    isTheLastWordActive,
+    isTheFirstEntryActive,
+    isTheLastEntryActive,
     currEntry,
     lang1Phrases,
     lang1PhrasesWithoutParentheses,

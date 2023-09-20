@@ -4,4 +4,5 @@ export class ColumnDefinition {
     isMeaningForestCol;
     isUsedInTrExampleSearch;
     isTrExamplePairCol;
+    sequence;
 }

@@ -14,9 +14,10 @@
   </button>
 </template>
 <script lang="ts" setup>
-  import { CheckBadgeIcon, } from '@heroicons/vue/24/solid'
-  import { defineProps, defineEmits } from 'vue';
+  import { CheckBadgeIcon, } from '@heroicons/vue/24/solid';
+
   defineEmits([`wordSelected`,]);
+  
   const props = defineProps({  
     idx: {type: Number, required: false,},
   })

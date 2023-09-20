@@ -35,34 +35,34 @@
               dark:ring-offset-gray-700 dark:bg-gray-600 dark:border-gray-500
               dark:focus:ring-fuchsia-600 dark:focus:ring-offset-gray-700
             ">
-            <slot name="rowLevelButtons" :idx="item.idx"></slot>
+            <slot name="rowLevelButtons" :idx="item.idx" :sortedIdx="item.sortedIdx"></slot>
           <label for="select-row-checkbox" class="sr-only">Sor kiválasztása</label>
         </div>
       </td>
       <td 
         scope="row" 
         class="px-2.5 py-1.5 font-medium text-gray-900 dark:text-gray-200" 
-        v-for="(colDef,colName) of (props.columnDefinitions as Record<string, ColumnDefinition>)" 
-        v-bind:key="colName" 
-        :class="colDef?.tailwindClasses ?? ``"
+        v-for="col of props.columnDefinitions" 
+        v-bind:key="col.colName" 
+        :class="col.colDef?.tailwindClasses ?? ``"
         >
         <MeaningForestViewer 
-          v-if="colDef.isMeaningForestCol" 
+          v-if="col.colDef.isMeaningForestCol" 
           :raw-val="item.val.translated" 
           :displayColsAsRawString="props.displayColsAsRawString" 
           />
-        <div v-else-if="colDef.isTrExamplePairCol && !props.displayColsAsRawString" >
+        <div v-else-if="col.colDef.isTrExamplePairCol && !props.displayColsAsRawString" >
           <div>
             <strong
-              v-html="highlightTrExamples(item.val[colName]?.split(`\t`)?.at(0) ?? ``)"
+              v-html="highlightTrExamples(item.val[col.colName]?.split(`\t`)?.at(0) ?? ``)"
             ></strong>
           </div>
           <div
-            v-html="highlightTrExamples(item.val[colName]?.split(`\t`)?.at(1) ?? ``)"
+            v-html="highlightTrExamples(item.val[col.colName]?.split(`\t`)?.at(1) ?? ``)"
           >
           </div>
         </div>
-        <div v-else>{{item.val[colName]}}</div>
+        <div v-else>{{item.val[col.colName]}}</div>
       </td>
       <td class="
         px-6 py-2 max-w-40 font-medium 
@@ -82,9 +82,10 @@
   import { ColumnDefinition } from '../../../../libs/szotar_common/src/models/ColumnDefinition';
   import * as sanitizeHtml from 'sanitize-html';
 
-  import { defineProps, defineEmits } from 'vue';
   import { FilteredEntry } from '@/frontend_models/FilteredEntry';
-import { HighlightDefinition } from '@/frontend_models/HighlightDefinition';
+  import { HighlightDefinition } from '@/frontend_models/HighlightDefinition';
+import { ComputedRef, computed } from 'vue';
+import { ColumnDefinitionArrayForm } from '@/frontend_models/ColumnDefinitionArrayForm';
 
   type PositionPair = {start: number, end: number}
 
@@ -147,9 +148,11 @@ import { HighlightDefinition } from '@/frontend_models/HighlightDefinition';
   const props = defineProps({  
     selectedIndices: {type: Set, required: true,},
     onePageOfEntries: { type: Array, required: true, },
-    columnDefinitions: { type: Object, required: true, },
+    columnDefinitions: { type: Array<ColumnDefinitionArrayForm>, required: true, },
     displayColsAsRawString: {type: Boolean, required: false,},
     disableRowSelectionCheckbox: {type: Boolean, required: false,},
     highlightedTexts: {type: Array<HighlightDefinition>, required: false,},
   });
+
+
 </script>

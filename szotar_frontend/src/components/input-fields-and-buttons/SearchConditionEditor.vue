@@ -91,7 +91,6 @@
 <script lang="ts" setup>
   import { SearchCondition } from '../../../../libs/szotar_common/src/models/SearchCondition';
   import RemoveConditionButton from './RemoveConditionButton.vue';
-  import { defineProps, defineEmits } from 'vue';
   defineEmits(['update:modelValue']);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const props = defineProps({

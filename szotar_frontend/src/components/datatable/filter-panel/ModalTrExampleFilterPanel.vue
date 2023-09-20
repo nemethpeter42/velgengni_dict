@@ -13,38 +13,8 @@
         @goButtonClicked="trExampleStore.executeBigFilterQuery()"
       />
       
-        
       <div class="flex flex-wrap items-center">
-        <WordListPrevNextButton 
-          text="Előző" 
-          id="prevWordBtn"
-          :isDisabled="wordListStore.isTheFirstEntryActive" 
-          @click=" 
-            async () => 
-              {
-                if(!wordListStore.isTheFirstEntryActive){
-                  wordListStore.setCurrentIdx(wordListStore.currentIdx-1);
-                }
-              }"
-          />
-        <WordListPrevNextButton 
-          text="Következő" 
-          id="nextWordBtn"
-          :isDisabled="wordListStore.isTheLastEntryActive" 
-          @click=" 
-            async () => 
-              {
-                if(!wordListStore.isTheLastEntryActive){
-                  wordListStore.setCurrentIdx(wordListStore.currentIdx+1);
-                }
-              }"
-          />
-        <WordListPrevNextButton 
-          text="Szóválasztó" 
-          id="wordListModalOpenBtn"
-          @click=" showWordListModal()"
-          />
-
+       
         <FilteringModeOption 
           :is-checked="trExampleStore.filteringMode === `MARK_ONLY`" 
           label-text="Csak kiemelés"
@@ -70,11 +40,11 @@
       </div>
       <div>
         <GeneratedQuickAccessBtnList 
-          :generator="Array.isArray(wordListStore.wordList) && wordListStore.currentIdx !== -1 ? wordListStore.wordList[wordListStore.currentIdx] : []"  
+          :generator="Array.isArray(dictStore.filteredEntries) && dictStore.currentIdx !== -1 ? [dictStore.filteredEntries[dictStore.currentIdx].val[`original`]] : []"  
           :defaultNumOfDisplayedItems="10" 
           @quickAccessSelected="(selection: QuickAccessSelectionResult) => handleQuickAccessSelected(selection)" 
-          :isAllDisplayed="wordListStore.isAllQuickAccessBtnVisible"
-          @displayAll="wordListStore.isAllQuickAccessBtnVisible = true"
+          :isAllDisplayed="dictStore.isAllQuickAccessBtnVisible"
+          @displayAll="dictStore.isAllQuickAccessBtnVisible = true"
         />
       </div>
 
@@ -141,46 +111,10 @@
     />
   </div>
 
- 
-  <div v-if="isWordListModalShown">
-      <div class="bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40"></div>
-      <div 
-        id="wordListModal"  
-        data-backdrop-for="wordListModal"
-        @click="$event => wordListModalBackdrop($event)"
-        tabindex="-1" 
-        aria-hidden="true" 
-        :class="{flex: isWordListModalShown, hidden: !isWordListModalShown,}" 
-        class="fixed top-0 left-0 right-0 z-50 w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center"
-        >
-        <div class="relative w-full max-w-5xl max-h-full">
-          <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-            <!-- Modal body -->
-            <div class="p-2 space-y-6">
-              <WordListModalContent 
-                @close="closeWordListModal()"
-              />
-            </div>
-            <div class="flex justify-between p-2 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
-              <div>
-                <button @click="closeWordListModal()" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
-                  Bezárás
-                </button>
-              </div>
-              <div>
-                  
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 </template>
 
 <script lang="ts" setup>
   import { ref } from 'vue';
-  import WordListModalContent from '@/components/modal-content/WordListModalContent.vue'
-  import {useWordListStore,} from '@/stores/wordList'
   import TrExampleResultLimit from '@/components/input-fields-and-buttons/TrExampleResultLimit.vue';
   import ExampleSearchButton from '@/components/input-fields-and-buttons/ExampleSearchButton.vue';
   import { useTranslationExampleStore } from '@/stores/translationExample';
@@ -190,36 +124,19 @@
   import { QuickAccessSelectionResult } from '@/frontend_models/QuickAccessSelectionResult';
   import { SearchCondition } from '../../../../../libs/szotar_common/src/models/SearchCondition';
   import ExampleSearchAltLangButton from '@/components/input-fields-and-buttons/ExampleSearchAltLangButton.vue';
-  import WordListPrevNextButton from '@/components/input-fields-and-buttons/WordListPrevNextButton.vue';
   import FilteringModeOption from '@/components/input-fields-and-buttons/FilteringModeOption.vue';
   import HighlightModeOption from '@/components/input-fields-and-buttons/HighlightModeOption.vue';
-import LanguagePairDropdown from '@/components/input-fields-and-buttons/LanguagePairDropdown.vue';
+  import LanguagePairDropdown from '@/components/input-fields-and-buttons/LanguagePairDropdown.vue';
+  import { useDictStore } from '@/stores/dict';
+  
   const props = defineProps({  
       storeId: {type: String, required: true,},
   })
 
-  const wordListStore = useWordListStore()
+  const dictStore = useDictStore()
   const trExampleStore = useTranslationExampleStore(props.storeId)
   
-  const isWordListModalShown = ref(false)
-  function closeWordListModal() {
-    isWordListModalShown.value = false
-  }
-
-  function showWordListModal() {
-    isWordListModalShown.value = true
-  }
-  
-  function wordListModalBackdrop($event: any) {
-    const attributes = 
-      [...$event?.originalTarget?.attributes]?.
-        map(e=>({name: e.name, value: e.value})) as {name: string, value: string}[];
-    if (attributes.filter(e=>e.name===`data-backdrop-for`,`wordListModal`).length > 0) {
-      isWordListModalShown.value = false
-    }
-    $event.stopPropagation();
-  }
-
+ 
   const handleQuickAccessSelected = async (selection: QuickAccessSelectionResult) => {
     const conditions = selection.words.map(
       expression => ({

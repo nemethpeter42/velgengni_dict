@@ -4,7 +4,7 @@
       
       <HeaderOfColumns
         :disableAllSelection="true" 
-        :cols="{word: {isVisible: true,}}"
+        :columnDefinitions="[{colName:`word`, colDef:{isVisible: true,}}]"
         :isAllSelected="false"
         :sortCol="store.sortCol"
         :sortAscending="store.sortAscending"
@@ -15,7 +15,7 @@
       <DatatableBody
         :disableRowSelectionCheckbox="true"
         :onePageOfEntries="store.onePageOfFilteredEntries"
-        :columnDefinitions="{word: {isVisible: true,}}"
+        :columnDefinitions="[{colName:`word`, colDef:{isVisible: true,}}]"
         :displayColsAsRawString="false"
         :selectedIndices="new Set()"
       >

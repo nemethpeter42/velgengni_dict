@@ -29,10 +29,8 @@
     </div>
 </template>
 <script setup lang="ts">
-  // eslint-disable-next-line no-undef
   defineEmits(['click']);
     
-  // eslint-disable-next-line no-undef
   const props = defineProps({  
     modelValue: {type: Boolean, required: true,},
     labelText: {type: String, required: true,},

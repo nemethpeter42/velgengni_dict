@@ -2,10 +2,36 @@
   <div class="text-sm font-medium text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
     <div>
       <div class="text-gray-800 dark:text-gray-200 font-bold text-lg mb-4 mx-2">
-        Flugnummer
+        {{store.entryInTrExampleModalFormat?.join(`; `) ?? ``}}
       </div>
     </div>
-    
+            
+    <div class="flex flex-wrap items-center">
+      <WordListPrevNextButton 
+        text="Előző" 
+        id="prevWordBtn"
+        :isDisabled="store.isTheFirstEntryActive" 
+        @click=" 
+          async () => 
+            {
+              if(!store.isTheFirstEntryActive){
+                store.setCurrentIdx(store.currentIdx-1);
+              }
+            }"
+        />
+      <WordListPrevNextButton 
+        text="Következő" 
+        id="nextWordBtn"
+        :isDisabled="store.isTheLastEntryActive" 
+        @click=" 
+          async () => 
+            {
+              if(!store.isTheLastEntryActive){
+                store.setCurrentIdx(store.currentIdx+1);
+              }
+            }"
+        />
+    </div>
     <div class="flex flex-wrap -mb-px">   
       <TabOption 
         text="Details" 
@@ -29,6 +55,7 @@
 <script setup lang="ts">
 import { useDictStore } from '@/stores/dict';
 import TabOption from '../input-fields-and-buttons/TabOption.vue';
+import WordListPrevNextButton from '../input-fields-and-buttons/WordListPrevNextButton.vue';
   const store = useDictStore()
 
 </script>

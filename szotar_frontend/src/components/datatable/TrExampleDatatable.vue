@@ -28,7 +28,7 @@
     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
       
       <HeaderOfColumns 
-        :cols="{example: {isVisible: true,isTrExamplePairCol:true,}}"
+        :columnDefinitions="[{colName:`example`, colDef:{isVisible: true,isTrExamplePairCol:true,}}]"
         :isAllSelected="trExampleStore.isAllSelected"
         :sortCol="trExampleStore.sortCol"
         :sortAscending="trExampleStore.sortAscending"
@@ -38,7 +38,7 @@
       
       <DatatableBody
         :onePageOfEntries="trExampleStore.onePageOfFilteredEntries"
-        :columnDefinitions="{example: {isVisible: true,isTrExamplePairCol:true,}}"
+        :columnDefinitions="[{colName:`example`, colDef:{isVisible: true,isTrExamplePairCol:true,}}]"
         :displayColsAsRawString="false"
         :selectedIndices="trExampleStore.selectedIndices"
         :highlightedTexts="trExampleStore.phrasesUsedInHighlight"
@@ -82,7 +82,7 @@
 </template>
 <script lang="ts" setup>
 import DtPagination from '@/components/datatable/DtPagination.vue'
-import { onMounted, defineProps } from 'vue';
+import { onMounted } from 'vue';
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PageJumpType } from '@/frontend_models/PageJumpType';
 import DictBulkActions from '@/components/datatable/DictBulkActions.vue';

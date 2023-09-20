@@ -84,7 +84,7 @@
 </template>
 <script lang="ts" setup>
   import { QuickAccessSelectionResult } from '@/frontend_models/QuickAccessSelectionResult';
-  import { defineProps, defineEmits, computed } from 'vue';
+  import { computed } from 'vue';
   defineEmits<{
     quickAccessSelected: [selection: QuickAccessSelectionResult ],
     displayAll: [],
