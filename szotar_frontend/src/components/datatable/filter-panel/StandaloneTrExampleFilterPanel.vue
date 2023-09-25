@@ -211,13 +211,17 @@ import LanguagePairDropdown from '@/components/input-fields-and-buttons/Language
   }
   
   function wordListModalBackdrop($event: any) {
-    const attributes = 
-      [...$event?.originalTarget?.attributes]?.
-        map(e=>({name: e.name, value: e.value})) as {name: string, value: string}[];
-    if (attributes.filter(e=>e.name===`data-backdrop-for`,`wordListModal`).length > 0) {
-      isWordListModalShown.value = false
+    try{
+      const attributes = 
+        [...$event?.originalTarget?.attributes]?.
+          map(e=>({name: e.name, value: e.value})) as {name: string, value: string}[];
+      if (attributes.filter(e=>e.name===`data-backdrop-for`,`wordListModal`).length > 0) {
+        isWordListModalShown.value = false
+      }
+      $event.stopPropagation();
+    } catch(e) {
+      /* eslint-disable no-empty */
     }
-    $event.stopPropagation();
   }
 
   const handleQuickAccessSelected = async (selection: QuickAccessSelectionResult) => {

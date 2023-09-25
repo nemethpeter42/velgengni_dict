@@ -166,7 +166,7 @@ const store = useDictStore()
 
 
 const scrollToTableTop = (): void => {
-    document.getElementById('datatable-table-top-anchor')?.scrollIntoView();
+    document.getElementById(`datatable-table-top-anchor`)?.scrollIntoView();
 };
 
 //debug celokra (pl. event) ideiglenesen behuzhato
@@ -201,22 +201,33 @@ function showConfigModal() {
 }
 
 function detailsModalBackdrop($event: any) {
-  const attributes = 
-    [...$event?.originalTarget?.attributes]?.
-      map(e=>({name: e.name, value: e.value})) as {name: string, value: string}[];
-  if (attributes.filter(e=>e.name===`data-backdrop-for`,`detailsModal`).length > 0) {
-    isDetailsModalShown.value = false
+  try {
+    const attributes = 
+      [...$event?.originalTarget?.attributes]?.
+        map(e=>({name: e.name, value: e.value})) as {name: string, value: string}[];
+    if (attributes.filter(e=>e.name===`data-backdrop-for`,`detailsModal`).length > 0) {
+      isDetailsModalShown.value = false
+    }
+    $event.stopPropagation();
+  } catch(e) {
+    /* eslint-disable no-empty */
+    //TODO: 
+    // normalisan visszafejteni es 
+    // csak az "attributes" lekeresenel jelentkezo hibat szurni
   }
-  $event.stopPropagation();
 }
 
 function configModalBackdrop($event: any) {
-  const attributes = 
-    [...$event?.originalTarget?.attributes]?.
-      map(e=>({name: e.name, value: e.value})) as {name: string, value: string}[];
-  if (attributes.filter(e=>e.name===`data-backdrop-for`,`configModal`).length > 0) {
-    isConfigModalShown.value = false
+  try {
+    const attributes = 
+      [...$event?.originalTarget?.attributes]?.
+        map(e=>({name: e.name, value: e.value})) as {name: string, value: string}[];
+    if (attributes.filter(e=>e.name===`data-backdrop-for`,`configModal`).length > 0) {
+      isConfigModalShown.value = false
+    }
+    $event.stopPropagation();
+  } catch(e) {
+    /* eslint-disable no-empty */
   }
-  $event.stopPropagation();
 }
 </script>

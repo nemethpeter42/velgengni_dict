@@ -8,6 +8,7 @@ import { FilteredEntry } from "@/frontend_models/FilteredEntry.js";
 import { useTranslationExampleStore } from "./translationExample";
 import { TrExampleStoreType } from "@/frontend_models/TrExampleStoreTypes";
 import { ColumnDefinitionArrayForm } from "@/frontend_models/ColumnDefinitionArrayForm.js";
+import { SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition.js";
 
 export const useDictStore = defineStore('dict', () => {
   //const entries: Ref<Record<string, string>[]> = ref([]);
@@ -59,8 +60,87 @@ export const useDictStore = defineStore('dict', () => {
 
   const currentIdx = ref(-1)
 
+  const entryInTrExampleModalFormat: ComputedRef<string[]> = computed(()=>{
+    if (Array.isArray(filteredEntries.value) && currentIdx.value !== -1 ){
+      const entry = filteredEntries.value[currentIdx.value]
+      const originalCol = currDict.value.meta.originalCol
+      const res = currDictColsAsSortedArray.value.
+        filter(
+          e=>
+            e.colName === originalCol || 
+            e.colDef.isMeaningForestCol ||
+            e.colDef.isUsedInTrExampleSearch
+        ).
+        map(
+          e=>
+            e.colDef.isMeaningForestCol ? 
+            `<${entry?.val[e.colName].split(`>`).join(``).split(`<`).join(``)}>` :
+            entry?.val[e.colName].split(`>`).join(``).split(`<`).join(``)
+        ).
+        filter(e=>e.split(`>`).join(``).split(`<`).join(``).trim() !== ``);
+      return res
+    } else {
+      return []
+    }
+  })
+  
+  const lang1Phrases: ComputedRef<string[]> = computed(
+    () => entryInTrExampleModalFormat.value.
+      filter(e=> !(e.trim().startsWith(`<`) && e.trim().endsWith(`>`))).
+      map(e=>e.trim()).
+      filter(e=>e!==``)
+  )
+
+  const lang1PhrasesWithoutParentheses = computed(
+    () => lang1Phrases.value.
+      map(e => e.
+        replaceAll(/\[[^\]]*\]/g,'').
+        replaceAll(/\([^)]*\)/g,'').
+        replaceAll(/\{[^}]*\}/g,'')
+      )  
+  )
+  
+  const lang2PhrasesRaw: ComputedRef<string[]> = computed(
+    () => entryInTrExampleModalFormat.value.
+      filter(e=> e.trim().startsWith(`<`) && e.trim().endsWith(`>`)).
+      map(e=>e.substring(1,e.length-1))
+  )     
+  const lang2Phrases: ComputedRef<string[]> = computed( 
+    () => lang2PhrasesRaw.value.
+      map(
+          e => 
+            e.
+              replaceAll(/\[[^\]]*\]/g,'').
+              replaceAll(/\([^)]*\)/g,'').
+              replaceAll(/\{[^}]*\}/g,'').
+              split(`;`).join(`,`).
+              split(`/`).join(`,`).
+              split(`\\`).join(``).
+              split(`,`)
+      ).
+      flat().
+      map(e=>e.trim()).
+      filter(e=>e!==``)
+  )
+
+
   const setCurrentIdx = async (idx: number) => {
     currentIdx.value = idx;
+    isAllQuickAccessBtnVisible.value = false;
+    await trExampleStore.resetBigFilter(lang2PhrasesRaw.value.join(`; `));
+    const words = lang1PhrasesWithoutParentheses.value[0]?.split(` `).filter(e=>e.trim()!==``) ?? []
+    const conditions = words.map(
+      expression => ({
+        expression, 
+        onlyWithSpaceDotOrCommaSuffix: false,//TODO config fuggo
+        onlyWithSpacePrefix: false, //TODO config fuggo
+      } as SearchCondition)
+    )
+    await trExampleStore.resetSearchConditions(conditions)
+    await trExampleStore.refreshExampleList(trExampleStore.exampleFindReq, false)
+    trExampleStore.jumpToPage(`FIRST`);
+    trExampleStore.setFilteringMode(`MARK_ONLY`);
+    trExampleStore.quickSearchQueryPhrase = ``;
     //TODO wordList.ts-bol atepiteni
   }
 
@@ -311,29 +391,6 @@ export const useDictStore = defineStore('dict', () => {
 
   const isAllQuickAccessBtnVisible = ref(false);
 
-  const entryInTrExampleModalFormat: ComputedRef<string[]> = computed(()=>{
-    if (Array.isArray(filteredEntries.value) && currentIdx.value !== -1 ){
-      const entry = filteredEntries.value[currentIdx.value]
-      const originalCol = currDict.value.meta.originalCol
-      const res = currDictColsAsSortedArray.value.
-        filter(
-          e=>
-            e.colName === originalCol || 
-            e.colDef.isMeaningForestCol ||
-            e.colDef.isUsedInTrExampleSearch
-        ).
-        map(
-          e=>
-            e.colDef.isMeaningForestCol ? 
-            `<${entry?.val[e.colName].split(`>`).join(``).split(`<`).join(``)}>` :
-            entry?.val[e.colName].split(`>`).join(``).split(`<`).join(``)
-        ).
-        filter(e=>e.split(`>`).join(``).split(`<`).join(``).trim() !== ``);
-      return res
-    } else {
-      return []
-    }
-  })
 
   // eslint-disable-next-line @typescript-eslint/no-extra-semi
   ;(async () => {

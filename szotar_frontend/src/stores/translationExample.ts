@@ -163,9 +163,9 @@ export const useTranslationExampleStore = (id: string) => {
     
     const isLastPage: Ref<boolean> = computed(() => currentPage.value===totalPageCount.value-1);
 
-    const resultsPerPageOptions: Ref<number[]> = ref([25,50,100,200,500]);
+    const resultsPerPageOptions: Ref<number[]> = ref([25,50,75,100,200,500]);
 
-    const resultsPerPage: Ref<number> = ref(100);
+    const resultsPerPage: Ref<number> = ref(75);
 
     const setResultsPerPage = async (num: number) => resultsPerPage.value = num;
 

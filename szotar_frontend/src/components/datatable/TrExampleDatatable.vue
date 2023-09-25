@@ -1,6 +1,6 @@
 <template>
   <div 
-    v-if="wordListStore.currentIdx !== -1" 
+    v-if="!props.wordListStoreDisabled && wordListStore.currentIdx !== -1" 
     class="text-gray-800 dark:text-gray-200 font-bold text-lg mb-4 mx-2"
     >
     {{ wordListStore.wordList[wordListStore.currentIdx]?.join(`; `) }}
@@ -11,7 +11,7 @@
   >
     <TrExampleStats :storeId="props.storeId" />
   </div>
-  <div class="shadow-md sm:rounded-lg" id="datatable-table-top-anchor">
+  <div class="shadow-md sm:rounded-lg" id="tr-example-table-top-anchor">
     <div class="flex flex-wrap items-center justify-between border-t-2 border-x-2 border-cyan-200 dark:border-indigo-900 sm:rounded-t-lg">
       <div class="my-1.5">
         
@@ -97,6 +97,7 @@ import { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';
 
 const props = defineProps({  
     storeId: {type: String, required: true,},
+    wordListStoreDisabled: {type: Boolean, required: false,},
 })
 
 const trExampleStore = useTranslationExampleStore(props.storeId)
@@ -105,7 +106,7 @@ const wordListStore = useWordListStore()
 
 
 const scrollToTableTop = (): void => {
-    document.getElementById('datatable-table-top-anchor')?.scrollIntoView();
+    document.getElementById('tr-example-table-top-anchor')?.scrollIntoView();
 };
 
 //debug celokra (pl. event) ideiglenesen behuzhato
