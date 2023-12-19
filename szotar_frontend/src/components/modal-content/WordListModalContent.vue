@@ -39,8 +39,9 @@
         aria-label="Table navigation"
         >
         <QuickSearch 
-            v-model="store.quickSearchQueryPhrase"
-            @input="store.jumpToPage(`FIRST`);"
+          :modelValue="store.quickSearchQueryPhrase"
+          @update:modelValue="val => store.setQuickSearchQueryPhrase(val)"
+          @input="store.jumpToPage(`FIRST`);"
           />
         <PageSizeInput 
           :options="store.resultsPerPageOptions" 

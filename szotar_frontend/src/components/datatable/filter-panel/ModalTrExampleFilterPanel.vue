@@ -6,10 +6,14 @@
       "
     >
     <div 
-      class="lg:grow-0 lg:pr-1 lg:border-r-4 border-gray-200 dark:border-gray-800 border-dashed"
+      class="
+        border-dashed
+        border-gray-200 dark:border-gray-800 
+        lg:grow-0 lg:pr-1 lg:border-r-4
+      "
       >
       <BigFilterInput
-        v-model="trExampleStore.bigFilterCurrVal"
+        v-model="trExampleStore.bigFilterInputFieldVal"
         @goButtonClicked="trExampleStore.executeBigFilterQuery()"
       />
       
@@ -40,11 +44,14 @@
       </div>
       <div>
         <GeneratedQuickAccessBtnList 
-          :generator="Array.isArray(dictStore.filteredEntries) && dictStore.currentIdx !== -1 ? [dictStore.filteredEntries[dictStore.currentIdx].val[`original`]] : []"  
+          :generator="
+            Array.isArray(dictStore.filteredEntries) && dictStore.currentIdx !== -1 ? 
+            [dictStore.filteredEntries[dictStore.currentIdx].val[`original`]] : 
+            []"  
           :defaultNumOfDisplayedItems="10" 
           @quickAccessSelected="(selection: QuickAccessSelectionResult) => handleQuickAccessSelected(selection)" 
           :isAllDisplayed="dictStore.isAllQuickAccessBtnVisible"
-          @displayAll="dictStore.isAllQuickAccessBtnVisible = true"
+          @displayAll="dictStore.setIsAllQuickAccessBtnVisible(true)"
         />
       </div>
 

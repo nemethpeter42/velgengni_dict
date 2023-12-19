@@ -140,7 +140,7 @@ export const useDictStore = defineStore('dict', () => {
     await trExampleStore.refreshExampleList(trExampleStore.exampleFindReq, false)
     trExampleStore.jumpToPage(`FIRST`);
     trExampleStore.setFilteringMode(`MARK_ONLY`);
-    trExampleStore.quickSearchQueryPhrase = ``;
+    trExampleStore.setQuickSearchQueryPhrase(``);
     //TODO wordList.ts-bol atepiteni
   }
 
@@ -185,6 +185,8 @@ export const useDictStore = defineStore('dict', () => {
   }
 
   const quickSearchQueryPhrase: Ref<string> = ref(``)
+
+  const setQuickSearchQueryPhrase = (val: string) => quickSearchQueryPhrase.value = val
 
   const currentPage = ref(0);
 
@@ -391,6 +393,8 @@ export const useDictStore = defineStore('dict', () => {
 
   const isAllQuickAccessBtnVisible = ref(false);
 
+  const setIsAllQuickAccessBtnVisible =  (val: boolean) => isAllQuickAccessBtnVisible.value = val;
+  
 
   // eslint-disable-next-line @typescript-eslint/no-extra-semi
   ;(async () => {
@@ -405,6 +409,7 @@ export const useDictStore = defineStore('dict', () => {
     resultsPerPage,
     setResultsPerPage,
     quickSearchQueryPhrase,
+    setQuickSearchQueryPhrase,
     filteredEntries,
     resultsPerPageOptions,
     jumpToPage,
@@ -442,6 +447,7 @@ export const useDictStore = defineStore('dict', () => {
     isTheFirstEntryActive,
     isTheLastEntryActive,
     isAllQuickAccessBtnVisible,
+    setIsAllQuickAccessBtnVisible,
     entryInTrExampleModalFormat,
     currDict,
 

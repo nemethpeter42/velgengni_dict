@@ -1,15 +1,20 @@
 <template>
+  
   <div
     class="
-        flex max-w-[90rem] m-auto flex-col 
+        relative flex max-w-[90rem] m-auto flex-col 
         lg:flex-row
       "
     >
+    <DtSpinner
+      v-if="trExampleStore.isLoading" 
+      test-id="standalone-tr-example-filter-panel-top"
+    />
     <div 
       class="lg:grow-0 lg:pr-1 lg:border-r-4 border-gray-200 dark:border-gray-800 border-dashed"
       >
       <BigFilterInput
-        v-model="trExampleStore.bigFilterCurrVal"
+        v-model="trExampleStore.bigFilterInputFieldVal"
         @goButtonClicked="trExampleStore.executeBigFilterQuery()"
       />
       
@@ -70,11 +75,14 @@
       </div>
       <div>
         <GeneratedQuickAccessBtnList 
-          :generator="Array.isArray(wordListStore.wordList) && wordListStore.currentIdx !== -1 ? wordListStore.wordList[wordListStore.currentIdx] : []"  
+          :generator="
+            Array.isArray(wordListStore.wordList) && wordListStore.currentIdx !== -1 ? 
+            wordListStore.wordList[wordListStore.currentIdx] : 
+            []"  
           :defaultNumOfDisplayedItems="10" 
           @quickAccessSelected="(selection: QuickAccessSelectionResult) => handleQuickAccessSelected(selection)" 
           :isAllDisplayed="wordListStore.isAllQuickAccessBtnVisible"
-          @displayAll="wordListStore.isAllQuickAccessBtnVisible = true"
+          @displayAll="wordListStore.setIsAllQuickAccessBtnVisible(true)"
         />
       </div>
 
@@ -109,7 +117,11 @@
       </div>
     </div>
   </div>
-  <div class="flex flex-wrap max-w-6xl m-auto">
+  <div class="relative flex flex-wrap max-w-6xl m-auto">
+    <DtSpinner
+      v-if="trExampleStore.isLoading" 
+      test-id="standalone-tr-example-filter-panel-bottom"
+    />
 
     <div class="m-1">
       <ExampleSearchButton
@@ -179,6 +191,7 @@
 
 <script lang="ts" setup>
   import { ref } from 'vue';
+  import DtSpinner from "../DtSpinner.vue"
   import WordListModalContent from '@/components/modal-content/WordListModalContent.vue'
   import {useWordListStore,} from '@/stores/wordList'
   import TrExampleResultLimit from '@/components/input-fields-and-buttons/TrExampleResultLimit.vue';

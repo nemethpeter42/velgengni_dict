@@ -10,6 +10,7 @@ import path from 'path';
 import { flattenTwoDimArray } from '../libs/szotar_common/src/helpers/flattenTwoDimArray.js';
 import { DictDescription } from '../libs/szotar_common/src/models/DictDescription.js';
 import savedExamplesRouter from './routes/saved_examples.js';
+import generatedLinksRouter from './routes/generated_links.js';
 const __dirname = path.resolve();
 XLSX.set_fs(fsPromises);
 const exampleSourceFiles = {
@@ -32,6 +33,7 @@ app.use(express.json());
 const portNum = process.env.PORT || 3035;
 app.set(`port`, portNum);
 app.use(`/saved_examples`, savedExamplesRouter);
+app.use(`/generated_links`, generatedLinksRouter);
 let wordList = fs.
     readFileSync(`word_list.txt`).
     //readFileSync(`word_list_nemet_ideigl.txt`).

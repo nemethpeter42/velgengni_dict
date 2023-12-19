@@ -1,5 +1,15 @@
 <template>
-  <div class="stats text-gray-800 dark:text-gray-300">
+  <div class="relative stats text-gray-800 dark:text-gray-300">
+    <DtSpinner 
+      v-if="store.isGeneratedLinksLoading" 
+      test-id="tr-example-stats"
+    />
+    <!-- TODO create an error notification/snackbar message-->
+    <span 
+      class="font-bold text-red-700"
+      v-if="store.lastTrExampleQueryErrored">
+      ERR!
+    </span>
     TOTAL: {{ store.exampleList.length }},
     <span :class="{'font-bold text-red-700': store.filteredEntries.length !== store.exampleList.length}">
       FILTERED:
@@ -10,7 +20,7 @@
       :key="index"
       class="phrase-stat-container cursor-pointer"
       @click="$event => {
-        store.quickSearchQueryPhrase = [store.quickSearchQueryPhrase, item.val].filter(e=>e.trim()!==``).join(`, `)
+        store.setQuickSearchQueryPhrase([store.quickSearchQueryPhrase, item.val].filter(e=>e.trim()!==``).join(`, `))
         store.jumpToPage(`FIRST`)
       }"
     >
@@ -21,8 +31,17 @@
     <span class="text-blue-800 dark:text-blue-300">
       <!-- TODO ezeket vmi normalis helyre, backendrol lekerdezve megcsinalni-->
       &nbsp;
-      <a :href="`https://www.google.com/search?q=${urlPhrase}+site%3A*.de&amp;tbm=isch`" target="_blank">google</a> &nbsp;
-      <a :href="`https://en.wiktionary.org/wiki/${urlPhrase}#German`" target="_blank">wiktionary</a> &nbsp;
+      <span
+        v-for="(link,index) of store.generatedLinks" 
+        :key="index"
+      >
+        <a
+          :href="link.url" 
+          target="_blank">
+          {{link.title}}
+        </a>
+        &nbsp;
+      </span>
       <!--
       <a :href="`https://www.google.com/search?q=${urlPhrase}+site%3A*.es&amp;tbm=isch`" target="_blank">google</a> &nbsp;
       <a :href="`https://en.wiktionary.org/wiki/${urlPhrase}#Spanish`" target="_blank">wiktionary</a> &nbsp;
@@ -37,6 +56,7 @@
 import { useTranslationExampleStore } from '@/stores/translationExample';
   import { SparklesIcon, } from '@heroicons/vue/24/solid'
 import { computed } from 'vue';
+import DtSpinner from './DtSpinner.vue';
   const props = defineProps({  
       storeId: {type: String, required: true,},
   })

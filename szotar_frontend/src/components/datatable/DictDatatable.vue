@@ -9,7 +9,8 @@
         </div>
         <div class="flex my-1.5">
           <QuickSearch 
-            v-model="store.quickSearchQueryPhrase"
+            :modelValue="store.quickSearchQueryPhrase"
+            @update:modelValue="val => store.setQuickSearchQueryPhrase(val)"
             @input="store.jumpToPage(`FIRST`);"
           />
           <ShowConfigModalButton 

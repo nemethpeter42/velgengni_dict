@@ -1,4 +1,4 @@
-import { ComputedRef, Ref, WritableComputedRef, computed, ref } from "vue"
+import { ComputedRef, Ref, ShallowReactive, ShallowRef, WritableComputedRef, computed, reactive, ref } from "vue"
 import { defineStore } from 'pinia'
 import { PageJumpType } from "@/frontend_models/PageJumpType.js";
 import { FilteredEntry } from "@/frontend_models/FilteredEntry.js";
@@ -76,8 +76,8 @@ export const useWordListStore = defineStore('wordList', () => {
     await trExampleStore.refreshExampleList(trExampleStore.exampleFindReq, false)
     trExampleStore.jumpToPage(`FIRST`);
     trExampleStore.setFilteringMode(`MARK_ONLY`);
-    trExampleStore.quickSearchQueryPhrase = ``;
-    quickSearchQueryPhrase.value = ``;
+    trExampleStore.setQuickSearchQueryPhrase(``);
+    setQuickSearchQueryPhrase(``);
   }
 
   const refreshWordList = async () => {
@@ -98,7 +98,9 @@ export const useWordListStore = defineStore('wordList', () => {
   };
 
 
-  const quickSearchQueryPhrase: Ref<string> = ref(``)
+  const quickSearchQueryPhrase = ref(``)
+
+  const setQuickSearchQueryPhrase = (val: string) => quickSearchQueryPhrase.value = val
 
   const currentPage = ref(0);
 
@@ -233,6 +235,8 @@ export const useWordListStore = defineStore('wordList', () => {
   })
 
   const isAllQuickAccessBtnVisible = ref(false);
+
+  const setIsAllQuickAccessBtnVisible =  (val: boolean) => isAllQuickAccessBtnVisible.value = val;
   
   (async () => {
     await trExampleStore.refreshLanguagePairs()
@@ -260,9 +264,11 @@ export const useWordListStore = defineStore('wordList', () => {
     sortAscending,
     sortCol,
     quickSearchQueryPhrase,
+    setQuickSearchQueryPhrase,
     currentIdx,
     setCurrentIdx,
     isAllQuickAccessBtnVisible,
+    setIsAllQuickAccessBtnVisible,
     isTheFirstEntryActive,
     isTheLastEntryActive,
     currEntry,

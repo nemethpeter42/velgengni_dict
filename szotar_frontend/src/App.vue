@@ -55,7 +55,7 @@
 <script lang="ts" setup>
   import { WritableComputedRef, computed, onMounted, ref } from 'vue'
   import { initFlowbite } from 'flowbite'
-  import { CloudArrowUpIcon, MoonIcon, SunIcon, ArrowUpOnSquareStackIcon } from '@heroicons/vue/24/solid'
+  import { MoonIcon, SunIcon, ArrowUpOnSquareStackIcon } from '@heroicons/vue/24/solid'
 import { useRoute } from 'vue-router';
 
 

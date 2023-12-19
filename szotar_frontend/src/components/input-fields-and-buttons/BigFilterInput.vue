@@ -4,7 +4,7 @@
       id="big-filter-input" 
       class="
         flex-1
-        px-3 py-2 mx-1
+        px-3 py-2 mx-1 max-w-[48rem]
         shadow-sm border block text-sm rounded-lg
         bg-gray-50 text-gray-900 border-gray-300 
         focus:ring-blue-500 focus:border-blue-500  
@@ -12,7 +12,6 @@
         dark:bg-gray-700 dark:text-white dark:border-gray-600 
         dark:focus:ring-blue-500 dark:focus:border-blue-500
       " 
-      style="max-width: 48rem;"
       placeholder="Nagy szűrő"
       :value="modelValue"
       @input="$emit('update:modelValue', ($event?.target as HTMLInputElement)?.value)"

@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { ExampleFindReq } from '../../../libs/szotar_common/src/models/ExampleFindReq.js';
 import { ExampleArrayWithBackendLimit } from "../../../libs/szotar_common/src/models/ExampleArrayWithBackendLimit.js";
 import { Example } from "../../../libs/szotar_common/src/models/Example.js";
+import { GeneratedLink } from "../../../libs/szotar_common/src/models/GeneratedLink.js";
 import { PageJumpType } from "@/frontend_models/PageJumpType.js";
 import { FilteredEntry } from "@/frontend_models/FilteredEntry.js";
 import { SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition.js";
@@ -20,6 +21,8 @@ export const useTranslationExampleStore = (id: string) => {
       filteringMode.value = val
       jumpToPage(`FIRST`)
     }
+
+    const isLoading = ref(false)
 
     const isQueryLangHighlightedSeparately = ref(true)
 
@@ -60,14 +63,15 @@ export const useTranslationExampleStore = (id: string) => {
       
     const quickSearchQueryPhrase: Ref<string> = ref(``)
 
-    const bigFilterCurrVal = ref(``)
+    const setQuickSearchQueryPhrase = (val: string) => quickSearchQueryPhrase.value = val
+
+    const bigFilterInputFieldVal = ref(``)
 
     const bigFilterLastQueryVal: Ref<string[]> = ref([])
 
-    //TODO ez gyakorlatilag egy setter a bigFilterLastQueryVal-hoz, ezert azt majd at kene irni WritableComputedRef(?)-re
     const executeBigFilterQuery = () => {
       bigFilterLastQueryVal.value = 
-        bigFilterCurrVal.value.
+        bigFilterInputFieldVal.value.
           replaceAll(/\[[^\]]*\]/g,'').
           replaceAll(/\([^)]*\)/g,'').
           replaceAll(/\{[^}]*\}/g,'').
@@ -82,7 +86,7 @@ export const useTranslationExampleStore = (id: string) => {
     }
 
     const resetBigFilter = async (val: string | undefined) => {
-      bigFilterCurrVal.value = 
+      bigFilterInputFieldVal.value = 
         (val ?? ``).
           replaceAll(/\[[^\]]*\]/g,'').
           replaceAll(/\([^)]*\)/g,'').
@@ -95,11 +99,40 @@ export const useTranslationExampleStore = (id: string) => {
 
     const exampleList: Ref<Example[]> = ref([]);
 
+    const generatedLinks: Ref<GeneratedLink[]> = ref([])
+
+    const isGeneratedLinksLoading = ref(false)
+
+    const refreshGeneratedLinks = async (lang: string, phrase: string) => {
+      generatedLinks.value = []
+      isGeneratedLinksLoading.value = true
+      try {
+        const url = `http://localhost:3035/generated_links/generate_links_for_entry?lang=${encodeURIComponent(lang)}&phrase=${encodeURIComponent(phrase)}`
+        const res = await (await fetch(url, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          method: `GET`, 
+        })).json() as GeneratedLink[];
+        generatedLinks.value = res
+        isGeneratedLinksLoading.value = false;
+      } catch(error) {
+        isGeneratedLinksLoading.value = false;
+        console.log(error);
+      }
+    }
+
+    const lastTrExampleQueryErrored = ref(false)
+
     const refreshExampleList = async (exampleFindReqParam: ExampleFindReq, isInverseSearch?: boolean) => {
+      lastTrExampleQueryErrored.value = false;
+      isLoading.value = true
       selectedIndices.value.clear();
       exampleList.value = []
       const exampleFindReq: ExampleFindReq = JSON.parse(JSON.stringify(exampleFindReqParam))
       exampleFindReq.searchInSecondParamLanguage = isInverseSearch
+      refreshGeneratedLinks(exampleFindReq.lang1, exampleFindReq.conditions.map(cnd => cnd.expression.trim()).join(` `))
       try {
         const res = await (await fetch(`http://localhost:3035/find`, {
           headers: {
@@ -111,9 +144,11 @@ export const useTranslationExampleStore = (id: string) => {
         })).json() as ExampleArrayWithBackendLimit;
         exampleList.value = res.entries;
         jumpToPage(`FIRST`)
-          
+        isLoading.value = false;
       } catch(error) {
+        isLoading.value = false;
         console.log(error);
+        lastTrExampleQueryErrored.value = true;
       }
     };
     
@@ -358,11 +393,17 @@ export const useTranslationExampleStore = (id: string) => {
     
 
     const resetSearchConditions = async(conditions: SearchCondition[]) => {
+      for (const condition of conditions) {
+        if (condition.expression){
+          condition.expression = condition.expression.split(`|`).join(``)
+        }
+      }
       exampleFindReq.value.conditions = conditions;
     }
 
 
     return {
+      isLoading,
       exampleList,
       refreshExampleList,
       jumpToPage,
@@ -380,6 +421,7 @@ export const useTranslationExampleStore = (id: string) => {
       sortAscending,
       sortCol,
       quickSearchQueryPhrase,
+      setQuickSearchQueryPhrase,
       bulkOpMenuIsOpen,
       selectedIndices,
       isAllSelected,
@@ -391,7 +433,7 @@ export const useTranslationExampleStore = (id: string) => {
       refreshLanguagePairs,
       languagePairs,
       resetSearchConditions,
-      bigFilterCurrVal,
+      bigFilterInputFieldVal,
       bigFilterLastQueryVal,
       resetBigFilter,
       finalPhrasesUsedInFiltering,
@@ -403,6 +445,9 @@ export const useTranslationExampleStore = (id: string) => {
       isQueryLangHighlightedJoined,
       isResultLangHighlited,
       filteredEntries,
+      generatedLinks,
+      isGeneratedLinksLoading,
+      lastTrExampleQueryErrored,
   }
 
 })()

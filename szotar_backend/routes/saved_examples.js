@@ -12,7 +12,7 @@ const pollInitializationStatus = async (limitInMs = 30000) => {
         timeLeftInMs -= pollInterval;
     }
     if (isInitialized === false) {
-        throw new Error(`Error: Saved translatio example db didn't initialize after ${limitInMs} ms.`);
+        throw new Error(`Error: Saved translation example db didn't initialize after ${limitInMs} ms.`);
     }
 };
 const translationExampleDbs = {};
