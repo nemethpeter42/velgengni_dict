@@ -44,6 +44,46 @@
                 }
               }"
           />
+
+        <WordListPrevNextButton 
+          text="a" 
+          id="extraPrioImportantBtn"
+          @click=" 
+            async () => 
+              {
+                wordListStore.prioImportantWords.push(wordListStore.currentIdx)
+                if(!wordListStore.isTheLastEntryActive){
+                  wordListStore.setCurrentIdx(wordListStore.currentIdx+1);
+                }
+              }"
+          />
+
+        <WordListPrevNextButton 
+          text="." 
+          id="extraPrioAverageBtn"
+          @click=" 
+            async () => 
+              {
+                wordListStore.prioAverageWords.push(wordListStore.currentIdx)
+                if(!wordListStore.isTheLastEntryActive){
+                  wordListStore.setCurrentIdx(wordListStore.currentIdx+1);
+                }
+              }"
+          />
+
+        <WordListPrevNextButton 
+          text="n" 
+          id="extraPrioRareBtn"
+          @click=" 
+            async () => 
+              {
+                wordListStore.prioRareWords.push(wordListStore.currentIdx)
+                if(!wordListStore.isTheLastEntryActive){
+                  wordListStore.setCurrentIdx(wordListStore.currentIdx+1);
+                }
+              }"
+          />
+
         <WordListPrevNextButton 
           text="Szóválasztó" 
           id="wordListModalOpenBtn"
@@ -206,7 +246,9 @@
   import WordListPrevNextButton from '@/components/input-fields-and-buttons/WordListPrevNextButton.vue';
   import FilteringModeOption from '@/components/input-fields-and-buttons/FilteringModeOption.vue';
   import HighlightModeOption from '@/components/input-fields-and-buttons/HighlightModeOption.vue';
-import LanguagePairDropdown from '@/components/input-fields-and-buttons/LanguagePairDropdown.vue';
+  import LanguagePairDropdown from '@/components/input-fields-and-buttons/LanguagePairDropdown.vue';
+
+  const prioButtonsEnabled = ref(true)
   const props = defineProps({  
       storeId: {type: String, required: true,},
   })

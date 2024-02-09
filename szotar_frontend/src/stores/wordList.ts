@@ -13,6 +13,10 @@ export const useWordListStore = defineStore('wordList', () => {
 
   const currentIdx: Ref<number> = ref(-1)
 
+  const prioImportantWords: Ref<number[]> = ref([]);
+  const prioAverageWords: Ref<number[]> = ref([]);
+  const prioRareWords: Ref<number[]> = ref([]);
+
   const currEntry: ComputedRef<string[]> = computed(() => {
       return wordList.value[currentIdx.value] ?? []
   })
@@ -151,7 +155,7 @@ export const useWordListStore = defineStore('wordList', () => {
 
   const resultsPerPageOptions: Ref<number[]> = ref([15,30,50,100,]);
 
-  const resultsPerPage: Ref<number> = ref(15);
+  const resultsPerPage: Ref<number> = ref(100);
 
   const setResultsPerPage = async (num: number) => resultsPerPage.value = num;
 
@@ -276,5 +280,8 @@ export const useWordListStore = defineStore('wordList', () => {
     lang1PhrasesWithoutParentheses,
     lang2Phrases,
     lang2PhrasesRaw,
+    prioAverageWords,
+    prioImportantWords,
+    prioRareWords,
   }
 });

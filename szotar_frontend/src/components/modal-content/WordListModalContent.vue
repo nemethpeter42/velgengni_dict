@@ -25,6 +25,9 @@
             :idx="idx"
             @wordSelected="(idx: number) => {store.setCurrentIdx(idx); $emit(`close`)}"
             />
+          <span class="text-red-400" v-if="store.prioImportantWords.includes(idx)"><b>(a)</b></span>
+          <span class="text-red-400" v-if="store.prioAverageWords.includes(idx)"><b>(.)</b></span>
+          <span class="text-red-400" v-if="store.prioRareWords.includes(idx)"><b>(n)</b></span>
         </template>
       </DatatableBody>
     </table>

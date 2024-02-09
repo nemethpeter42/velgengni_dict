@@ -58,7 +58,7 @@ export const useTranslationExampleStore = (id: string) => {
       conditions: [],
       lang1: ``,
       lang2: ``,
-      resultLimit: 3000,
+      resultLimit: 10000,
     } as ExampleFindReq) 
       
     const quickSearchQueryPhrase: Ref<string> = ref(``)
@@ -200,7 +200,7 @@ export const useTranslationExampleStore = (id: string) => {
 
     const resultsPerPageOptions: Ref<number[]> = ref([25,50,75,100,200,500]);
 
-    const resultsPerPage: Ref<number> = ref(75);
+    const resultsPerPage: Ref<number> = ref(500);
 
     const setResultsPerPage = async (num: number) => resultsPerPage.value = num;
 

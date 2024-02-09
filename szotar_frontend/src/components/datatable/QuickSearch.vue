@@ -17,12 +17,12 @@
         "
         placeholder="Gyorskeresés"
         :value="modelValue"
-        @input="$emit('update:modelValue', ($event?.target as HTMLInputElement)?.value)"
+        @input="emitWithDebounce(($event?.target as HTMLInputElement)?.value)"
         >
       <div class="absolute inset-y-0 right-0 flex items-center pl-3.5">
         
         <button 
-          @click="$emit('update:modelValue',``)"
+          @click="emitWithDebounce(``)"
           type="button" 
           class="
             px-1.5 py-1.5 mr-1
@@ -41,7 +41,14 @@
 
 <script lang="ts" setup>
   import { MagnifyingGlassIcon, TrashIcon, } from '@heroicons/vue/24/solid'
-  defineEmits(['update:modelValue']);
+  const emit = defineEmits(['update:modelValue']);
+  let timeout
+  const emitWithDebounce = (val: string) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      emit('update:modelValue',val)
+    }, 800);
+  }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const props = defineProps({
     modelValue: {type: String, required: true,},
