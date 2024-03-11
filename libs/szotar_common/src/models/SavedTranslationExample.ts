@@ -1,5 +1,7 @@
 import { Example } from "./Example.js";
 
 export type SavedTranslationExample = Example & {
-	dictEntryUuid: string,
+	dictEntryUuid: string;
+	uuid: string;
+	isLowPriority?: boolean;
 }

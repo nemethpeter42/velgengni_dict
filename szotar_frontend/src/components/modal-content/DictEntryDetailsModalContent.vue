@@ -57,6 +57,8 @@
         <TrExampleDatatable 
           :storeId="TrExampleStoreType.DICT_MODAL" 
           :wordListStoreDisabled="true"
+          :addExistingButtonVisible="true"
+          @addExistingExample="val => addExistingExample(val)"
           />
       </div>
     </div>
@@ -71,7 +73,22 @@
   import TrExampleDatatable from '../datatable/TrExampleDatatable.vue';
   import StandaloneTrExampleFilterPanel from '../datatable/filter-panel/StandaloneTrExampleFilterPanel.vue';
   import ModalTrExampleFilterPanel from '../datatable/filter-panel/ModalTrExampleFilterPanel.vue';
+  import { Example } from '../../../../libs/szotar_common/src/models/Example';
+  import { useSavedTrExampleStore } from '@/stores/savedTrExample';
+import { SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
   const store = useDictStore()
+  const savedTrExampleStore = useSavedTrExampleStore()
   
-  
+  const addExistingExample = async (example: Example) => {
+    const dictName = store.dictNameUsedInLastQuery;
+    await savedTrExampleStore.create(
+      dictName,
+      {
+        ...example,
+        uuid: ``,
+        dictEntryUuid: store.currentUuid,
+        isLowPriority: false,
+      } as SavedTranslationExample
+    );
+  }
 </script>

@@ -60,8 +60,23 @@ export const useDictStore = defineStore('dict', () => {
 
   const currentIdx = ref(-1)
 
+  const currentUuid = computed(() => {
+    if (
+      Array.isArray(filteredEntries.value) && 
+      currentIdx.value !== -1 && 
+      currDict.value?.meta?.idCol 
+    ){
+      return filteredEntries.value[currentIdx.value].val[currDict.value.meta.idCol]
+    } else {
+      return ``
+    }
+  })
+
   const entryInTrExampleModalFormat: ComputedRef<string[]> = computed(()=>{
-    if (Array.isArray(filteredEntries.value) && currentIdx.value !== -1 ){
+    if (
+      Array.isArray(filteredEntries.value) && 
+      currentIdx.value !== -1 
+    ){
       const entry = filteredEntries.value[currentIdx.value]
       const originalCol = currDict.value.meta.originalCol
       const res = currDictColsAsSortedArray.value.
@@ -450,6 +465,6 @@ export const useDictStore = defineStore('dict', () => {
     setIsAllQuickAccessBtnVisible,
     entryInTrExampleModalFormat,
     currDict,
-
+    currentUuid,
   }
 })

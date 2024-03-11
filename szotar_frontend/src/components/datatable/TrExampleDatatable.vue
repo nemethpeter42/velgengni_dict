@@ -51,6 +51,10 @@
           @toggleRowSelection="(idx: number,$event: Event) => toggleRowSelection(idx,$event)"
         >
           <template #rowLevelButtons="{idx,}">
+            <AddExistingExampleButton 
+              v-if="props.addExistingButtonVisible"
+              @click= "$emit(`addExistingExample`, trExampleStore.exampleList[idx])"
+            />
             <span 
               class="ml-3 w-10"
               >
@@ -101,10 +105,12 @@ import { useWordListStore } from '@/stores/wordList';
 import TrExampleStats from './TrExampleStats.vue';
 import { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';
 import DtSpinner from './DtSpinner.vue';
+import AddExistingExampleButton from '../input-fields-and-buttons/AddExistingExampleButton.vue';
 
 const props = defineProps({  
     storeId: {type: String, required: true,},
     wordListStoreDisabled: {type: Boolean, required: false,},
+    addExistingButtonVisible: {type: Boolean, reqired: false,},
 })
 
 const trExampleStore = useTranslationExampleStore(props.storeId)

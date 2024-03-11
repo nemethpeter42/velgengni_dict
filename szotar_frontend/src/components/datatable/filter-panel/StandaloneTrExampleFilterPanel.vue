@@ -48,6 +48,7 @@
         <WordListPrevNextButton 
           text="a" 
           id="extraPrioImportantBtn"
+          v-if="prioButtonsEnabled"
           @click=" 
             async () => 
               {
@@ -61,6 +62,7 @@
         <WordListPrevNextButton 
           text="." 
           id="extraPrioAverageBtn"
+          v-if="prioButtonsEnabled"
           @click=" 
             async () => 
               {
@@ -74,6 +76,7 @@
         <WordListPrevNextButton 
           text="n" 
           id="extraPrioRareBtn"
+          v-if="prioButtonsEnabled"
           @click=" 
             async () => 
               {
@@ -194,16 +197,20 @@
   </div>
 
  
-  <div v-if="isWordListModalShown">
-      <div class="bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40"></div>
+  <div v-if="modalStore.openModals.has(`WORD_LIST`)">
+    <Teleport to="body">
+      <div class="bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-[120]"></div>
       <div 
         id="wordListModal"  
         data-backdrop-for="wordListModal"
         @click="$event => wordListModalBackdrop($event)"
         tabindex="-1" 
         aria-hidden="true" 
-        :class="{flex: isWordListModalShown, hidden: !isWordListModalShown,}" 
-        class="fixed top-0 left-0 right-0 z-50 w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center"
+        :class="{
+          flex: modalStore.openModals.has(`WORD_LIST`), 
+          hidden: !modalStore.openModals.has(`WORD_LIST`),
+        }" 
+        class="fixed top-0 left-0 right-0 z-[130] w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center"
         >
         <div class="relative w-full max-w-5xl max-h-full">
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -226,7 +233,8 @@
           </div>
         </div>
       </div>
-    </div>
+    </Teleport>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -247,22 +255,23 @@
   import FilteringModeOption from '@/components/input-fields-and-buttons/FilteringModeOption.vue';
   import HighlightModeOption from '@/components/input-fields-and-buttons/HighlightModeOption.vue';
   import LanguagePairDropdown from '@/components/input-fields-and-buttons/LanguagePairDropdown.vue';
+import { useModalStore } from '@/stores/modal';
 
-  const prioButtonsEnabled = ref(true)
+  const prioButtonsEnabled = ref(false)
   const props = defineProps({  
       storeId: {type: String, required: true,},
   })
 
   const wordListStore = useWordListStore()
   const trExampleStore = useTranslationExampleStore(props.storeId)
+  const modalStore = useModalStore();
   
-  const isWordListModalShown = ref(false)
   function closeWordListModal() {
-    isWordListModalShown.value = false
+    modalStore.openModals.delete(`WORD_LIST`)
   }
 
   function showWordListModal() {
-    isWordListModalShown.value = true
+    modalStore.openModals.add(`WORD_LIST`)
   }
   
   function wordListModalBackdrop($event: any) {
@@ -271,7 +280,7 @@
         [...$event?.originalTarget?.attributes]?.
           map(e=>({name: e.name, value: e.value})) as {name: string, value: string}[];
       if (attributes.filter(e=>e.name===`data-backdrop-for`,`wordListModal`).length > 0) {
-        isWordListModalShown.value = false
+        modalStore.openModals.delete(`WORD_LIST`)
       }
       $event.stopPropagation();
     } catch(e) {

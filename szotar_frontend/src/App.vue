@@ -1,64 +1,74 @@
 <template>
-<div class="bg-cyan-50 dark:bg-indigo-950 min-h-screen">
-  <button 
-    title="Save modifications"
-      class="
-      fixed z-90 top-1 left-5 w-9 h-9 rounded-full drop-shadow-lg 
-      flex justify-center items-center text-2xl 
-      hover:drop-shadow-2xl "
-      :class="
-        todoIsDirty ? 
-        `text-white bg-red-700 hover:bg-red-800` : 
-        `text-white bg-blue-700 hover:bg-blue-800`"
-      ><ArrowUpOnSquareStackIcon class="h-6 w-6" /></button>
-  <nav class="m-auto text-center">
-    <router-link 
-      class="font-bold" 
-      :class="route.name===`home` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
-      to="/"
-      >Home
-    </router-link> |
-    <router-link 
-      class="font-bold" 
-      :class="route.name===`examples` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
-      to="/examples"
-      >Examples
-    </router-link> |
-    <router-link 
-      class="font-bold" 
-      :class="route.name===`about` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
-      to="/about"
-      >Sandbox
-    </router-link>
-    <button 
-      id="theme-toggle" 
-      type="button" 
-      @click="darkMode = !darkMode"
-      class="
-        ml-2 border-4 rounded-lg text-sm px-1.5 py-1.5
-        text-gray-500 border-gray-200 
-        hover:bg-gray-100 
-        focus:outline-none focus:ring-4 focus:ring-gray-200 
-        dark:text-gray-400 dark:border-gray-600 
-        dark:hover:bg-gray-700 
-        dark:focus:ring-gray-700">
-      <MoonIcon class="w-5 h-5" :class="{'hidden':!darkMode,}"></MoonIcon>
-      <SunIcon class="w-5 h-5" :class="{'hidden':darkMode,}"></SunIcon>
-    </button>
+  <div 
+    class="
+      main-content
+      h-screen w-screen p-1
+      bg-cyan-50 
+      dark:bg-indigo-950
+    "
+    :class="{
+      [`
+        overflow-hidden
+      `]: modalStore.openModals.size > 0,
+      [`
+        overflow-auto
+      `]: !(modalStore.openModals.size > 0),
+    }">
+      
+    <div class="max-w-[105rem] m-auto">
+      <FloatingActionButtons />
+      
+      <nav class="m-auto text-center">
+        <router-link 
+          class="font-bold" 
+          :class="route.name===`home` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
+          to="/"
+          >Home
+        </router-link> |
+        <router-link 
+          class="font-bold" 
+          :class="route.name===`examples` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
+          to="/examples"
+          >Examples
+        </router-link> |
+        <router-link 
+          class="font-bold" 
+          :class="route.name===`about` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
+          to="/about"
+          >Sandbox
+        </router-link>
+        <button 
+          id="theme-toggle" 
+          type="button" 
+          @click="darkMode = !darkMode"
+          class="
+            ml-2 border-4 rounded-lg text-sm px-1.5 py-1.5
+            text-gray-500 border-gray-200 
+            hover:bg-gray-100 
+            focus:outline-none focus:ring-4 focus:ring-gray-200 
+            dark:text-gray-400 dark:border-gray-600 
+            dark:hover:bg-gray-700 
+            dark:focus:ring-gray-700">
+          <MoonIcon class="w-5 h-5" :class="{'hidden':!darkMode,}"></MoonIcon>
+          <SunIcon class="w-5 h-5" :class="{'hidden':darkMode,}"></SunIcon>
+        </button>
 
-   
-  </nav>
-  <router-view />
-</div>
+      
+      </nav>
+      <router-view />
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
   import { WritableComputedRef, computed, onMounted, ref } from 'vue'
   import { initFlowbite } from 'flowbite'
-  import { MoonIcon, SunIcon, ArrowUpOnSquareStackIcon } from '@heroicons/vue/24/solid'
-import { useRoute } from 'vue-router';
+  import { MoonIcon, SunIcon } from '@heroicons/vue/24/solid'
+  import { useRoute } from 'vue-router';
+  import { useModalStore } from './stores/modal';
+  import FloatingActionButtons from './components/input-fields-and-buttons/FloatingActionButtons.vue';
 
-
+  const modalStore = useModalStore();
   const darkModeRef = ref(false)
 
   const darkMode: WritableComputedRef<boolean> = computed({
@@ -89,17 +99,25 @@ import { useRoute } from 'vue-router';
 
   const route = useRoute()
 
-  const todoIsDirty = ref()
 
 </script>
 
 <style lang="scss">
 
 #app {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+
+}
+body{
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
 }
 
 </style>

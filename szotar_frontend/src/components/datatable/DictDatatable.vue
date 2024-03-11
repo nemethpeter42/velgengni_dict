@@ -75,16 +75,20 @@
       </nav>
     </div>
     
-    <div v-if="isDetailsModalShown">
-      <div class="bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40"></div>
+    <div v-if="modalStore.openModals.has(`DICT_ENTRY_DETAILS`)">
+      <Teleport to="body">
+      <div class="bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-[120]"></div>
       <div 
         id="detailsModal"  
         data-backdrop-for="detailsModal"
         @click="$event => detailsModalBackdrop($event)"
         tabindex="-1" 
         aria-hidden="true" 
-        :class="{flex: isDetailsModalShown, hidden: !isDetailsModalShown,}" 
-        class="fixed top-0 left-0 right-0 z-50 w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center"
+        :class="{
+          flex: modalStore.openModals.has(`DICT_ENTRY_DETAILS`), 
+          hidden: !modalStore.openModals.has(`DICT_ENTRY_DETAILS`),
+        }" 
+        class="fixed top-0 left-0 right-0 z-[130] w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center"
         >
         <div class="relative w-full max-w-7xl max-h-full">
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -104,18 +108,23 @@
           </div>
         </div>
       </div>
+      </Teleport>
     </div>
-
-    <div v-if="isConfigModalShown">
-      <div class="bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40"></div>
+    
+    <div v-if="modalStore.openModals.has(`DICT_CONFIG`)">
+      <Teleport to="body">
+      <div class="bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-[120]"></div>
       <div 
         id="configModal"  
         data-backdrop-for="configModal"
         @click="$event => configModalBackdrop($event)"
         tabindex="-1" 
         aria-hidden="true" 
-        :class="{flex: isConfigModalShown, hidden: !isConfigModalShown,}" 
-        class="fixed top-0 left-0 right-0 z-50 w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center"
+        :class="{
+          flex: modalStore.openModals.has(`DICT_CONFIG`), 
+          hidden: !modalStore.openModals.has(`DICT_CONFIG`),
+        }" 
+        class="fixed top-0 left-0 right-0 z-[130] w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center"
         >
         <div class="relative w-full max-w-5xl max-h-full">
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -141,8 +150,8 @@
           </div>
         </div>
       </div>
+      </Teleport>
     </div>
-
 
   </div>
 </template>
@@ -161,6 +170,7 @@ import ShowConfigModalButton from '../input-fields-and-buttons/ShowConfigModalBu
 import ShowDetailsModalButton from '../input-fields-and-buttons/ShowDetailsModalButton.vue';
 import DatatableBody from './DatatableBody.vue';
 import DictEntryDetailsModalContent from '../modal-content/DictEntryDetailsModalContent.vue';
+import { useModalStore } from '@/stores/modal';
 
 const store = useDictStore()
 
@@ -182,23 +192,20 @@ const toggleRowSelection = (index: number, $event: Event) => {
 // mert a flowbyte-vue komponense annyira rossz volt 
 // (ablkmeret-csokkentesnel tulfut), 
 // hogy helyette ide kiteritettem
-
-const isDetailsModalShown = ref(false)
+const  modalStore = useModalStore();
 function closeDetailsModal() {
-  isDetailsModalShown.value = false
+  modalStore.openModals.delete(`DICT_ENTRY_DETAILS`)
 }
 function showDetailsModal(idx: number) {
-  console.log(`TODO showDetailsModal ${idx}`)
   store.setCurrentIdx(idx)
-  isDetailsModalShown.value = true
+  modalStore.openModals.add(`DICT_ENTRY_DETAILS`)
 }
 
-const isConfigModalShown = ref(false)
 function closeConfigModal() {
-  isConfigModalShown.value = false
+  modalStore.openModals.delete(`DICT_CONFIG`)
 }
 function showConfigModal() {
-  isConfigModalShown.value = true
+  modalStore.openModals.add(`DICT_CONFIG`)
 }
 
 function detailsModalBackdrop($event: any) {
@@ -207,7 +214,7 @@ function detailsModalBackdrop($event: any) {
       [...$event?.originalTarget?.attributes]?.
         map(e=>({name: e.name, value: e.value})) as {name: string, value: string}[];
     if (attributes.filter(e=>e.name===`data-backdrop-for`,`detailsModal`).length > 0) {
-      isDetailsModalShown.value = false
+      modalStore.openModals.delete(`DICT_ENTRY_DETAILS`)
     }
     $event.stopPropagation();
   } catch(e) {
@@ -224,7 +231,7 @@ function configModalBackdrop($event: any) {
       [...$event?.originalTarget?.attributes]?.
         map(e=>({name: e.name, value: e.value})) as {name: string, value: string}[];
     if (attributes.filter(e=>e.name===`data-backdrop-for`,`configModal`).length > 0) {
-      isConfigModalShown.value = false
+      modalStore.openModals.delete(`DICT_CONFIG`)
     }
     $event.stopPropagation();
   } catch(e) {
