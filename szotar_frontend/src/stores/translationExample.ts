@@ -105,6 +105,8 @@ export const useTranslationExampleStore = (id: string) => {
 
     const refreshGeneratedLinks = async (lang: string, phrase: string) => {
       generatedLinks.value = []
+      //quick bugfix for "setCurrentIdx(-1)" case
+      if (phrase.trim() ===``) {return;}
       isGeneratedLinksLoading.value = true
       try {
         const url = `http://localhost:3035/generated_links/generate_links_for_entry?lang=${encodeURIComponent(lang)}&phrase=${encodeURIComponent(phrase)}`
@@ -285,20 +287,19 @@ export const useTranslationExampleStore = (id: string) => {
 
     const filteredEntries = computed(() => {
         let res
+        res = exampleList.value?.map(
+          (e,i)=>
+            ({
+              idx:i,
+              val:{'example': `${e.original.split(`\t`).join(` `)}\t${e.translated.split(`\t`).join(` `)}`,},
+            })
+        );
         if (
             quickSearchQueryPhrase.value.trim() !== `` ||
             [`FILTER`, `INVERSE_FILTER`].includes(filteringMode.value) && 
             bigFilterLastQueryVal.value.length > 0
           ) {
-            res = exampleList.value?.
-              map(
-                (e,i)=>
-                  ({
-                    idx:i,
-                    val:{'example': `${e.original.split(`\t`).join(` `)}\t${e.translated.split(`\t`).join(` `)}`,},
-                  })
-              ).
-              filter(e=>
+            res = res.filter(e=>
                 [`FILTER`, `INVERSE_FILTER`].includes(filteringMode.value) ?
                 (filteringMode.value===`INVERSE_FILTER`) !==
                 !!bigFilterLastQueryVal.value.
@@ -314,7 +315,7 @@ export const useTranslationExampleStore = (id: string) => {
                 e=> 
                   !([`FILTER`, `INVERSE_FILTER`].includes(filteringMode.value) && quickSearchQueryPhrase.value.trim() === ``) ?
                   finalPhrasesUsedInFiltering.value.
-                  map(e => [e,e.replaceAll(/a$/gi,`á`).replaceAll(/e$/gi,`é`)]).flat().
+                  //map(e => [e,e.replaceAll(/a$/gi,`á`).replaceAll(/e$/gi,`é`)]).flat().
                   some( 
                       phrase =>
                           (e.val?.example?.toLowerCase() ?? ``).
@@ -322,15 +323,7 @@ export const useTranslationExampleStore = (id: string) => {
                   ):
                   true
               );
-        } else {
-            res = exampleList.value?.map(
-              (e,i)=>
-                ({
-                  idx:i,
-                  val:{'example': `${e.original.split(`\t`).join(` `)}\t${e.translated.split(`\t`).join(` `)}`,},
-                })
-            );
-        }
+        } 
         const typeSafeResult = res ?? []
         const sortedResult = 
             sortCol.value!==`` ? 

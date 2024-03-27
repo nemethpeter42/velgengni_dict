@@ -9,6 +9,7 @@ import { useTranslationExampleStore } from "./translationExample";
 import { TrExampleStoreType } from "@/frontend_models/TrExampleStoreTypes";
 import { ColumnDefinitionArrayForm } from "@/frontend_models/ColumnDefinitionArrayForm.js";
 import { SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition.js";
+import { useSavedTrExampleStore } from "./savedTrExample";
 
 export const useDictStore = defineStore('dict', () => {
   //const entries: Ref<Record<string, string>[]> = ref([]);
@@ -22,6 +23,8 @@ export const useDictStore = defineStore('dict', () => {
   */
   
   const trExampleStore = useTranslationExampleStore(TrExampleStoreType.DICT_MODAL)
+
+  const savedTrExStore = useSavedTrExampleStore()
 
   const dictNameOnForm = ref(``)
   
@@ -140,6 +143,20 @@ export const useDictStore = defineStore('dict', () => {
 
 
   const setCurrentIdx = async (idx: number) => {
+    savedTrExStore.newElemEditor = {
+      isLoading: false,
+      original: ``,
+      translated: ``,
+      isLowPriority: false,
+      visible: false,
+    };
+    savedTrExStore.existingElemEditor = {
+      uuid: ``,
+      original: ``,
+      translated: ``,
+      isLowPriority: false,
+      isLoading: false,
+    }
     currentIdx.value = idx;
     isAllQuickAccessBtnVisible.value = false;
     await trExampleStore.resetBigFilter(lang2PhrasesRaw.value.join(`; `));
@@ -147,8 +164,8 @@ export const useDictStore = defineStore('dict', () => {
     const conditions = words.map(
       expression => ({
         expression, 
-        onlyWithSpaceDotOrCommaSuffix: false,//TODO config fuggo
-        onlyWithSpacePrefix: false, //TODO config fuggo
+        onlyWithSpaceDotOrCommaSuffix: false,//TODO provided by config
+        onlyWithSpacePrefix: false, //TODO provided by config
       } as SearchCondition)
     )
     await trExampleStore.resetSearchConditions(conditions)

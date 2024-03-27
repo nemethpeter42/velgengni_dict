@@ -53,7 +53,7 @@
           <template #rowLevelButtons="{idx,}">
             <AddExistingExampleButton 
               v-if="props.addExistingButtonVisible"
-              @click= "$emit(`addExistingExample`, trExampleStore.exampleList[idx])"
+              @click= "$emit(`createSavedTrExample`, trExampleStore.exampleList[idx])"
             />
             <span 
               class="ml-3 w-10"

@@ -88,9 +88,9 @@
           flex: modalStore.openModals.has(`DICT_ENTRY_DETAILS`), 
           hidden: !modalStore.openModals.has(`DICT_ENTRY_DETAILS`),
         }" 
-        class="fixed top-0 left-0 right-0 z-[130] w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center"
+        class="fixed top-0 left-0 right-0 z-[130] w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-start"
         >
-        <div class="relative w-full max-w-7xl max-h-full">
+        <div class="relative w-full max-w-7xl max-h-full overflow-x-auto">
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <div class="p-6 space-y-6">
               <DictEntryDetailsModalContent />
@@ -126,7 +126,7 @@
         }" 
         class="fixed top-0 left-0 right-0 z-[130] w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center"
         >
-        <div class="relative w-full max-w-5xl max-h-full">
+        <div class="relative w-full max-w-5xl max-h-full overflow-x-auto">
           <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
               <div class="flex items-center text-lg text-gray-700 dark:text-gray-300">

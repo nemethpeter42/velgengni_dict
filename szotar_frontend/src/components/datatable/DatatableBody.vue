@@ -1,11 +1,12 @@
 <template>
   <tbody>
-    <tr
+    <template
       v-for="(item, rowIndex) in (props.onePageOfEntries as FilteredEntry[])" 
-      v-bind:key="item.idx" 
+      v-bind:key="item.idx"
+    >
+    <tr 
       class="
         border-b
-        
       "
       :class="{
         [`
@@ -73,6 +74,9 @@
         
       </td>
     </tr>
+    
+    <slot name="detailRow" :idx="item.idx" :sortedIdx="item.sortedIdx" :preferredColspan="props.columnDefinitions.length + 2"></slot>
+    </template>
   </tbody>
 </template>
 

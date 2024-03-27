@@ -1,7 +1,7 @@
 <template>
   <div class="text-sm font-medium text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
     <div>
-      <div class="text-gray-800 dark:text-gray-200 font-bold text-lg mb-4 mx-2">
+      <div class="text-gray-800 dark:text-gray-200 font-bold text-lg mb-4 mx-2 min-h-[3.5rem]">
         {{store.entryInTrExampleModalFormat?.join(`; `) ?? ``}}
       </div>
     </div>
@@ -55,12 +55,16 @@
       </div>
       <div class="max-w-5xl mx-auto pt-2 pb-3">
         <TrExampleDatatable 
-          :storeId="TrExampleStoreType.DICT_MODAL" 
-          :wordListStoreDisabled="true"
-          :addExistingButtonVisible="true"
-          @addExistingExample="val => addExistingExample(val)"
-          />
+        :storeId="TrExampleStoreType.DICT_MODAL" 
+        :wordListStoreDisabled="true"
+        :addExistingButtonVisible="true"
+        @createSavedTrExample="val => createSavedTrExample(val)"
+        />
       </div>
+    </div>
+    <div v-if="store.entryDetailsActiveTab === 3">
+      <NewSavedExampleEditor />
+      <SavedTrExampleDatatable />
     </div>
   </div>
 </template>
@@ -75,11 +79,13 @@
   import ModalTrExampleFilterPanel from '../datatable/filter-panel/ModalTrExampleFilterPanel.vue';
   import { Example } from '../../../../libs/szotar_common/src/models/Example';
   import { useSavedTrExampleStore } from '@/stores/savedTrExample';
+import SavedTrExampleDatatable from '../datatable/SavedTrExampleDatatable.vue';
 import { SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
+import NewSavedExampleEditor from '../input-fields-and-buttons/NewSavedExampleEditor.vue';
   const store = useDictStore()
   const savedTrExampleStore = useSavedTrExampleStore()
   
-  const addExistingExample = async (example: Example) => {
+  const createSavedTrExample = async (example: Example) => {
     const dictName = store.dictNameUsedInLastQuery;
     await savedTrExampleStore.create(
       dictName,

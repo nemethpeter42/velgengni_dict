@@ -1,4 +1,5 @@
 import express from 'express';
+import { move } from '../../libs/szotar_common/src/helpers/move.js';
 import * as uuidGenerator from "uuid";
 import * as fsPromises from 'fs/promises';
 let isInitialized = false;
@@ -77,6 +78,37 @@ router.post('/create', async (req, res) => {
         }
     }
 });
+router.post('/move', async (req, res) => {
+    try {
+        await pollInitializationStatus();
+        const reqBody = req.body;
+        if (reqBody && reqBody.dictName && [`UP`, `DOWN`].includes(reqBody.direction ?? ``)) {
+            if (!translationExampleDbs[reqBody.dictName]) {
+                throw Error(`Saved translation example db for "${reqBody.dictName}" doesn't exist`);
+            }
+            if (reqBody?.uuid) {
+                translationExampleDbs[reqBody.dictName] = move(translationExampleDbs[reqBody.dictName], reqBody.direction, reqBody?.uuid);
+                res.send(200);
+                return;
+            }
+            else {
+                throw Error(`Saved translation example not found.`);
+            }
+        }
+        else {
+            throw Error(`Request body is in incorrect format.`);
+        }
+    }
+    catch (error) {
+        console.error(error);
+        if (error instanceof Error) {
+            res.status(400).send(error);
+        }
+        else {
+            res.status(400).send(error);
+        }
+    }
+});
 router.put('/update', async (req, res) => {
     try {
         await pollInitializationStatus();
@@ -113,11 +145,11 @@ router.put('/update', async (req, res) => {
 router.delete('/delete', async (req, res) => {
     try {
         await pollInitializationStatus();
-        const reqParams = req.query;
-        const uuid = reqParams?.uuid ?? ``;
-        const dictName = reqParams?.dictName ?? ``;
+        const reqBody = req.body;
+        const uuid = reqBody?.uuid ?? ``;
+        const dictName = reqBody?.dictName ?? ``;
         if (translationExampleDbs[dictName]) {
-            translationExampleDbs[dictName] = translationExampleDbs[dictName].filter(e => e.uuid === uuid);
+            translationExampleDbs[dictName] = translationExampleDbs[dictName].filter(e => e.uuid !== uuid);
         }
         else {
             res.status(400).send(`Saved translation example db for "${dictName}" doesn't exist`);
