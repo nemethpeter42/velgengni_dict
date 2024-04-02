@@ -128,8 +128,8 @@
   import SearchConditionEditor from '@/components/input-fields-and-buttons/SearchConditionEditor.vue';
   import GeneratedQuickAccessBtnList from '@/components/input-fields-and-buttons/GeneratedQuickAccessBtnList.vue';
   import BigFilterInput from '@/components/input-fields-and-buttons/BigFilterInput.vue';
-  import { QuickAccessSelectionResult } from '@/frontend_models/QuickAccessSelectionResult';
-  import { SearchCondition } from '../../../../../libs/szotar_common/src/models/SearchCondition';
+  import { type QuickAccessSelectionResult } from '@/frontend_models/QuickAccessSelectionResult';
+  import { type SearchCondition } from '../../../../../libs/szotar_common/src/models/SearchCondition';
   import ExampleSearchAltLangButton from '@/components/input-fields-and-buttons/ExampleSearchAltLangButton.vue';
   import FilteringModeOption from '@/components/input-fields-and-buttons/FilteringModeOption.vue';
   import HighlightModeOption from '@/components/input-fields-and-buttons/HighlightModeOption.vue';

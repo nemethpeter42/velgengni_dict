@@ -118,7 +118,7 @@
 </template>
 
 <script lang="ts" setup>
-    defineEmits(['update:modelValue']);
+    defineEmits(['update:modelValue', `jumpToPage`]);
     
     const props = defineProps({
         modelValue: {type: String, required: true,},

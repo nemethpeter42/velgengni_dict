@@ -42,7 +42,7 @@
 <script lang="ts" setup>
   import { MagnifyingGlassIcon, TrashIcon, } from '@heroicons/vue/24/solid'
   const emit = defineEmits(['update:modelValue']);
-  let timeout
+  let timeout: NodeJS.Timeout | undefined
   const emitWithDebounce = (val: string) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => {

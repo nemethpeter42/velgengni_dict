@@ -1,9 +1,9 @@
-import { ComputedRef, Ref, ShallowReactive, ShallowRef, WritableComputedRef, computed, reactive, ref } from "vue"
+import { type ComputedRef, type Ref, type ShallowReactive, type ShallowRef, type WritableComputedRef, computed, reactive, ref } from "vue"
 import { defineStore } from 'pinia'
-import { PageJumpType } from "@/frontend_models/PageJumpType.js";
-import { FilteredEntry } from "@/frontend_models/FilteredEntry.js";
+import { type PageJumpType } from "@/frontend_models/PageJumpType.js";
+import { type FilteredEntry } from "@/frontend_models/FilteredEntry.js";
 import { useTranslationExampleStore } from "./translationExample";
-import { SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition";
+import { type SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition";
 import { TrExampleStoreType } from "@/frontend_models/TrExampleStoreTypes";
 
 export const useWordListStore = defineStore('wordList', () => {

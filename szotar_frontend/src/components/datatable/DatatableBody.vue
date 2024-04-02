@@ -1,26 +1,23 @@
 <template>
   <tbody>
     <template
-      v-for="(item, rowIndex) in (props.onePageOfEntries as FilteredEntry[])" 
+      v-for="(item, idxOnCurrPage) in (props.onePageOfEntries as FilteredEntry[])" 
       v-bind:key="item.idx"
     >
     <tr 
-      class="
-        border-b
-      "
       :class="{
         [`
           bg-gray-100 
           hover:bg-gray-300
           dark:bg-gray-800 dark:border-gray-600 
           dark:hover:bg-gray-600
-        `]: rowIndex % 2 === 0,
+        `]: idxOnCurrPage % 2 === 0,
         [`
           bg-gray-200
           hover:bg-gray-300
           dark:bg-gray-700 dark:border-gray-700 
           dark:hover:bg-gray-600
-        `]: rowIndex % 2 !== 0,
+        `]: idxOnCurrPage % 2 !== 0,
         }"
       >
       <td class="w-4 pl-4 pr-2 py-1.5">
@@ -36,7 +33,7 @@
               dark:ring-offset-gray-700 dark:bg-gray-600 dark:border-gray-500
               dark:focus:ring-fuchsia-600 dark:focus:ring-offset-gray-700
             ">
-            <slot name="rowLevelButtons" :idx="item.idx" :sortedIdx="item.sortedIdx"></slot>
+            <slot name="rowLevelButtons" :idx="item.idx" :sortedIdx="item.sortedIdx" :idxOnCurrPage="idxOnCurrPage"></slot>
           <label for="select-row-checkbox" class="sr-only">Sor kiválasztása</label>
         </div>
       </td>
@@ -75,7 +72,13 @@
       </td>
     </tr>
     
-    <slot name="detailRow" :idx="item.idx" :sortedIdx="item.sortedIdx" :preferredColspan="props.columnDefinitions.length + 2"></slot>
+    <slot 
+      name="detailRow" 
+      :idx="item.idx" 
+      :sortedIdx="item.sortedIdx" 
+      :idxOnCurrPage="idxOnCurrPage" 
+      :preferredColspan="props.columnDefinitions.length + 2">
+    </slot>
     </template>
   </tbody>
 </template>
@@ -86,10 +89,10 @@
   import { ColumnDefinition } from '../../../../libs/szotar_common/src/models/ColumnDefinition';
   import * as sanitizeHtml from 'sanitize-html';
 
-  import { FilteredEntry } from '@/frontend_models/FilteredEntry';
-  import { HighlightDefinition } from '@/frontend_models/HighlightDefinition';
-import { ComputedRef, computed } from 'vue';
-import { ColumnDefinitionArrayForm } from '@/frontend_models/ColumnDefinitionArrayForm';
+  import type { FilteredEntry } from '@/frontend_models/FilteredEntry';
+  import type { HighlightDefinition } from '@/frontend_models/HighlightDefinition';
+import { type ComputedRef, computed } from 'vue';
+import type { ColumnDefinitionArrayForm } from '@/frontend_models/ColumnDefinitionArrayForm';
 
   type PositionPair = {start: number, end: number}
 

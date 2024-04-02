@@ -65,8 +65,18 @@
             />
             <span 
               class="ml-3 w-10"
+              :class="{
+                [`text-red-500 dark:text-red-400 italic`]:savedTrExStore.examplesOfCurrEntry[idx].isLowPriority, 
+                
+              }"
               >
-              #{{ idx + 1 }}
+                <span
+                  :class="{
+                    [`text-green-500 dark:text-green-400`]:savedTrExStore.examplesOfCurrEntry[idx].isGrammaticalExample, 
+                  }"
+                  >
+                  #{{ idx + 1 }}
+                </span>
             </span>
           </template>
           <template #detailRow="{sortedIdx,preferredColspan,}">
@@ -113,7 +123,7 @@
 import DtPagination from '@/components/datatable/DtPagination.vue'
 import { onMounted } from 'vue';
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { PageJumpType } from '@/frontend_models/PageJumpType';
+import { type PageJumpType } from '@/frontend_models/PageJumpType';
 import DictBulkActions from '@/components/datatable/DictBulkActions.vue';
 import QuickSearch from '@/components/datatable/QuickSearch.vue';
 import PageSizeInput from './PageSizeInput.vue';
@@ -132,7 +142,7 @@ import RemoveSavedExampleButton from '../input-fields-and-buttons/RemoveSavedExa
 import { useDictStore } from '@/stores/dict';
 import EditSavedExampleButton from '../input-fields-and-buttons/EditSavedExampleButton.vue';
 import ExistingSavedExampleEditor from '../input-fields-and-buttons/ExistingSavedExampleEditor.vue';
-import { SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
+import { type SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
 
 
 const savedTrExStore = useSavedTrExampleStore();
@@ -145,6 +155,7 @@ const setEditorTo = (idxBeforeFilter: number) => {
     savedTrExStore.existingElemEditor.original = entry.original;
     savedTrExStore.existingElemEditor.translated = entry.translated;
     savedTrExStore.existingElemEditor.isLowPriority = entry.isLowPriority;
+    savedTrExStore.existingElemEditor.isGrammaticalExample = entry.isGrammaticalExample;
   }
 }
 

@@ -77,10 +77,10 @@
   import TrExampleDatatable from '../datatable/TrExampleDatatable.vue';
   import StandaloneTrExampleFilterPanel from '../datatable/filter-panel/StandaloneTrExampleFilterPanel.vue';
   import ModalTrExampleFilterPanel from '../datatable/filter-panel/ModalTrExampleFilterPanel.vue';
-  import { Example } from '../../../../libs/szotar_common/src/models/Example';
+  import { type Example } from '../../../../libs/szotar_common/src/models/Example';
   import { useSavedTrExampleStore } from '@/stores/savedTrExample';
 import SavedTrExampleDatatable from '../datatable/SavedTrExampleDatatable.vue';
-import { SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
+import { type SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
 import NewSavedExampleEditor from '../input-fields-and-buttons/NewSavedExampleEditor.vue';
   const store = useDictStore()
   const savedTrExampleStore = useSavedTrExampleStore()
@@ -94,6 +94,7 @@ import NewSavedExampleEditor from '../input-fields-and-buttons/NewSavedExampleEd
         uuid: ``,
         dictEntryUuid: store.currentUuid,
         isLowPriority: false,
+        isGrammaticalExample: false,
       } as SavedTranslationExample
     );
   }

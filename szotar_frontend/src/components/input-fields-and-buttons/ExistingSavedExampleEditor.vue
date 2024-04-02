@@ -1,5 +1,5 @@
 <template>
-  <div class="existing-saved-example-editor flex flex-column flex-wrap">
+  <div class="existing-saved-example-editor flex flex-column flex-col">
     <div
       class="m-1"
       >
@@ -34,10 +34,56 @@
         placeholder="Szöveg (célnyelv)"
         >
     </div>
+    <div class="flex items-center m-2">
+      <input 
+        id="edit-example-is-grammatical-example"
+        type="checkbox" 
+        v-model="savedTrExStore.existingElemEditor.isGrammaticalExample"
+        class="
+          w-4 h-4 rounded 
+          text-blue-600 bg-gray-100 border-gray-300
+          focus:ring-2 
+          focus:ring-blue-500 
+          dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600
+          dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800 
+        ">
+      <label 
+        for="edit-example-is-grammatical-example"
+        class="
+          ml-2 text-sm font-medium select-none
+          text-gray-900 
+          dark:text-gray-300
+        ">
+        Nyelvtani példa
+      </label>
+    </div>
+    <div class="flex items-center m-2">
+      <input 
+        id="edit-example-is-low-priority"
+        type="checkbox" 
+        v-model="savedTrExStore.existingElemEditor.isLowPriority"
+        class="
+          w-4 h-4 rounded 
+          text-blue-600 bg-gray-100 border-gray-300
+          focus:ring-2 
+          focus:ring-blue-500 
+          dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600
+          dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800 
+        ">
+      <label 
+        for="edit-example-is-low-priority"
+        class="
+          ml-2 text-sm font-medium select-none
+          text-gray-900 
+          dark:text-gray-300
+        ">
+        Nem jelentős példa
+      </label>
+    </div>
     <button 
         class="
           submit-btn
-          m-1 mr-2 mb-2 px-5 py-2.5 font-medium rounded-full text-sm text-center
+          m-1 mr-2 mb-2 px-5 py-2.5 w-96 font-medium rounded-full text-sm text-center
           text-gray-900 bg-yellow-200 
           border border-gray-200 
           hover:bg-yellow-300
@@ -54,7 +100,7 @@
 <script setup lang="ts">
 import { useSavedTrExampleStore } from '@/stores/savedTrExample';
 import { ref } from 'vue';
-import { SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
+import { type SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
 import { useDictStore } from '@/stores/dict';
 const savedTrExStore = useSavedTrExampleStore();
   const store = useDictStore()
@@ -70,6 +116,7 @@ const savedTrExStore = useSavedTrExampleStore();
         uuid: savedTrExStore.existingElemEditor.uuid,
         dictEntryUuid: ``,
         isLowPriority: savedTrExStore.existingElemEditor.isLowPriority,
+        isGrammaticalExample: savedTrExStore.existingElemEditor.isGrammaticalExample,
       } as SavedTranslationExample
     );
   }

@@ -94,7 +94,7 @@
 import DtPagination from '@/components/datatable/DtPagination.vue'
 import { onMounted } from 'vue';
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { PageJumpType } from '@/frontend_models/PageJumpType';
+import { type PageJumpType } from '@/frontend_models/PageJumpType';
 import DictBulkActions from '@/components/datatable/DictBulkActions.vue';
 import QuickSearch from '@/components/datatable/QuickSearch.vue';
 import PageSizeInput from './PageSizeInput.vue';

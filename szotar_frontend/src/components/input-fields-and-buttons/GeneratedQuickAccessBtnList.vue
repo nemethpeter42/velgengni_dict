@@ -83,7 +83,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { QuickAccessSelectionResult } from '@/frontend_models/QuickAccessSelectionResult';
+  import { type QuickAccessSelectionResult } from '@/frontend_models/QuickAccessSelectionResult';
   import { computed } from 'vue';
   defineEmits<{
     quickAccessSelected: [selection: QuickAccessSelectionResult ],

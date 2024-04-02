@@ -1,9 +1,9 @@
 import { defineStore } from "pinia"
-import { ComputedRef, Ref, WritableComputedRef, computed, ref } from "vue"
-import { SavedTranslationExample } from "../../../libs/szotar_common/src/models/SavedTranslationExample.js";
+import { type ComputedRef, type Ref, type WritableComputedRef, computed, ref } from "vue"
+import { type SavedTranslationExample } from "../../../libs/szotar_common/src/models/SavedTranslationExample.js";
 import { move } from "../../../libs/szotar_common/src/helpers/move.js";
-import { PageJumpType } from "@/frontend_models/PageJumpType.js";
-import { FilteredEntry } from "@/frontend_models/FilteredEntry.js";
+import { type PageJumpType } from "@/frontend_models/PageJumpType.js";
+import { type FilteredEntry } from "@/frontend_models/FilteredEntry.js";
 import { useDictStore } from "./dict";
 
 export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
@@ -105,6 +105,18 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
       savedTrExamples.value[dictStore.dictNameUsedInLastQuery].filter(e=>e.dictEntryUuid === dictStore.currentUuid):
       []
   );
+
+  const examplesOfCurrDict: ComputedRef<Record<string,SavedTranslationExample[]>> = computed(
+    () => 
+      savedTrExamples.value[dictStore.dictNameUsedInLastQuery]?
+      savedTrExamples.value[dictStore.dictNameUsedInLastQuery].
+        filter(e=>e.dictEntryUuid).
+        reduce((resObj, arrItem) => {
+          resObj[arrItem.dictEntryUuid] = (resObj[arrItem.dictEntryUuid] ?? []).concat(arrItem)
+          return resObj
+        },{} as Record<string,SavedTranslationExample[]>):
+      {}
+  )
 
   const filteredEntries = computed(() => {
     let res;
@@ -367,12 +379,14 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
     original: string;
     translated: string;
     isLowPriority?: boolean;
+    isGrammaticalExample?:boolean;
     isLoading: boolean;
   }> = ref({
     visible: false,
     original: ``,
     translated: ``,
     isLowPriority: false,
+    isGrammaticalExample: false,
     isLoading: false, // TODO implement
   })
 
@@ -386,12 +400,14 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
     original: string;
     translated: string;      
     isLowPriority?: boolean;
+    isGrammaticalExample?: boolean;
     isLoading: boolean;
   }> = ref({
     uuid: ``,
     original: ``,
     translated: ``,
     isLowPriority: false,
+    isGrammaticalExample: false,
     isLoading: false, // TODO implement
   })
 
@@ -430,5 +446,6 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
     phrasesUsedInHighlight,
     toggleAllSelection,
     examplesOfCurrEntry,
+    examplesOfCurrDict,
   }
 })

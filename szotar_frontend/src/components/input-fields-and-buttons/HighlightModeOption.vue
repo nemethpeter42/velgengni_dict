@@ -29,7 +29,7 @@
     </div>
 </template>
 <script setup lang="ts">
-  defineEmits(['click']);
+  defineEmits([`click`, `update:modelValue`]);
     
   const props = defineProps({  
     modelValue: {type: Boolean, required: true,},

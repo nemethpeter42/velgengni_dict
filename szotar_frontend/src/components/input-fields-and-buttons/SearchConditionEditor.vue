@@ -89,7 +89,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { SearchCondition } from '../../../../libs/szotar_common/src/models/SearchCondition';
+  import { type SearchCondition } from '../../../../libs/szotar_common/src/models/SearchCondition';
   import RemoveConditionButton from './RemoveConditionButton.vue';
   defineEmits(['update:modelValue']);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

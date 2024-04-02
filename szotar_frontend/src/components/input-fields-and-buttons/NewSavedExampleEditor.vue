@@ -1,10 +1,10 @@
 <template>
-  <div class="new-saved-example-editor flex flex-wrap">
+  <div class="new-saved-example-editor flex flex-col">
     <button 
       v-if="!savedTrExStore.newElemEditor.visible"
       class="
         make-editor-visible-btn
-        m-1 mr-2 mb-2 px-5 py-2.5 font-medium rounded-full text-sm text-center
+        m-1 mr-2 mb-2 px-5 py-2.5 w-96 font-medium rounded-full text-sm text-center
         text-gray-900 bg-yellow-200 
         border border-gray-200 
         hover:bg-yellow-300
@@ -52,11 +52,61 @@
         placeholder="Szöveg (célnyelv)"
         >
     </div>
+    <div 
+      v-if="savedTrExStore.newElemEditor.visible"
+      class="flex items-center m-2">
+      <input 
+        id="new-example-is-grammatical-example"
+        type="checkbox" 
+        v-model="savedTrExStore.newElemEditor.isGrammaticalExample"
+        class="
+          w-4 h-4 rounded 
+          text-blue-600 bg-gray-100 border-gray-300
+          focus:ring-2 
+          focus:ring-blue-500 
+          dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600
+          dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800 
+        ">
+      <label 
+        for="new-example-is-grammatical-example"
+        class="
+          ml-2 text-sm font-medium select-none
+          text-gray-900 
+          dark:text-gray-300
+        ">
+        Nyelvtani példa
+      </label>
+    </div>
+    <div 
+      v-if="savedTrExStore.newElemEditor.visible"
+      class="flex items-center m-2">
+      <input 
+        id="new-example-is-low-priority"
+        type="checkbox" 
+        v-model="savedTrExStore.newElemEditor.isLowPriority"
+        class="
+          w-4 h-4 rounded 
+          text-blue-600 bg-gray-100 border-gray-300
+          focus:ring-2 
+          focus:ring-blue-500 
+          dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600
+          dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800 
+        ">
+      <label 
+        for="new-example-is-low-priority"
+        class="
+          ml-2 text-sm font-medium select-none
+          text-gray-900 
+          dark:text-gray-300
+        ">
+        Nem jelentős példa
+      </label>
+    </div>
     <button 
       v-if="savedTrExStore.newElemEditor.visible"
         class="
           submit-btn
-          m-1 mr-2 mb-2 px-5 py-2.5 font-medium rounded-full text-sm text-center
+          m-1 mr-2 mb-2 px-5 py-2.5 w-96 font-medium rounded-full text-sm text-center
           text-gray-900 bg-yellow-200 
           border border-gray-200 
           hover:bg-yellow-300
@@ -74,19 +124,20 @@
 import { useDictStore } from '@/stores/dict';
 import { useSavedTrExampleStore } from '@/stores/savedTrExample';
 import { ref } from 'vue';
-import { Example } from '../../../../libs/szotar_common/src/models/Example';
-import { SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
+import { type Example } from '../../../../libs/szotar_common/src/models/Example';
+import { type SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
   const savedTrExStore = useSavedTrExampleStore();
   const store = useDictStore()
   
   const openEditor = async () => {
     savedTrExStore.newElemEditor = {
-    visible: true,
-    original: ``,
-    translated: ``,
-    isLowPriority: false,
-    isLoading: false,
-}
+      visible: true,
+      original: ``,
+      translated: ``,
+      isLowPriority: false,
+      isGrammaticalExample: false,
+      isLoading: false,
+    }
   }
 
   const createSavedTrExample = async () => {
@@ -98,7 +149,8 @@ import { SavedTranslationExample } from '../../../../libs/szotar_common/src/mode
         translated: savedTrExStore.newElemEditor.translated,
         uuid: ``,
         dictEntryUuid: store.currentUuid,
-        isLowPriority: false,
+        isLowPriority: savedTrExStore.newElemEditor.isLowPriority,
+        isGrammaticalExample: savedTrExStore.newElemEditor.isGrammaticalExample,
       } as SavedTranslationExample
     );
   }

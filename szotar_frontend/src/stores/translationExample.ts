@@ -1,14 +1,14 @@
-import { ComputedRef, Ref, WritableComputedRef, computed, ref } from "vue"
+import { type ComputedRef, type Ref, type WritableComputedRef, computed, ref } from "vue"
 import { defineStore } from 'pinia'
-import { ExampleFindReq } from '../../../libs/szotar_common/src/models/ExampleFindReq.js';
-import { ExampleArrayWithBackendLimit } from "../../../libs/szotar_common/src/models/ExampleArrayWithBackendLimit.js";
-import { Example } from "../../../libs/szotar_common/src/models/Example.js";
-import { GeneratedLink } from "../../../libs/szotar_common/src/models/GeneratedLink.js";
-import { PageJumpType } from "@/frontend_models/PageJumpType.js";
-import { FilteredEntry } from "@/frontend_models/FilteredEntry.js";
-import { SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition.js";
-import { HighlightDefinition } from "@/frontend_models/HighlightDefinition.js";
-import { LanguagePair } from "@/frontend_models/LanguagePair.js";
+import { type ExampleFindReq } from '../../../libs/szotar_common/src/models/ExampleFindReq';
+import { type ExampleArrayWithBackendLimit } from "../../../libs/szotar_common/src/models/ExampleArrayWithBackendLimit.js";
+import { type Example } from "../../../libs/szotar_common/src/models/Example.js";
+import { type GeneratedLink } from "../../../libs/szotar_common/src/models/GeneratedLink.js";
+import { type PageJumpType } from "@/frontend_models/PageJumpType.js";
+import { type FilteredEntry } from "@/frontend_models/FilteredEntry.js";
+import { type SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition.js";
+import { type HighlightDefinition } from "@/frontend_models/HighlightDefinition.js";
+import { type LanguagePair } from "@/frontend_models/LanguagePair.js";
 
 export const useTranslationExampleStore = (id: string) => { 
   const store =  defineStore(`translationExample-${id}`, () => {

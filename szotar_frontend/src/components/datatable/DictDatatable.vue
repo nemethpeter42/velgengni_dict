@@ -47,7 +47,26 @@
               #{{ idx + 1 }}
             </span>
          </template>
+         <template #detailRow="{ sortedIdx,preferredColspan,idxOnCurrPage,}">
+            <tr
+              :class="{
+                [`bg-violet-200 dark:bg-violet-800`]: (idxOnCurrPage + index) % 2 === 0,
+                [`bg-violet-100 dark:bg-violet-900`]: (idxOnCurrPage + index) % 2 !== 0,
+              }"
+              v-if="store.displaySavedExamples"
+              v-for="(item,index) of store.nonLowPrioExamplesOfCurrDict[sortedIdx]"
+              :key="index"
+              >
+              <td :colspan="preferredColspan">
+                <DictTableSavedExampleRow 
+                  :saved-example="item"
+                />
+                
+              </td>
+            </tr>
+          </template>
         </DatatableBody>
+       
       </table>
       <nav class="
           py-3 px-2
@@ -161,7 +180,7 @@ import { useDictStore } from '@/stores/dict'
 import { ref } from 'vue';
 import TableConfiguration from '@/components/modal-content/TableConfiguration.vue';
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { PageJumpType } from '@/frontend_models/PageJumpType';
+import { type PageJumpType } from '@/frontend_models/PageJumpType';
 import DictBulkActions from '@/components/datatable/DictBulkActions.vue';
 import QuickSearch from '@/components/datatable/QuickSearch.vue';
 import PageSizeInput from './PageSizeInput.vue';
@@ -171,9 +190,12 @@ import ShowDetailsModalButton from '../input-fields-and-buttons/ShowDetailsModal
 import DatatableBody from './DatatableBody.vue';
 import DictEntryDetailsModalContent from '../modal-content/DictEntryDetailsModalContent.vue';
 import { useModalStore } from '@/stores/modal';
+import { useSavedTrExampleStore } from '@/stores/savedTrExample';
+import DictTableSavedExampleRow from './DictTableSavedExampleRow.vue';
 
 const store = useDictStore()
 
+const savedTrExStore = useSavedTrExampleStore();
 
 
 const scrollToTableTop = (): void => {

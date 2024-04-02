@@ -50,7 +50,7 @@
 <script lang="ts" setup>
 
   import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/24/solid'
-  import { ColumnDefinitionArrayForm } from '@/frontend_models/ColumnDefinitionArrayForm';
+  import { type ColumnDefinitionArrayForm } from '@/frontend_models/ColumnDefinitionArrayForm';
   
   defineEmits([`toggleSort`, `toggleAllSelection`,]);
     

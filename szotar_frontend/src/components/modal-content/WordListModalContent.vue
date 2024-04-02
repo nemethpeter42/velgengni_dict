@@ -68,7 +68,7 @@
   import DtPagination from '../datatable/DtPagination.vue';
   import PageSizeInput from '../datatable/PageSizeInput.vue';
   //eslint-disable-next-line @typescript-eslint/no-unused-vars
-  import { PageJumpType } from '@/frontend_models/PageJumpType';
+  import { type PageJumpType } from '@/frontend_models/PageJumpType';
   import DatatableBody from '../datatable/DatatableBody.vue';
   import {useWordListStore,} from '@/stores/wordList'
   import HeaderOfColumns from '../datatable/HeaderOfColumns.vue';

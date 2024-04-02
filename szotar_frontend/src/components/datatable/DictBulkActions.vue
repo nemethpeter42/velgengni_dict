@@ -43,6 +43,5 @@
 </template>
 
 <script setup lang='ts'>
-  import { Dropdown, } from 'flowbite-vue'
   import { ChevronDownIcon, CloudArrowDownIcon } from '@heroicons/vue/24/solid'
 </script>

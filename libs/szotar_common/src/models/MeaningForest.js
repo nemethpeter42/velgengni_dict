@@ -1,6 +1,6 @@
 import { MeaningBranch } from "./MeaningBranch.js";
 import { MeaningLeaf } from "./MeaningLeaf.js";
-class MeaningForest {
+export class MeaningForest {
     val;
     toString() {
         return `{val: ${this.val}}`;
@@ -235,4 +235,3 @@ class MeaningForest {
         return new MeaningForest(meaningTreeResult);
     };
 }
-export { MeaningForest };

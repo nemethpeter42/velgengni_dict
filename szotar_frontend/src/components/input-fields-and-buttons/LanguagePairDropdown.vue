@@ -64,7 +64,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { LanguagePair } from '@/frontend_models/LanguagePair';
+  import { type LanguagePair } from '@/frontend_models/LanguagePair';
   import { ChevronDownIcon, FlagIcon, } from '@heroicons/vue/24/solid'
 import { ref } from 'vue';
   

@@ -61,7 +61,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { WritableComputedRef, computed, onMounted, ref } from 'vue'
+  import { type WritableComputedRef, computed, onMounted, ref } from 'vue'
   import { initFlowbite } from 'flowbite'
   import { MoonIcon, SunIcon } from '@heroicons/vue/24/solid'
   import { useRoute } from 'vue-router';

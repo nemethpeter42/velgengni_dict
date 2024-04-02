@@ -77,7 +77,7 @@
 </template>
 <script lang="ts" setup>
 import { useDictStore } from '@/stores/dict';
-import { Ref, ref } from 'vue';
+import { type Ref, ref } from 'vue';
 
   const store = useDictStore()
 

@@ -1,15 +1,16 @@
-import { ComputedRef, Ref, WritableComputedRef, computed, ref } from "vue"
+import { type ComputedRef, type Ref, type WritableComputedRef, computed, ref } from "vue"
 import { defineStore } from 'pinia'
-import { Dict } from '../../../libs/szotar_common/src/models/Dict.js';
+import { type Dict } from '../../../libs/szotar_common/src/models/Dict.js';
 import { DictDescription } from "../../../libs/szotar_common/src/models/DictDescription.js";
 import { ColumnDefinition } from "../../../libs/szotar_common/src/models/ColumnDefinition.js";
-import { PageJumpType } from "@/frontend_models/PageJumpType.js";
-import { FilteredEntry } from "@/frontend_models/FilteredEntry.js";
+import { type PageJumpType } from "@/frontend_models/PageJumpType.js";
+import { type FilteredEntry } from "@/frontend_models/FilteredEntry.js";
 import { useTranslationExampleStore } from "./translationExample";
 import { TrExampleStoreType } from "@/frontend_models/TrExampleStoreTypes";
-import { ColumnDefinitionArrayForm } from "@/frontend_models/ColumnDefinitionArrayForm.js";
-import { SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition.js";
+import { type ColumnDefinitionArrayForm } from "@/frontend_models/ColumnDefinitionArrayForm.js";
+import { type SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition.js";
 import { useSavedTrExampleStore } from "./savedTrExample";
+import type { SavedTranslationExample } from "../../../libs/szotar_common/src/models/SavedTranslationExample.js";
 
 export const useDictStore = defineStore('dict', () => {
   //const entries: Ref<Record<string, string>[]> = ref([]);
@@ -69,7 +70,7 @@ export const useDictStore = defineStore('dict', () => {
       currentIdx.value !== -1 && 
       currDict.value?.meta?.idCol 
     ){
-      return filteredEntries.value[currentIdx.value].val[currDict.value.meta.idCol]
+      return filteredEntries.value[currentIdx.value]?.val[currDict.value.meta.idCol] ?? ``
     } else {
       return ``
     }
@@ -123,6 +124,7 @@ export const useDictStore = defineStore('dict', () => {
       filter(e=> e.trim().startsWith(`<`) && e.trim().endsWith(`>`)).
       map(e=>e.substring(1,e.length-1))
   )     
+
   const lang2Phrases: ComputedRef<string[]> = computed( 
     () => lang2PhrasesRaw.value.
       map(
@@ -148,6 +150,7 @@ export const useDictStore = defineStore('dict', () => {
       original: ``,
       translated: ``,
       isLowPriority: false,
+      isGrammaticalExample: false,
       visible: false,
     };
     savedTrExStore.existingElemEditor = {
@@ -155,6 +158,7 @@ export const useDictStore = defineStore('dict', () => {
       original: ``,
       translated: ``,
       isLowPriority: false,
+      isGrammaticalExample: false,
       isLoading: false,
     }
     currentIdx.value = idx;
@@ -175,6 +179,7 @@ export const useDictStore = defineStore('dict', () => {
     trExampleStore.setQuickSearchQueryPhrase(``);
     //TODO wordList.ts-bol atepiteni
   }
+
 
 
   const refreshEntries = async (backendSearchQuery: string, customSortComparison: string) => {
@@ -353,18 +358,30 @@ export const useDictStore = defineStore('dict', () => {
       //console.log(res)
       return res;
     }
-  })
+  });
 
-  const bulkOpMenuIsOpen = ref(false)
+  const nonLowPrioExamplesOfCurrDict: ComputedRef<SavedTranslationExample[][]> = 
+    computed( () => 
+      filteredEntries.value.map(
+        filteredEntry => 
+          filteredEntry.val[currDict.value.meta.idCol] ?
+          (savedTrExStore.examplesOfCurrDict[filteredEntry.val[currDict.value.meta.idCol]] ?? []).
+          filter(e=> !e.isLowPriority).
+          slice().sort((a,b)=>Number(b.isGrammaticalExample ?? false) - Number(a.isGrammaticalExample ?? false)):
+          []
+      )
+    );
 
-  const selectedIndices: Ref<Set<number>> = ref(new Set())
+  const bulkOpMenuIsOpen = ref(false);
+
+  const selectedIndices: Ref<Set<number>> = ref(new Set());
 
   //private, ne vezesd ki
   const selectAll = async () => {
     selectedIndices.value = new Set(lastDictQueryResult.value?.main.keys())
   } 
 
-  const isAllSelected = computed(() => selectedIndices.value.size === lastDictQueryResult.value?.main.length ?? false)
+  const isAllSelected = computed(() => selectedIndices.value.size === lastDictQueryResult.value?.main.length)
 
   const toggleAllSelection = async () => {
     if (isAllSelected.value) {
@@ -377,6 +394,8 @@ export const useDictStore = defineStore('dict', () => {
   const displayColsAsRawString = ref(false)
   
   const displayRowNumbers = ref(false)
+
+  const displaySavedExamples = ref(true)
 
   const currDict = 
     computed(() => dictQueriesWithMeta.value[dictNameUsedInLastQuery.value]);
@@ -472,6 +491,7 @@ export const useDictStore = defineStore('dict', () => {
     sortCol,
     sortAscending,
     displayRowNumbers,
+    displaySavedExamples,
     entryDetailsActiveTab,
     setEntryDetailsActiveTab,
     currentIdx,
@@ -483,5 +503,8 @@ export const useDictStore = defineStore('dict', () => {
     entryInTrExampleModalFormat,
     currDict,
     currentUuid,
+    lang1Phrases,
+    lang2Phrases,
+    nonLowPrioExamplesOfCurrDict,
   }
 })
