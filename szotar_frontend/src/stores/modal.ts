@@ -5,7 +5,9 @@ export const useModalStore = defineStore(`modal`, () => {
   const openModals: Ref<Set<(
     'DICT_CONFIG'|
     'DICT_ENTRY_DETAILS'|
-    'WORD_LIST'
+    'WORD_LIST'|
+    'SAVED_QUERIES'|
+    'SAVED_QUERIES_KNOWLEDGE'
     )>> = ref(new Set());
     
   return {

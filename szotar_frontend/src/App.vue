@@ -2,28 +2,48 @@
   <div 
     class="
       main-content
-      h-screen w-screen p-1
+      h-screen w-screen
       bg-cyan-50 
       dark:bg-indigo-950
     "
     :class="{
       [`
         overflow-hidden
-      `]: modalStore.openModals.size > 0,
+      `]: modalStore.openModals.size > 0 || route.name===`knowledge`,
       [`
         overflow-auto
       `]: !(modalStore.openModals.size > 0),
     }">
       
-    <div class="max-w-[105rem] m-auto">
+    <div 
+      class="max-w-[105rem] m-auto p-1"
+      :class="{
+        [`
+          overflow-hidden
+          flex flex-col
+          max-h-screen
+        `]: route.name===`knowledge`,
+      }">
       <FloatingActionButtons />
+      <FloatingNotifications />
+      <SavedQueriesModal type="knowledgeModule"/>
+      <SavedQueriesModal type="dictModule"/>
+      <TableConfigurationModal />
+      <DictEntryDetailsModal />
+      <WordListModal />
       
       <nav class="m-auto text-center">
         <router-link 
           class="font-bold" 
           :class="route.name===`home` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
           to="/"
-          >Home
+          >Dictionaries
+        </router-link> |
+        <router-link 
+          class="font-bold" 
+          :class="route.name===`knowledge` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
+          to="/knowledge"
+          >Knowledge
         </router-link> |
         <router-link 
           class="font-bold" 
@@ -31,12 +51,12 @@
           to="/examples"
           >Examples
         </router-link> |
-        <router-link 
+        <!--<router-link 
           class="font-bold" 
           :class="route.name===`about` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
           to="/about"
           >Sandbox
-        </router-link>
+        </router-link>-->
         <button 
           id="theme-toggle" 
           type="button" 
@@ -67,6 +87,11 @@
   import { useRoute } from 'vue-router';
   import { useModalStore } from './stores/modal';
   import FloatingActionButtons from './components/input-fields-and-buttons/FloatingActionButtons.vue';
+  import FloatingNotifications from './components/FloatingNotifications.vue';
+  import SavedQueriesModal from './components/modal-container/SavedQueriesModal.vue';
+  import TableConfigurationModal from './components/modal-container/TableConfigurationModal.vue';
+  import DictEntryDetailsModal from './components/modal-container/DictEntryDetailsModal.vue';
+  import WordListModal from './components/modal-container/WordListModal.vue';
 
   const modalStore = useModalStore();
   const darkModeRef = ref(false)

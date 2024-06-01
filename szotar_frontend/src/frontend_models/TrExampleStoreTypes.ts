@@ -1,4 +1,1 @@
-export enum TrExampleStoreType  {
-   STANDALONE = `standalone`,
-   DICT_MODAL = `dictModal`,
-}
+export type TrExampleStoreType = `standalone` | `dictModal`;

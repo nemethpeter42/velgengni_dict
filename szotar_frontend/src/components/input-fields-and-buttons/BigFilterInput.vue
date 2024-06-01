@@ -21,13 +21,13 @@
         class="flex-0 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-1.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         @click="$emit(`goButtonClicked`)"
         > 
-        <ArrowSmallRightIcon  class="w-6 h-6 fill-current"/>
+        <ArrowRightIcon  class="w-6 h-6 fill-current"/>
       </button>
     
   </div>
 </template>
 <script lang="ts" setup>
-  import { ArrowSmallRightIcon, } from '@heroicons/vue/24/solid'
+  import { ArrowRightIcon, } from '@heroicons/vue/24/solid'
   defineEmits(['update:modelValue','goButtonClicked']);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const props = defineProps({

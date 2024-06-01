@@ -4,10 +4,9 @@ import { type PageJumpType } from "@/frontend_models/PageJumpType.js";
 import { type FilteredEntry } from "@/frontend_models/FilteredEntry.js";
 import { useTranslationExampleStore } from "./translationExample";
 import { type SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition";
-import { TrExampleStoreType } from "@/frontend_models/TrExampleStoreTypes";
 
 export const useWordListStore = defineStore('wordList', () => {
-  const trExampleStore = useTranslationExampleStore(TrExampleStoreType.STANDALONE)
+  const trExampleStore = useTranslationExampleStore(`standalone`)
 
   const wordList : Ref<string[][]>= ref([]);
 

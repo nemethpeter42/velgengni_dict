@@ -6,7 +6,6 @@ import { ColumnDefinition } from "../../../libs/szotar_common/src/models/ColumnD
 import { type PageJumpType } from "@/frontend_models/PageJumpType.js";
 import { type FilteredEntry } from "@/frontend_models/FilteredEntry.js";
 import { useTranslationExampleStore } from "./translationExample";
-import { TrExampleStoreType } from "@/frontend_models/TrExampleStoreTypes";
 import { type ColumnDefinitionArrayForm } from "@/frontend_models/ColumnDefinitionArrayForm.js";
 import { type SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition.js";
 import { useSavedTrExampleStore } from "./savedTrExample";
@@ -23,7 +22,7 @@ export const useDictStore = defineStore('dict', () => {
   }
   */
   
-  const trExampleStore = useTranslationExampleStore(TrExampleStoreType.DICT_MODAL)
+  const trExampleStore = useTranslationExampleStore(`dictModal`)
 
   const savedTrExStore = useSavedTrExampleStore()
 
@@ -93,8 +92,8 @@ export const useDictStore = defineStore('dict', () => {
         map(
           e=>
             e.colDef.isMeaningForestCol ? 
-            `<${entry?.val[e.colName].split(`>`).join(``).split(`<`).join(``)}>` :
-            entry?.val[e.colName].split(`>`).join(``).split(`<`).join(``)
+            `<${(entry?.val[e.colName] ?? ``).split(`>`).join(``).split(`<`).join(``)}>` :
+            (entry?.val[e.colName] ?? ``).split(`>`).join(``).split(`<`).join(``)
         ).
         filter(e=>e.split(`>`).join(``).split(`<`).join(``).trim() !== ``);
       return res
@@ -271,9 +270,9 @@ export const useDictStore = defineStore('dict', () => {
   
   const isLastPage: Ref<boolean> = computed(() => currentPage.value===totalPageCount.value-1);
 
-  const resultsPerPageOptions: Ref<number[]> = ref([25,50,100,200,500]);
+  const resultsPerPageOptions: Ref<number[]> = ref([40,80,100,160,200,500]);
 
-  const resultsPerPage: Ref<number> = ref(50);
+  const resultsPerPage: Ref<number> = ref(80);
 
   const setResultsPerPage = async (num: number) => resultsPerPage.value = num;
 
@@ -445,6 +444,16 @@ export const useDictStore = defineStore('dict', () => {
   const isAllQuickAccessBtnVisible = ref(false);
 
   const setIsAllQuickAccessBtnVisible =  (val: boolean) => isAllQuickAccessBtnVisible.value = val;
+
+  const searchQuery = ref(``)
+
+  const sortComparison = ref(``)
+
+  const executeBackendSearch = async () => {
+    await refreshEntries(searchQuery.value, sortComparison.value)
+    selectedIndices.value.clear()
+    jumpToPage(`FIRST`)
+  }
   
 
   // eslint-disable-next-line @typescript-eslint/no-extra-semi
@@ -506,5 +515,8 @@ export const useDictStore = defineStore('dict', () => {
     lang1Phrases,
     lang2Phrases,
     nonLowPrioExamplesOfCurrDict,
+    searchQuery,
+    sortComparison,
+    executeBackendSearch,
   }
 })

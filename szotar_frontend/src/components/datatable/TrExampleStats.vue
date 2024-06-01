@@ -19,14 +19,17 @@
       v-for="(item, index) of store.phrasesUsedInHighlight" 
       :key="index"
       class="phrase-stat-container cursor-pointer"
-      @click="$event => {
-        store.setQuickSearchQueryPhrase([store.quickSearchQueryPhrase, item.val].filter(e=>e.trim()!==``).join(`, `))
-        store.jumpToPage(`FIRST`)
-      }"
+      @click="$event => addToQuickSearch([item.val])"
     >
       <SparklesIcon class="w-4 h-4 inline mr-1" :style="item.style" />
       <span class="stat-key">{{ item.val }}</span>:
       <span class="stat-val">{{ countExamplesContainingThePhrase(item.val) }}</span>{{ index!==store.phrasesUsedInHighlight.length-1 ? `, ` : ``}} 
+    </span>
+    <span 
+      class="phrase-stat-container cursor-pointer ml-1"
+      @click="addToQuickSearch(store.bigFilterLastQueryVal)">
+      <Squares2X2Icon class="w-4 h-4 inline mr-1" />
+      [Mind]
     </span>
     <span class="text-blue-800 dark:text-blue-300">
       <!-- TODO ezeket vmi normalis helyre, backendrol lekerdezve megcsinalni-->
@@ -42,24 +45,18 @@
         </a>
         &nbsp;
       </span>
-      <!--
-      <a :href="`https://www.google.com/search?q=${urlPhrase}+site%3A*.es&amp;tbm=isch`" target="_blank">google</a> &nbsp;
-      <a :href="`https://en.wiktionary.org/wiki/${urlPhrase}#Spanish`" target="_blank">wiktionary</a> &nbsp;
-      <a :href="`https://hu.wiktionary.org/wiki/${urlPhrase}#Spanyol`" target="_blank">wik_hu</a> &nbsp;
-      <a :href="`https://www.collinsdictionary.com/dictionary/spanish-english/${urlPhrase}`" target="_blank">collins</a>
-      -->
     </span>
   </div>
 </template>
 <script lang="ts" setup>
-  import { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';
 import { useTranslationExampleStore } from '@/stores/translationExample';
-  import { SparklesIcon, } from '@heroicons/vue/24/solid'
+  import { SparklesIcon, Squares2X2Icon, } from '@heroicons/vue/24/solid'
 import { computed } from 'vue';
 import DtSpinner from './DtSpinner.vue';
-  const props = defineProps({  
-      storeId: {type: String, required: true,},
-  })
+import type { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';
+  const props = defineProps<{  
+      storeId: TrExampleStoreType,
+  }>()
   const store = useTranslationExampleStore(props.storeId)
 
   const countExamplesContainingThePhrase = (phrase: string): number => {
@@ -71,6 +68,11 @@ import DtSpinner from './DtSpinner.vue';
         e.val.example.toLowerCase().includes(phraseVariant.toLowerCase())
       )
     }).length
+  }
+
+  const addToQuickSearch = (phrases: string[]) => {
+    store.setQuickSearchQueryPhrase([store.quickSearchQueryPhrase, ...phrases].filter(e=>e.trim()!==``).join(`, `))
+    store.jumpToPage(`FIRST`)
   }
 
   const urlPhrase = computed(() => store.exampleFindReq.conditions.map(e=>e.expression).join(` `))

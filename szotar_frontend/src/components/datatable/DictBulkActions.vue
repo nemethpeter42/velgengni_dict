@@ -1,7 +1,6 @@
 <template>
   <div>
-    <dropdown text="Tömeges műv.">
-        <template #trigger>
+    <div text="Tömeges műv.">
           <button 
             id="dropdownActionButton" 
             class="
@@ -20,12 +19,13 @@
             Tömeges műv.
             <ChevronDownIcon class="w-3 h-3 ml-2" />
           </button>
-        </template>
-        <ul class="
-          overflow-hidden w-48 rounded-lg text-sm font-medium border 
-          text-gray-900 bg-white border-gray-200 
-          dark:bg-gray-700 dark:border-gray-600 dark:text-white
-          ">
+        <ul
+          class="
+              hidden TODO-fix-it
+              overflow-hidden w-48 rounded-lg text-sm font-medium border 
+              text-gray-900 bg-white border-gray-200 
+              dark:bg-gray-700 dark:border-gray-600 dark:text-white
+            ">
           <li class="
             block px-4 py-2 inline-flex items-center w-full border-b cursor-pointer
             border-gray-200 
@@ -38,7 +38,7 @@
             <div class="mr-2"><CloudArrowDownIcon class="w-4 h-4 fill-current" /></div> Interaktív HTML export
           </li>
         </ul>
-      </dropdown>
+      </div>
   </div>
 </template>
 

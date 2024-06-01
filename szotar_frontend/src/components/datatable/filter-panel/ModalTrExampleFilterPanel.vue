@@ -46,7 +46,7 @@
         <GeneratedQuickAccessBtnList 
           :generator="
             Array.isArray(dictStore.filteredEntries) && dictStore.currentIdx !== -1 ? 
-            [dictStore.filteredEntries[dictStore.currentIdx].val[`original`]] : 
+            dictStore.entryInTrExampleModalFormat : 
             []"  
           :defaultNumOfDisplayedItems="10" 
           @quickAccessSelected="(selection: QuickAccessSelectionResult) => handleQuickAccessSelected(selection)" 
@@ -135,10 +135,11 @@
   import HighlightModeOption from '@/components/input-fields-and-buttons/HighlightModeOption.vue';
   import LanguagePairDropdown from '@/components/input-fields-and-buttons/LanguagePairDropdown.vue';
   import { useDictStore } from '@/stores/dict';
+import type { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';
   
-  const props = defineProps({  
-      storeId: {type: String, required: true,},
-  })
+  const props = defineProps<{  
+      storeId: TrExampleStoreType,
+  }>()
 
   const dictStore = useDictStore()
   const trExampleStore = useTranslationExampleStore(props.storeId)

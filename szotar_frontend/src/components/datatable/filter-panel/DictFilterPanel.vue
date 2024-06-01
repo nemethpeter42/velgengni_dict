@@ -3,9 +3,9 @@
   <div>
     <div class="flex flex-wrap ">
         <div class="m-2"> 
-          <label for="command" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Keresési parancs:</label>
+          <label for="searchQuery" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Keresési parancs:</label>
           <textarea 
-            id="command" 
+            id="searchQuery" 
             rows="2" 
             class="
               block p-2.5 w-96 text-sm rounded-lg resize-none
@@ -16,12 +16,12 @@
               dark:focus:ring-blue-500 dark:focus:border-blue-500 
             " 
             placeholder='Keresési parancs'
-            v-model="backendSearchQuery"
+            v-model="store.searchQuery"
           ></textarea>
           <div class="text-gray-600 dark:text-gray-400 text-sm my-1">Pl.&nbsp; e.original.trim().toLowerCase().includes(`cat`)</div>
         </div>
         <div class="m-2">
-          <label for="command" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Szótár:</label>
+          <label for="dictName" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Szótár:</label>
           <select 
             id="dictName" 
             class="
@@ -34,16 +34,16 @@
           >
             <option 
               v-for="val in Object.keys(store.dictQueriesWithMeta)" 
-              v-bind:key="val" 
+              :key="val" 
               :selected="store.dictNameOnForm===val" 
               @click="store.setDictNameOnForm(val);"
               >{{val}}</option>
           </select>
         </div>
         <div class="m-2"> 
-          <label for="command" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Rendezési függvény:</label>
+          <label for="sortComparison" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Rendezési függvény:</label>
           <textarea 
-            id="command" 
+            id="sortComparison" 
             rows="2" 
             class="
               block p-2.5 w-96 text-sm rounded-lg resize-none
@@ -54,40 +54,35 @@
               dark:focus:ring-blue-500 dark:focus:border-blue-500 
             " 
             placeholder='Rendezési függvény'
-            v-model="customSortComparison"
+            v-model="store.sortComparison"
           ></textarea>
           <div class="text-gray-600 dark:text-gray-400 text-sm my-1">Pl.&nbsp; -1*a.original.localeCompare(b.original, `es`)</div>
         </div>
       </div>
 
-      <button 
-        class="
-          m-1 mr-2 mb-2 px-5 py-2.5 font-medium rounded-full text-sm text-center 
-          text-white bg-blue-700 
-          hover:bg-blue-800 
-          focus:outline-none focus:ring-4 focus:ring-blue-300 
-          dark:bg-blue-600 
-          dark:hover:bg-blue-700 
-          dark:focus:ring-blue-800
-        "
-        @click=" executeBackendSearch()"
-      >Keresés</button>
+      <ExecuteDictQueryBtn
+        @click=" store.executeBackendSearch()"
+        />
+      <OpenSavedQueriesModalBtn 
+        @click=" showSavedQueriesModal()"
+        />
+
 
   </div>
 </template>
 <script lang="ts" setup>
-import { useDictStore } from '@/stores/dict';
-import { type Ref, ref } from 'vue';
+  import ExecuteDictQueryBtn from '@/components/input-fields-and-buttons/ExecuteDictQueryBtn.vue';
+  import OpenSavedQueriesModalBtn from '@/components/input-fields-and-buttons/OpenSavedQueriesModalBtn.vue';
+  import { useDictStore } from '@/stores/dict';
+  import { useModalStore } from '@/stores/modal';
+  import { type Ref, ref } from 'vue';
 
-  const store = useDictStore()
+  const store = useDictStore();
 
-  async function executeBackendSearch() {
-    await store.refreshEntries(backendSearchQuery.value, customSortComparison.value)
-    store.selectedIndices.clear()
-    store.jumpToPage(`FIRST`)
+  const modalStore = useModalStore();
+    
+  const showSavedQueriesModal = () => {
+    modalStore.openModals.add(`SAVED_QUERIES`)
   }
-  
-  const backendSearchQuery: Ref<string> = ref(``)
-  const customSortComparison: Ref<string> = ref(``)
 
 </script>

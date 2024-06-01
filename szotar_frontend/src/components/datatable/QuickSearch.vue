@@ -50,7 +50,7 @@
     }, 800);
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const props = defineProps({
-    modelValue: {type: String, required: true,},
-  })
+  const props = defineProps<{
+    modelValue: string,
+  }>();
 </script>

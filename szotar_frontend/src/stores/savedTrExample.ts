@@ -64,7 +64,7 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
 
   const isLastPage: Ref<boolean> = computed(() => currentPage.value===totalPageCount.value-1);
 
-  const resultsPerPageOptions: Ref<number[]> = ref([25,50,75,100,200,500]);
+  const resultsPerPageOptions: Ref<number[]> = ref([40,80,100,160,200,500]);
 
   const resultsPerPage: Ref<number> = ref(500);
 

@@ -2,10 +2,9 @@
   
   <div
     class="
-        relative flex max-w-[90rem] m-auto flex-col 
-        lg:flex-row
-      "
-    >
+      relative flex max-w-[90rem] m-auto flex-col 
+      lg:flex-row
+    ">
     <DtSpinner
       v-if="trExampleStore.isLoading" 
       test-id="standalone-tr-example-filter-panel-top"
@@ -196,51 +195,11 @@
     />
   </div>
 
- 
-  <div v-if="modalStore.openModals.has(`WORD_LIST`)">
-    <Teleport to="body">
-      <div class="bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-[120]"></div>
-      <div 
-        id="wordListModal"  
-        data-backdrop-for="wordListModal"
-        @click="$event => wordListModalBackdrop($event)"
-        tabindex="-1" 
-        aria-hidden="true" 
-        :class="{
-          flex: modalStore.openModals.has(`WORD_LIST`), 
-          hidden: !modalStore.openModals.has(`WORD_LIST`),
-        }" 
-        class="fixed top-0 left-0 right-0 z-[130] w-full p-4  overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center"
-        >
-        <div class="relative w-full max-w-5xl max-h-full overflow-x-auto">
-          <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-            <!-- Modal body -->
-            <div class="p-2 space-y-6">
-              <WordListModalContent 
-                @close="closeWordListModal()"
-              />
-            </div>
-            <div class="flex justify-between p-2 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
-              <div>
-                <button @click="closeWordListModal()" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
-                  Bezárás
-                </button>
-              </div>
-              <div>
-                  
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Teleport>
-  </div>
 </template>
 
 <script lang="ts" setup>
   import { ref } from 'vue';
   import DtSpinner from "../DtSpinner.vue"
-  import WordListModalContent from '@/components/modal-content/WordListModalContent.vue'
   import {useWordListStore,} from '@/stores/wordList'
   import TrExampleResultLimit from '@/components/input-fields-and-buttons/TrExampleResultLimit.vue';
   import ExampleSearchButton from '@/components/input-fields-and-buttons/ExampleSearchButton.vue';
@@ -255,37 +214,20 @@
   import FilteringModeOption from '@/components/input-fields-and-buttons/FilteringModeOption.vue';
   import HighlightModeOption from '@/components/input-fields-and-buttons/HighlightModeOption.vue';
   import LanguagePairDropdown from '@/components/input-fields-and-buttons/LanguagePairDropdown.vue';
-import { useModalStore } from '@/stores/modal';
+  import { useModalStore } from '@/stores/modal';
+  import type { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';
 
   const prioButtonsEnabled = ref(false)
-  const props = defineProps({  
-      storeId: {type: String, required: true,},
-  })
+  const props = defineProps<{  
+      storeId: TrExampleStoreType,
+  }>()
 
   const wordListStore = useWordListStore()
   const trExampleStore = useTranslationExampleStore(props.storeId)
   const modalStore = useModalStore();
   
-  function closeWordListModal() {
-    modalStore.openModals.delete(`WORD_LIST`)
-  }
-
   function showWordListModal() {
     modalStore.openModals.add(`WORD_LIST`)
-  }
-  
-  function wordListModalBackdrop($event: any) {
-    try{
-      const attributes = 
-        [...$event?.originalTarget?.attributes]?.
-          map(e=>({name: e.name, value: e.value})) as {name: string, value: string}[];
-      if (attributes.filter(e=>e.name===`data-backdrop-for`,`wordListModal`).length > 0) {
-        modalStore.openModals.delete(`WORD_LIST`)
-      }
-      $event.stopPropagation();
-    } catch(e) {
-      /* eslint-disable no-empty */
-    }
   }
 
   const handleQuickAccessSelected = async (selection: QuickAccessSelectionResult) => {

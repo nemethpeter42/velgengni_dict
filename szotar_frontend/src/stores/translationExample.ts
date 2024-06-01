@@ -9,8 +9,9 @@ import { type FilteredEntry } from "@/frontend_models/FilteredEntry.js";
 import { type SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition.js";
 import { type HighlightDefinition } from "@/frontend_models/HighlightDefinition.js";
 import { type LanguagePair } from "@/frontend_models/LanguagePair.js";
+import type { TrExampleStoreType } from "@/frontend_models/TrExampleStoreTypes";
 
-export const useTranslationExampleStore = (id: string) => { 
+export const useTranslationExampleStore = (id: TrExampleStoreType) => { 
   const store =  defineStore(`translationExample-${id}`, () => {
 
     type FilteringModeOpts = `FILTER` | `MARK_ONLY` | `INVERSE_FILTER`
@@ -200,7 +201,7 @@ export const useTranslationExampleStore = (id: string) => {
     
     const isLastPage: Ref<boolean> = computed(() => currentPage.value===totalPageCount.value-1);
 
-    const resultsPerPageOptions: Ref<number[]> = ref([25,50,75,100,200,500]);
+    const resultsPerPageOptions: Ref<number[]> = ref([40,80,100,160,200,500]);
 
     const resultsPerPage: Ref<number> = ref(500);
 

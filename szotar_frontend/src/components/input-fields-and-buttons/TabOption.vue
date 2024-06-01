@@ -16,7 +16,13 @@
       `] : !props.isActive, 
     }"
     @click="$emit(`click`)"
-    >{{props.text}}</div>
+    >{{props.text}}
+    <span
+      v-if="props.labelText!==undefined" 
+      class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
+      {{ props.labelText }}
+    </span>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -26,6 +32,7 @@
   const props = defineProps({  
     text: {type: String, required: true,},
     isActive: {type: Boolean, required: true,},
+    labelText: {type: Number, required: false,},
   })
 
 </script>

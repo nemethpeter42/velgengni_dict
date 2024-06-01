@@ -71,7 +71,7 @@
     </div>
     <div>
       <button 
-        id="executeSearchAltLangButton"
+        id="addSearchConditionButton"
         class="
           m-1 mr-2 mb-2 px-5 py-2.5 font-medium rounded-full text-sm text-center
           text-gray-900 bg-yellow-200 

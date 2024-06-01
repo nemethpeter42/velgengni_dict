@@ -103,15 +103,15 @@ import DatatableBody from './DatatableBody.vue';
 import { useTranslationExampleStore } from '@/stores/translationExample';
 import { useWordListStore } from '@/stores/wordList';
 import TrExampleStats from './TrExampleStats.vue';
-import { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';
 import DtSpinner from './DtSpinner.vue';
 import AddExistingExampleButton from '../input-fields-and-buttons/AddExistingExampleButton.vue';
+import type { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';
 
-const props = defineProps({  
-    storeId: {type: String, required: true,},
-    wordListStoreDisabled: {type: Boolean, required: false,},
-    addExistingButtonVisible: {type: Boolean, reqired: false,},
-})
+const props = defineProps<{  
+    storeId: TrExampleStoreType,
+    wordListStoreDisabled?: boolean,
+    addExistingButtonVisible?: boolean,
+}>()
 
 const trExampleStore = useTranslationExampleStore(props.storeId)
 const wordListStore = useWordListStore()
