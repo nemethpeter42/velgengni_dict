@@ -187,7 +187,7 @@ router.post('/save_db', async (req, res) => {
         const fn = async() => {
           try {
             console.log(`writing saved translation example file: "${dictName}"`);
-            await fsPromises.writeFile(`${DICTS_FOLDER}/${dictName}.trexample.json`,JSON.stringify(translationExampleDbs[dictName]) ,{encoding: `utf8`,});
+            await fsPromises.writeFile(`${DICTS_FOLDER}/${dictName}.trexample.json`,JSON.stringify(translationExampleDbs[dictName], null, 2) ,{encoding: `utf8`,});
           } catch (error) {
             console.log(`Error while writing saved translation example for "${dictName}"`);
             throw (error)

@@ -50,24 +50,27 @@ export class MeaningForest{
 	}
 
 	static fromString = (meaningsColumnEntryInCsv: string) : MeaningForest => {
-		const ESCAPE_CHARACTER= `\\`
+		const ESCAPE_CHARACTER= `\\`;
+
+		const POSTFIX_TYPE_LABEL_CHARACTER = `!`;
+		const PREFIX_TYPE_LABEL_CHARACTER = `#`;
 		
-		const COMMENT_DELIMITER = `;`
+		const COMMENT_DELIMITER = `;`;
 		
 		// lvl 1 = meaning group
-		const MEANING_GROUP_DELIMITER = `;`
-		const LVL1_COMMENT_OPENING = `(`
-		const LVL1_COMMENT_CLOSURE = `)`
+		const MEANING_GROUP_DELIMITER = `;`;
+		const LVL1_COMMENT_OPENING = `(`;
+		const LVL1_COMMENT_CLOSURE = `)`;
 		
 		// lvl 2 = close meanings
-		const CLOSE_MEANINGS_DELIMITER = `,`
-		const LVL2_COMMENT_OPENING = `{`
-		const LVL2_COMMENT_CLOSURE = `}`
+		const CLOSE_MEANINGS_DELIMITER = `,`;
+		const LVL2_COMMENT_OPENING = `{`;
+		const LVL2_COMMENT_CLOSURE = `}`;
 		
 		// lvl 3 = almost identical meanings
-		const ALMOST_IDENTICAL_MEANINGS_DELIMITER = `/`
-		const LVL3_COMMENT_OPENING = `[`
-		const LVL3_COMMENT_CLOSURE = `]`
+		const ALMOST_IDENTICAL_MEANINGS_DELIMITER = `/`;
+		const LVL3_COMMENT_OPENING = `[`;
+		const LVL3_COMMENT_CLOSURE = `]`;
 		
 		const COMMENT_CHARACTERS = new Set<string>([
 			LVL1_COMMENT_OPENING,
@@ -76,7 +79,8 @@ export class MeaningForest{
 			LVL2_COMMENT_CLOSURE,
 			LVL3_COMMENT_OPENING,
 			LVL3_COMMENT_CLOSURE,
-		])
+		]);
+
 		
 		const findEscapedPositions = (str: string, specialCharacters: Array<string> | Set<string> | undefined): Set<number> => {
 			specialCharacters = new Set<string>(specialCharacters)
@@ -89,8 +93,10 @@ export class MeaningForest{
 			}
 			for (let i = 1; i<str.length;++i){
 				//console.log(str[i-1] === ESCAPE_CHARACTER)
-				if (str[i-1] === ESCAPE_CHARACTER && specialCharacters.has(str[i])){
-					[i-1,i].forEach(e => positions.add(e))
+				//if (str[i-1] === ESCAPE_CHARACTER && specialCharacters.has(str[i])){
+				if (str[i-1] === ESCAPE_CHARACTER){
+					positions.add(i-1);
+					positions.add(i);
 					//console.log(str[i-1])
 					++i // dupla ugratás
 				}
@@ -99,6 +105,21 @@ export class MeaningForest{
 			//console.log(positions)
 			return positions
 		}
+
+		const isPostfixTypeLabel = (trimmedStr: string): boolean => {
+			const result = 
+				trimmedStr.length > 1 &&
+				!findEscapedPositions(trimmedStr,[]).has(trimmedStr.length-1) && 
+				trimmedStr[trimmedStr.length-1]===POSTFIX_TYPE_LABEL_CHARACTER;
+			return result;
+		};
+
+		const isPrefixTypeLabel =  (trimmedStr: string): boolean => {
+			const result = 
+				trimmedStr.length > 1 && 
+				trimmedStr[0] === PREFIX_TYPE_LABEL_CHARACTER;
+			return result;
+		};
 		
 		const splitStringWithoutScanningParenthesesContent = (str: string,delimiter: string) : string[] => {
 			const escapedPositions = findEscapedPositions(str, new Set([delimiter,...COMMENT_CHARACTERS]))
@@ -156,17 +177,17 @@ export class MeaningForest{
 			for(let i = str.length-1; i >= 0; --i){
 				if (str[i]===`*` && str[i-1]===`*` && str[i-2]===`*`) {
 					if (!escapedPositions.has(i-2)){
-						str = `${str.substring(0, i-2)}(1!)${str.substring(i+1)}`;
+						str = `${str.substring(0, i-2)}(${PREFIX_TYPE_LABEL_CHARACTER}1)${str.substring(i+1)}`;
 					}
 					i=i-2;
 				} else if (str[i]===`*` && str[i-1]===`*`) {
 					if (!escapedPositions.has(i-1)){
-						str = `${str.substring(0, i-1)}{1!}${str.substring(i+1)}`;
+						str = `${str.substring(0, i-1)}{${PREFIX_TYPE_LABEL_CHARACTER}1}${str.substring(i+1)}`;
 					}
 					i=i-1;
 				} else if (str[i]===`*`){
 					if (!escapedPositions.has(i)){
-						str = `${str.substring(0, i)}[1!]${str.substring(i+1)}`;
+						str = `${str.substring(0, i)}[${PREFIX_TYPE_LABEL_CHARACTER}1]${str.substring(i+1)}`;
 					}
 					//itt nincs plusz léptetés
 				}
@@ -199,8 +220,22 @@ export class MeaningForest{
 			insideSections = insideSections.map(e=>e.trim()).flatMap(e=> splitStringWithoutScanningParenthesesContent(e,commentDelimiter)).map(e => e.trim()).filter(e=> e!== ``)
 			outsideSections = outsideSections.map(e=>e.trim())
 			let result = new ExtractLevelResponse();
-			result.notes = insideSections.filter(e=> e[e.length-1]!==`!`).map(e=>unesc(e));
-			result.labels = insideSections.filter(e=> e[e.length-1]===`!`).map(e=> unesc(e.substring(0,e.length-1)));
+			
+			result.notes = 
+				insideSections.filter(
+					e=> 
+						!(isPrefixTypeLabel(e) || isPostfixTypeLabel(e))
+				).map(e=>unesc(e));
+			result.labels = 
+				insideSections.filter(
+					e=> 
+						isPrefixTypeLabel(e) || isPostfixTypeLabel(e)
+				).map(
+					e=> 
+						isPrefixTypeLabel(e) ? 
+						unesc(e.substring(1,e.length)):
+						unesc(e.substring(0,e.length-1))
+				);
 			result.rawNextLevel = outsideSections.join(` `)
 			return result
 		}
@@ -219,7 +254,11 @@ export class MeaningForest{
 			let escapedPositionsArr: Array<number> = Array.from(escapedPositions)
 			//escape characters are always the first from a pair
 			//as we are deleting from string, we process it in backwards direction
-			for (let i=escapedPositionsArr.length-2; i>=0; i-=2){
+			const lastPairPos = 
+				escapedPositionsArr.length % 2 === 0 ? 
+				escapedPositionsArr.length-2:
+				escapedPositionsArr.length-3;
+			for (let i=lastPairPos; i>=0; i-=2){
 				let pos = escapedPositionsArr[i]
 				str = str.substring(0, pos)+str.substring(pos+1);
 			}
