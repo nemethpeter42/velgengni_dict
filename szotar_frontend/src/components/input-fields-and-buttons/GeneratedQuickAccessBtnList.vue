@@ -89,11 +89,11 @@
     quickAccessSelected: [selection: QuickAccessSelectionResult ],
     displayAll: [],
   }>();
-  const props = defineProps({  
-    generator: {type: Array<string>, required: true,},
-    defaultNumOfDisplayedItems: {type: Number, required: true,},
-    isAllDisplayed: {type: Boolean, required: true,},
-  });
+  const props = defineProps<{  
+    generator: string[],
+    defaultNumOfDisplayedItems: number,
+    isAllDisplayed: boolean,
+  }>();
   
   const allItems = computed(() => {
     const res: {words: string[], isInverseSearch: boolean}[] = []

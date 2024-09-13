@@ -10,6 +10,21 @@ import { type SearchCondition } from "../../../libs/szotar_common/src/models/Sea
 import { type HighlightDefinition } from "@/frontend_models/HighlightDefinition.js";
 import { type LanguagePair } from "@/frontend_models/LanguagePair.js";
 import type { TrExampleStoreType } from "@/frontend_models/TrExampleStoreTypes";
+import { backendBaseUrl } from "@/config";
+
+export const obtainTrExampleFindResult = async (
+  exampleFindReq: ExampleFindReq
+): Promise<ExampleArrayWithBackendLimit> => {
+const res = await (await fetch(`${backendBaseUrl}/find`, {
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+  method: `POST`, 
+  body: JSON.stringify(exampleFindReq),
+})).json() as ExampleArrayWithBackendLimit;
+return res;
+};
 
 export const useTranslationExampleStore = (id: TrExampleStoreType) => { 
   const store =  defineStore(`translationExample-${id}`, () => {
@@ -35,7 +50,7 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
 
     const refreshLanguagePairs = async () => {
       try {
-        const res = await (await fetch(`http://localhost:3035/tr_example_languages`, {
+        const res = await (await fetch(`${backendBaseUrl}/tr_example_languages`, {
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -96,7 +111,7 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
       executeBigFilterQuery()
     }
 
-    const currentPage = ref(0);
+    const currentPageIdx = ref(0);
 
     const exampleList: Ref<Example[]> = ref([]);
 
@@ -110,7 +125,7 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
       if (phrase.trim() ===``) {return;}
       isGeneratedLinksLoading.value = true
       try {
-        const url = `http://localhost:3035/generated_links/generate_links_for_entry?lang=${encodeURIComponent(lang)}&phrase=${encodeURIComponent(phrase)}`
+        const url = `${backendBaseUrl}/generated_links/generate_links_for_entry?lang=${encodeURIComponent(lang)}&phrase=${encodeURIComponent(phrase)}`
         const res = await (await fetch(url, {
           headers: {
             'Accept': 'application/json',
@@ -137,14 +152,8 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
       exampleFindReq.searchInSecondParamLanguage = isInverseSearch
       refreshGeneratedLinks(exampleFindReq.lang1, exampleFindReq.conditions.map(cnd => cnd.expression.trim()).join(` `))
       try {
-        const res = await (await fetch(`http://localhost:3035/find`, {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          method: `POST`, 
-          body: JSON.stringify(exampleFindReq),
-        })).json() as ExampleArrayWithBackendLimit;
+        
+        const res = await obtainTrExampleFindResult(exampleFindReq)
         exampleList.value = res.entries;
         jumpToPage(`FIRST`)
         isLoading.value = false;
@@ -157,8 +166,8 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
     
 
     const currentPageOneIncremented = computed({
-        get: ():number => currentPage.value + 1,
-        set: (value: number) => currentPage.value = value - 1,
+        get: ():number => currentPageIdx.value + 1,
+        set: (value: number) => currentPageIdx.value = value - 1,
     });
     
     const currentPageInputField: Ref<{val:string,valid:boolean}> = ref({
@@ -197,9 +206,9 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
             
     }
     
-    const isFirstPage: Ref<boolean> = computed(() => currentPage.value===0);
+    const isFirstPage: Ref<boolean> = computed(() => currentPageIdx.value===0);
     
-    const isLastPage: Ref<boolean> = computed(() => currentPage.value===totalPageCount.value-1);
+    const isLastPage: Ref<boolean> = computed(() => currentPageIdx.value===totalPageCount.value-1);
 
     const resultsPerPageOptions: Ref<number[]> = ref([40,80,100,160,200,500]);
 
@@ -207,9 +216,9 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
 
     const setResultsPerPage = async (num: number) => resultsPerPage.value = num;
 
-    const sortCol = ref(``)
+    const sortCol = ref(``);
 
-    const sortAscending = ref(true)
+    const sortAscending = ref(true);
 
     const toggleSort = (colName: string) => {
         if (sortCol.value !== colName) {
@@ -220,7 +229,7 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
         } else if (sortCol.value === colName && sortAscending.value === false) { 
             sortCol.value = ``
         }
-    }
+    };
 
     
     const HIGHLIGHT_STYLES = [
@@ -236,7 +245,7 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
       `background-color: rgba(255,   0,   0, 0.45);`, // piros
       `background-color: rgba(0,   201, 255, 0.55);`, // vilagoskek
       `background-color: rgba(0,   128,   0, 0.65);`, // fenyozold
-    ]
+    ];
 
 
     const phrasesUsedInHighlight: Ref<HighlightDefinition[]> = computed(() => {
@@ -273,7 +282,7 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
         val:e,
         style: HIGHLIGHT_STYLES[i % HIGHLIGHT_STYLES.length],
       }))
-    })
+    });
 
     const finalPhrasesUsedInFiltering = computed(()=> {
       return quickSearchQueryPhrase.value.
@@ -284,7 +293,7 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
         map(e=>e.toLowerCase()).
         map(e=>e.split(`_`).join(` `)).
         map(e => [e,e.replaceAll(/a$/gi,`á`).replaceAll(/e$/gi,`é`)]).flat()
-    })
+    });
 
     const filteredEntries = computed(() => {
         let res
@@ -335,14 +344,20 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
             typeSafeResult;
         const finalResult: FilteredEntry[] = sortedResult.map((e,i)=> ({idx:e.idx, val:e.val, sortedIdx:i,}))
         return finalResult
-    })
+    });
 
-    const onePageOfFilteredEntries = computed(()=>
-        filteredEntries.value.slice(
-            currentPage.value*resultsPerPage.value,
-            (currentPage.value+1)*resultsPerPage.value
-        )
+    const pagesOfFilteredEntries = computed(()=> {
+      const chunkSize = resultsPerPage.value;
+      return filteredEntries.value.reduce((acc, _, i) => {
+        if (i % chunkSize === 0) acc.push(filteredEntries.value.slice(i, i + chunkSize))
+        return acc
+      }, [] as FilteredEntry[][])
+    });
+
+    const currPageOfFilteredEntries = computed(()=>
+      pagesOfFilteredEntries.value.at(currentPageIdx.value) ?? []
     );
+
 
     const totalPageCount: ComputedRef<number> = computed(()=> {
         if (filteredEntries.value===undefined || filteredEntries.value.length===0){
@@ -355,7 +370,7 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
             //console.log(res)
             return res;
         }
-    })
+    });
 
     const bulkOpMenuIsOpen = ref(false)
 
@@ -364,25 +379,25 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
     //private, ne vezesd ki
     const selectAll = async () => {
         selectedIndices.value = new Set(exampleList.value?.keys())
-    } 
+    }; 
 
-    const isAllSelected = computed(() => selectedIndices.value.size === exampleList.value?.length ?? false)
+    const isAllSelected = computed(() => selectedIndices.value.size === exampleList.value?.length ?? false);
 
     const toggleAllSelection = async () => {
         if (isAllSelected.value) {
-            selectedIndices.value.clear()
+            selectedIndices.value.clear();
         } else {
-            await selectAll()
+            await selectAll();
         }
-    }
+    };
 
     const setLang1 = async (val: string) => {
-      exampleFindReq.value.lang1 = val
-    }
+      exampleFindReq.value.lang1 = val;
+    };
 
     const setLang2 = async (val: string) => {
-      exampleFindReq.value.lang2 = val
-    }
+      exampleFindReq.value.lang2 = val;
+    };
 
     
 
@@ -403,6 +418,7 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
       jumpToPage,
       isFirstPage,
       isLastPage,
+      currentPageIdx,
       currentPageInputForTwoWayBinding,
       currentPageInputField,
       currentPageOneIncremented,
@@ -410,7 +426,8 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
       resultsPerPage,
       setResultsPerPage,
       totalPageCount,
-      onePageOfFilteredEntries,
+      currPageOfFilteredEntries,
+      pagesOfFilteredEntries,
       toggleSort,
       sortAscending,
       sortCol,
@@ -442,8 +459,7 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
       generatedLinks,
       isGeneratedLinksLoading,
       lastTrExampleQueryErrored,
-  }
-
-})()
-return store
+    }
+  })();
+  return store;
 };

@@ -29,10 +29,10 @@
 
    defineEmits(['click']);
     
-  const props = defineProps({  
-    text: {type: String, required: true,},
-    isActive: {type: Boolean, required: true,},
-    labelText: {type: Number, required: false,},
-  })
+  const props = defineProps<{  
+    text: string,
+    isActive: boolean,
+    labelText?: number,
+  }>()
 
 </script>

@@ -24,8 +24,8 @@
 </template>
 <script lang="ts" setup>
   defineEmits([`input`]);
-  const props = defineProps({
-    options: {type: Array<number>, required: true,},
-    currentlySelected: {type: Number, required: false,},
-  });
+  const props = defineProps<{
+    options: number[],
+    currentlySelected?: number,
+  }>();
 </script>

@@ -3,8 +3,9 @@
     <div class="shadow-md sm:rounded-lg" id="datatable-table-top-anchor">
       <div class="flex flex-wrap items-center justify-between border-t-2 border-x-2 border-cyan-200 dark:border-indigo-900 sm:rounded-t-lg">
         <div class="my-1.5">
-          
-          <DictBulkActions />
+          <ShowExportModalBtn 
+            @click="modalStore.openModals.add(`EXPORT`)"
+          />
           
         </div>
         <div class="flex my-1.5">
@@ -30,28 +31,34 @@
         />
         
         <DatatableBody
-          :onePageOfEntries="store.onePageOfFilteredEntries"
+          :onePageOfEntries="store.currPageOfFilteredEntries"
           :columnDefinitions="store.currDictVisibleCols"
           :displayColsAsRawString="store.displayColsAsRawString"
           :selectedIndices="store.selectedIndices"
           @toggleRowSelection="(idx: number,$event: Event) => toggleRowSelection(idx,$event)"
         >
-         <template #rowLevelButtons="{idx,sortedIdx,}">
-            <ShowDetailsModalButton 
-              @click="showDictEntryDetailsModal(sortedIdx)"
-              />
-            <span 
+        <template #rowLevelButtons="{idx,sortedIdx,idxOnCurrPage,}">
+          <ShowDetailsModalButton 
+            @click="showDictEntryDetailsModal(sortedIdx)"
+            />
+          <div class="flex flex-col items-end">
+            <div 
               v-if="store.displayRowNumbers"
-              class="ml-3 w-10"
-              >
+              class="ml-3 w-10">
               #{{ idx + 1 }}
-            </span>
-         </template>
-         <template #detailRow="{ sortedIdx,preferredColspan,idxOnCurrPage,}">
+            </div>
+            <div
+              class="ml-3 w-12 text-right"
+              v-if="store.frequencySearchResult[idxOnCurrPage]!==undefined">
+              ({{ store.frequencySearchResult[idxOnCurrPage] }})
+            </div>
+          </div>
+        </template>
+        <template #detailRow="{ sortedIdx,preferredColspan,idxOnCurrPage,}">
             <tr
               :class="{
-                [`bg-violet-300 dark:bg-violet-800 opacity-85`]: (idxOnCurrPage + index) % 2 === 0,
-                [`bg-violet-200 dark:bg-violet-900 opacity-85`]: (idxOnCurrPage + index) % 2 !== 0,
+                [`even-tr-example-row opacity-90`]: (idxOnCurrPage + index) % 2 === 0,
+                [`odd-tr-example-row opacity-90`]: (idxOnCurrPage + index) % 2 !== 0,
               }"
               v-if="store.displaySavedExamples"
               v-for="(item,index) of store.nonLowPrioExamplesOfCurrDict[sortedIdx]"
@@ -112,8 +119,9 @@ import DatatableBody from './DatatableBody.vue';
 import { useModalStore } from '@/stores/modal';
 import { useSavedTrExampleStore } from '@/stores/savedTrExample';
 import DictTableSavedExampleRow from './DictTableSavedExampleRow.vue';
+import ShowExportModalBtn from '../input-fields-and-buttons/ShowExportModalBtn.vue';
 
-const store = useDictStore()
+const store = useDictStore(`dictModule`)
 
 const scrollToTableTop = (): void => {
     document.getElementById(`datatable-table-top-anchor`)?.scrollIntoView();
@@ -143,3 +151,20 @@ function showConfigModal() {
 }
 
 </script>
+<style scoped>
+  .even-tr-example-row{
+    background-color: rgb(207, 194, 254);
+  }
+
+  .even-tr-example-row:is(.dark *) {
+    background-color: rgb(86, 39, 161);
+  }
+  
+  .odd-tr-example-row {
+    background-color: rgb(221, 214, 254);
+  }
+
+  .odd-tr-example-row:is(.dark *) {
+    background-color: rgb(76, 29, 149);
+  }
+</style>

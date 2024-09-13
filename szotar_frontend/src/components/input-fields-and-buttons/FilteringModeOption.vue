@@ -31,11 +31,11 @@
 <script setup lang="ts">
   defineEmits(['click']);
     
-  const props = defineProps({  
-    isChecked: {type: Boolean, required: true,},
-    labelText: {type: String, required: true,},
-    idValue: {type: String, required: true,}
-  })
+  const props = defineProps<{  
+    isChecked: boolean,
+    labelText: string,
+    idValue: string
+  }>()
 
 
 </script>

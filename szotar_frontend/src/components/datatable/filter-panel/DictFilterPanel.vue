@@ -77,7 +77,7 @@
   import { useModalStore } from '@/stores/modal';
   import { type Ref, ref } from 'vue';
 
-  const store = useDictStore();
+  const store = useDictStore(`dictModule`);
 
   const modalStore = useModalStore();
     

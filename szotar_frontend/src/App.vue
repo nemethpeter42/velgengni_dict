@@ -5,6 +5,7 @@
       h-screen w-screen
       bg-cyan-50 
       dark:bg-indigo-950
+      flex flex-col justify-start
     "
     :class="{
       [`
@@ -12,22 +13,16 @@
       `]: modalStore.openModals.size > 0 || route.name===`knowledge`,
       [`
         overflow-auto
-      `]: !(modalStore.openModals.size > 0),
+      `]: !(modalStore.openModals.size > 0) && route.name!==`knowledge`,
     }">
-      
+    <div class="flex justify-center">  
     <div 
-      class="max-w-[105rem] m-auto p-1"
-      :class="{
-        [`
-          overflow-hidden
-          flex flex-col
-          max-h-screen
-        `]: route.name===`knowledge`,
-      }">
+      class="max-w-[105rem] grow">
       <FloatingActionButtons />
       <FloatingNotifications />
       <SavedQueriesModal type="knowledgeModule"/>
       <SavedQueriesModal type="dictModule"/>
+      <ExportModal />
       <TableConfigurationModal />
       <DictEntryDetailsModal />
       <WordListModal />
@@ -75,6 +70,25 @@
 
       
       </nav>
+      </div>
+    </div>
+    <div
+      class="
+        p-1
+        flex flex-col
+        items-center
+        self-center
+        grow
+      "
+      :class="{
+        [`
+          max-w-[105rem]
+        `]: route.name!==`knowledge`,
+        [`
+          overflow-hidden
+        `]: route.name===`knowledge`,
+      }"
+      >
       <router-view />
     </div>
   </div>
@@ -92,6 +106,7 @@
   import TableConfigurationModal from './components/modal-container/TableConfigurationModal.vue';
   import DictEntryDetailsModal from './components/modal-container/DictEntryDetailsModal.vue';
   import WordListModal from './components/modal-container/WordListModal.vue';
+import ExportModal from './components/modal-container/ExportModal.vue';
 
   const modalStore = useModalStore();
   const darkModeRef = ref(false)

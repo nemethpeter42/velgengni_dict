@@ -14,7 +14,7 @@
 
       <DatatableBody
         :disableRowSelectionCheckbox="true"
-        :onePageOfEntries="store.onePageOfFilteredEntries"
+        :onePageOfEntries="store.currPageOfFilteredEntries"
         :columnDefinitions="[{colName:`word`, colDef:{isVisible: true,}}]"
         :displayColsAsRawString="false"
         :selectedIndices="new Set()"

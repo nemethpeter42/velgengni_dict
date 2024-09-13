@@ -99,7 +99,7 @@ import SavedTrExampleDatatable from '../datatable/SavedTrExampleDatatable.vue';
 import { type SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
 import NewSavedExampleEditor from '../input-fields-and-buttons/NewSavedExampleEditor.vue';
 import SaveModificationsLargeBtn from '../input-fields-and-buttons/SaveModificationsLargeBtn.vue';
-  const store = useDictStore()
+  const store = useDictStore(`dictModule`)
   const savedTrExampleStore = useSavedTrExampleStore()
   
   const createSavedTrExample = async (example: Example) => {
@@ -110,8 +110,8 @@ import SaveModificationsLargeBtn from '../input-fields-and-buttons/SaveModificat
         ...example,
         uuid: ``,
         dictEntryUuid: store.currentUuid,
-        isLowPriority: false,
-        isGrammaticalExample: false,
+        isOfLowImportance: false,
+        isOfHighImportance: false,
       } as SavedTranslationExample
     );
   }

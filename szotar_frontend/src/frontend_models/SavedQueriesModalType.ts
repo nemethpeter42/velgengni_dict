@@ -1,0 +1,1 @@
+export type SavedQueriesModalType = `SAVED_QUERIES` | `SAVED_QUERIES_KNOWLEDGE`;

@@ -126,10 +126,17 @@
         <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Mentett példák megjelenítése</span>
       </label>
     </div>
+    <div class="mt-2">
+      <WordListPrevNextButton 
+        @click="store.runFrequencySearch()"
+        id="word-count-btn" 
+        text="Word count (experimental)"/>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
   import { useDictStore } from '@/stores/dict';
-  const store = useDictStore()
+import WordListPrevNextButton from '../input-fields-and-buttons/WordListPrevNextButton.vue';
+  const store = useDictStore(`dictModule`)
 </script>

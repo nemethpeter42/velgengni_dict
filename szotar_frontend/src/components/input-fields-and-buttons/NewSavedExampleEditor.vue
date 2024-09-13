@@ -58,7 +58,7 @@
       <input 
         id="new-example-is-grammatical-example"
         type="checkbox" 
-        v-model="savedTrExStore.newElemEditor.isGrammaticalExample"
+        v-model="savedTrExStore.newElemEditor.isOfHighImportance"
         class="
           w-4 h-4 rounded 
           text-blue-600 bg-gray-100 border-gray-300
@@ -83,7 +83,7 @@
       <input 
         id="new-example-is-low-priority"
         type="checkbox" 
-        v-model="savedTrExStore.newElemEditor.isLowPriority"
+        v-model="savedTrExStore.newElemEditor.isOfLowImportance"
         class="
           w-4 h-4 rounded 
           text-blue-600 bg-gray-100 border-gray-300
@@ -127,15 +127,15 @@ import { ref } from 'vue';
 import { type Example } from '../../../../libs/szotar_common/src/models/Example';
 import { type SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
   const savedTrExStore = useSavedTrExampleStore();
-  const store = useDictStore()
+  const store = useDictStore(`dictModule`)
   
   const openEditor = async () => {
     savedTrExStore.newElemEditor = {
       visible: true,
       original: ``,
       translated: ``,
-      isLowPriority: false,
-      isGrammaticalExample: false,
+      isOfLowImportance: false,
+      isOfHighImportance: false,
       isLoading: false,
     }
   }
@@ -149,8 +149,8 @@ import { type SavedTranslationExample } from '../../../../libs/szotar_common/src
         translated: savedTrExStore.newElemEditor.translated,
         uuid: ``,
         dictEntryUuid: store.currentUuid,
-        isLowPriority: savedTrExStore.newElemEditor.isLowPriority,
-        isGrammaticalExample: savedTrExStore.newElemEditor.isGrammaticalExample,
+        isOfLowImportance: savedTrExStore.newElemEditor.isOfLowImportance,
+        isOfHighImportance: savedTrExStore.newElemEditor.isOfHighImportance,
       } as SavedTranslationExample
     );
   }

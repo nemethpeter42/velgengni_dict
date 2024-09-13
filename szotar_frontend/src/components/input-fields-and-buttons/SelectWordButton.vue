@@ -18,7 +18,7 @@
 
   defineEmits([`wordSelected`,]);
   
-  const props = defineProps({  
-    idx: {type: Number, required: false,},
-  })
+  const props = defineProps<{  
+    idx?: number,
+  }>();
 </script>

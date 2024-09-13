@@ -5,6 +5,7 @@ import { move } from "../../../libs/szotar_common/src/helpers/move.js";
 import { type PageJumpType } from "@/frontend_models/PageJumpType.js";
 import { type FilteredEntry } from "@/frontend_models/FilteredEntry.js";
 import { useDictStore } from "./dict";
+import { backendBaseUrl } from "@/config";
 
 export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
   
@@ -16,12 +17,12 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
 
   const setQuickSearchQueryPhrase = (val: string) => quickSearchQueryPhrase.value = val;
   
-  const currentPage = ref(0);
+  const currentPageIdx = ref(0);
 
   
   const currentPageOneIncremented = computed({
-    get: ():number => currentPage.value + 1,
-    set: (value: number) => currentPage.value = value - 1,
+    get: ():number => currentPageIdx.value + 1,
+    set: (value: number) => currentPageIdx.value = value - 1,
   });
 
   const currentPageInputField: Ref<{val:string,valid:boolean}> = ref({
@@ -60,9 +61,9 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
         
   }
 
-  const isFirstPage: Ref<boolean> = computed(() => currentPage.value===0);
+  const isFirstPage: Ref<boolean> = computed(() => currentPageIdx.value===0);
 
-  const isLastPage: Ref<boolean> = computed(() => currentPage.value===totalPageCount.value-1);
+  const isLastPage: Ref<boolean> = computed(() => currentPageIdx.value===totalPageCount.value-1);
 
   const resultsPerPageOptions: Ref<number[]> = ref([40,80,100,160,200,500]);
 
@@ -97,7 +98,7 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
       map(e => [e,e.replaceAll(/a$/gi,`á`).replaceAll(/e$/gi,`é`)]).flat()
   })
   
-  const dictStore = useDictStore()
+  const dictStore = useDictStore(`dictModule`)
 
   const examplesOfCurrEntry: ComputedRef<SavedTranslationExample[]> = computed(
     () => 
@@ -160,12 +161,18 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
     return finalResult;
   })
 
-  const onePageOfFilteredEntries = computed(()=>
-    filteredEntries.value.slice(
-      currentPage.value*resultsPerPage.value,
-      (currentPage.value+1)*resultsPerPage.value
-    )
+  const pagesOfFilteredEntries = computed(()=> {
+    const chunkSize = resultsPerPage.value;
+    return filteredEntries.value.reduce((acc, _, i) => {
+      if (i % chunkSize === 0) acc.push(filteredEntries.value.slice(i, i + chunkSize))
+      return acc
+    }, [] as FilteredEntry[][])
+  })
+
+  const currPageOfFilteredEntries = computed(()=>
+    pagesOfFilteredEntries.value.at(currentPageIdx.value) ?? []
   );
+
 
   const totalPageCount: ComputedRef<number> = computed(()=> {
     if (filteredEntries.value===undefined || filteredEntries.value.length===0){
@@ -204,7 +211,7 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
   const refreshTrExamples = async () => {
     isLoading.value = true;
     try {
-      const res = await fetch(`http://localhost:3035/saved_examples/get_db`, {
+      const res = await fetch(`${backendBaseUrl}/saved_examples/get_db`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -229,7 +236,7 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
   const create = async (dictName: string, entry: SavedTranslationExample) => {
     newElemEditor.value.isLoading = true
     try {
-      const res = await fetch(`http://localhost:3035/saved_examples/create`, {
+      const res = await fetch(`${backendBaseUrl}/saved_examples/create`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -265,7 +272,7 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
         throw Error(`Cannot find element in store`);
       }
       entry.dictEntryUuid = savedTrExamples.value[dictName][idx].dictEntryUuid;
-      const res = await fetch(`http://localhost:3035/saved_examples/update`, {
+      const res = await fetch(`${backendBaseUrl}/saved_examples/update`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -294,7 +301,7 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
 
   const execMove = async (dictName: string, direction: `UP`| `DOWN`, uuid: string) => {
     try {
-      const res = await fetch(`http://localhost:3035/saved_examples/move`, {
+      const res = await fetch(`${backendBaseUrl}/saved_examples/move`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -320,7 +327,7 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
 
   const remove = async (dictName: string, uuid: string) => {
     try {
-      const res = await fetch(`http://localhost:3035/saved_examples/delete`, {
+      const res = await fetch(`${backendBaseUrl}/saved_examples/delete`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -346,7 +353,7 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
 
   const saveDb = async () => {
     try {
-      const res = await fetch(`http://localhost:3035/saved_examples/save_db`, {
+      const res = await fetch(`${backendBaseUrl}/saved_examples/save_db`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -378,15 +385,15 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
     visible: boolean;
     original: string;
     translated: string;
-    isLowPriority?: boolean;
-    isGrammaticalExample?:boolean;
+    isOfLowImportance?: boolean;
+    isOfHighImportance?:boolean;
     isLoading: boolean;
   }> = ref({
     visible: false,
     original: ``,
     translated: ``,
-    isLowPriority: false,
-    isGrammaticalExample: false,
+    isOfLowImportance: false,
+    isOfHighImportance: false,
     isLoading: false, // TODO implement
   })
 
@@ -399,15 +406,15 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
     uuid: string;
     original: string;
     translated: string;      
-    isLowPriority?: boolean;
-    isGrammaticalExample?: boolean;
+    isOfLowImportance?: boolean;
+    isOfHighImportance?: boolean;
     isLoading: boolean;
   }> = ref({
     uuid: ``,
     original: ``,
     translated: ``,
-    isLowPriority: false,
-    isGrammaticalExample: false,
+    isOfLowImportance: false,
+    isOfHighImportance: false,
     isLoading: false, // TODO implement
   })
 
@@ -425,12 +432,13 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
     isLoading,
     quickSearchQueryPhrase,
     setQuickSearchQueryPhrase,
-    currentPage,
+    currentPageIdx,
     currentPageOneIncremented,
     currentPageInputField,
     currentPageInputForTwoWayBinding,
     filteredEntries,
-    onePageOfFilteredEntries,
+    pagesOfFilteredEntries,
+    currPageOfFilteredEntries,
     totalPageCount,
     resultsPerPage,
     resultsPerPageOptions,

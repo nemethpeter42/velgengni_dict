@@ -86,7 +86,6 @@
 <script lang="ts" setup>
   
   import MeaningForestViewer from '@/components/meaning-forest/MeaningForestViewer.vue';
-  import { ColumnDefinition } from '../../../../libs/szotar_common/src/models/ColumnDefinition';
   import * as sanitizeHtml from 'sanitize-html';
 
   import type { FilteredEntry } from '@/frontend_models/FilteredEntry';
@@ -152,14 +151,14 @@ import type { ColumnDefinitionArrayForm } from '@/frontend_models/ColumnDefiniti
 
   defineEmits(['toggleRowSelection']);
     
-  const props = defineProps({  
-    selectedIndices: {type: Set, required: true,},
-    onePageOfEntries: { type: Array, required: true, },
-    columnDefinitions: { type: Array<ColumnDefinitionArrayForm>, required: true, },
-    displayColsAsRawString: {type: Boolean, required: false,},
-    disableRowSelectionCheckbox: {type: Boolean, required: false,},
-    highlightedTexts: {type: Array<HighlightDefinition>, required: false,},
-  });
+  const props = defineProps<{  
+    selectedIndices: Set<number>,
+    onePageOfEntries: FilteredEntry[],
+    columnDefinitions: ColumnDefinitionArrayForm[],
+    displayColsAsRawString?: boolean,
+    disableRowSelectionCheckbox?: boolean,
+    highlightedTexts?: HighlightDefinition[],
+  }>();
 
 
 </script>

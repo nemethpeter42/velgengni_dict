@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.prefer-serif {
+  font-family: ui-serif, "Times New Roman", Times, serif;
+}

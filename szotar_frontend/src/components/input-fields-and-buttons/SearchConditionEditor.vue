@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex flex-wrap lg:flex-nowrap" v-for="(item, index) in modelValue" :key="index">
+    <div class="flex flex-wrap lg:flex-nowrap" v-for="(item, index) in props.modelValue" :key="index">
       <div class="flex items-center m-2">
         <input 
           :id="`prefix-space-checkbox-${index + 1}`"
@@ -93,8 +93,8 @@
   import RemoveConditionButton from './RemoveConditionButton.vue';
   defineEmits(['update:modelValue']);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const props = defineProps({
-    modelValue: {type: Array<SearchCondition>, required: true,},
-  })
+  const props = defineProps<{
+    modelValue: SearchCondition[],
+  }>();
 
 </script>

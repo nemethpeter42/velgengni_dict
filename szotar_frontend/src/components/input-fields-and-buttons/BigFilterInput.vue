@@ -30,7 +30,7 @@
   import { ArrowRightIcon, } from '@heroicons/vue/24/solid'
   defineEmits(['update:modelValue','goButtonClicked']);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const props = defineProps({
-    modelValue: {type: String, required: true,},
-  })
+  const props = defineProps<{
+    modelValue: string,
+  }>();
 </script>

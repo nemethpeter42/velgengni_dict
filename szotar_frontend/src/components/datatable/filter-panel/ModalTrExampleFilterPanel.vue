@@ -141,7 +141,7 @@ import type { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';
       storeId: TrExampleStoreType,
   }>()
 
-  const dictStore = useDictStore()
+  const dictStore = useDictStore(`dictModule`)
   const trExampleStore = useTranslationExampleStore(props.storeId)
   
  

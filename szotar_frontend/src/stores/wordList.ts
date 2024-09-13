@@ -4,6 +4,7 @@ import { type PageJumpType } from "@/frontend_models/PageJumpType.js";
 import { type FilteredEntry } from "@/frontend_models/FilteredEntry.js";
 import { useTranslationExampleStore } from "./translationExample";
 import { type SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition";
+import { backendBaseUrl } from "@/config";
 
 export const useWordListStore = defineStore('wordList', () => {
   const trExampleStore = useTranslationExampleStore(`standalone`)
@@ -86,7 +87,7 @@ export const useWordListStore = defineStore('wordList', () => {
   const refreshWordList = async () => {
     //console.log(`DEBUG getDictMetas egyszer lefut`)
     try {
-      const res = await (await fetch(`http://localhost:3035/list`, {
+      const res = await (await fetch(`${backendBaseUrl}/list`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
@@ -105,11 +106,11 @@ export const useWordListStore = defineStore('wordList', () => {
 
   const setQuickSearchQueryPhrase = (val: string) => quickSearchQueryPhrase.value = val
 
-  const currentPage = ref(0);
+  const currentPageIdx = ref(0);
 
   const currentPageOneIncremented = computed({
-    get: ():number => currentPage.value + 1,
-    set: (value: number) => currentPage.value = value - 1,
+    get: ():number => currentPageIdx.value + 1,
+    set: (value: number) => currentPageIdx.value = value - 1,
   });
   
   const currentPageInputField: Ref<{val:string,valid:boolean}> = ref({
@@ -148,9 +149,9 @@ export const useWordListStore = defineStore('wordList', () => {
       
   }
   
-  const isFirstPage: Ref<boolean> = computed(() => currentPage.value===0);
+  const isFirstPage: Ref<boolean> = computed(() => currentPageIdx.value===0);
   
-  const isLastPage: Ref<boolean> = computed(() => currentPage.value===totalPageCount.value-1);
+  const isLastPage: Ref<boolean> = computed(() => currentPageIdx.value===totalPageCount.value-1);
 
   const resultsPerPageOptions: Ref<number[]> = ref([15,30,50,100,]);
 
@@ -216,12 +217,17 @@ export const useWordListStore = defineStore('wordList', () => {
     const finalResult: FilteredEntry[] = sortedResult.map((e,i)=> ({idx:e.idx, val:e.val, sortedIdx:i,}))
     return finalResult
   })
+  
+  const pagesOfFilteredEntries = computed(()=> {
+    const chunkSize = resultsPerPage.value;
+    return filteredEntries.value.reduce((acc, _, i) => {
+      if (i % chunkSize === 0) acc.push(filteredEntries.value.slice(i, i + chunkSize))
+      return acc
+    }, [] as FilteredEntry[][])
+  });
 
-  const onePageOfFilteredEntries = computed(()=>
-    filteredEntries.value.slice(
-      currentPage.value*resultsPerPage.value,
-      (currentPage.value+1)*resultsPerPage.value
-    )
+  const currPageOfFilteredEntries = computed(()=>
+    pagesOfFilteredEntries.value.at(currentPageIdx.value) ?? []
   );
 
   const totalPageCount: ComputedRef<number> = computed(()=> {
@@ -255,6 +261,7 @@ export const useWordListStore = defineStore('wordList', () => {
     jumpToPage,
     isFirstPage,
     isLastPage,
+    currentPageIdx,
     currentPageInputForTwoWayBinding,
     currentPageInputField,
     currentPageOneIncremented,
@@ -262,7 +269,8 @@ export const useWordListStore = defineStore('wordList', () => {
     resultsPerPage,
     setResultsPerPage,
     totalPageCount,
-    onePageOfFilteredEntries,
+    currPageOfFilteredEntries,
+    pagesOfFilteredEntries,
     toggleSort,
     sortAscending,
     sortCol,

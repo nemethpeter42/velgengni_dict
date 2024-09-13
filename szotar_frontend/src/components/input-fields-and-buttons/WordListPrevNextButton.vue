@@ -29,9 +29,9 @@
 <script lang="ts" setup>
   defineEmits(['click']);
   
-  const props = defineProps({  
-    id: {type: String, required: true,},
-    text: { type: String, required: true, },
-    isDisabled: {type: Boolean, required: false,},
-  });
+  const props = defineProps<{  
+    id: string,
+    text: string,
+    isDisabled?: boolean,
+  }>();
 </script>

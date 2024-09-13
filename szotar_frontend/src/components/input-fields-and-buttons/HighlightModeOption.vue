@@ -31,11 +31,11 @@
 <script setup lang="ts">
   defineEmits([`click`, `update:modelValue`]);
     
-  const props = defineProps({  
-    modelValue: {type: Boolean, required: true,},
-    labelText: {type: String, required: true,},
-    idValue: {type: String, required: true,}
-  })
+  const props = defineProps<{  
+    modelValue: boolean,
+    labelText: string,
+    idValue: string,
+  }>()
 
 
 </script>

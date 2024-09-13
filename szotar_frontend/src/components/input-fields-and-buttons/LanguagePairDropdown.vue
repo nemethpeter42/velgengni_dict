@@ -70,13 +70,12 @@ import { ref } from 'vue';
   
   defineEmits([`optionSelected`])
 
-  const props = defineProps({  
-    toggleBtnText: {type: String, required: true,},
-    idOfToggleBtn: { type: String, required: true, },
-    idOfOptionList: { type: String, required: true, },
-    languagePairs: {type: Array<LanguagePair>, required: true,},
-  });
-
+  const props = defineProps<{  
+    toggleBtnText: string,
+    idOfToggleBtn: string,
+    idOfOptionList: string,
+    languagePairs: LanguagePair[],
+  }>();
   
   const closeDropdown = (toggleElementId: string) => {
     const dropdownToggleElement = document.getElementById(toggleElementId)

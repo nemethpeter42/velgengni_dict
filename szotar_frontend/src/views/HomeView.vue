@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl m-auto home-page">
+  <div class="max-w-7xl home-page">
     <DictFilterPanel />
     <DictDatatable />
   </div>

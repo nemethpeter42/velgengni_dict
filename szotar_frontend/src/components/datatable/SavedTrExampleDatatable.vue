@@ -37,7 +37,7 @@
         />
         
         <DatatableBody
-          :onePageOfEntries="savedTrExStore.onePageOfFilteredEntries"
+          :onePageOfEntries="savedTrExStore.currPageOfFilteredEntries"
           :columnDefinitions="[{colName:`example`, colDef:{isVisible: true,isTrExamplePairCol:true,}}]"
           :displayColsAsRawString="false"
           :selectedIndices="savedTrExStore.selectedIndices"
@@ -66,13 +66,13 @@
             <span 
               class="ml-3 w-10"
               :class="{
-                [`text-red-500 dark:text-red-400 italic`]:savedTrExStore.examplesOfCurrEntry[idx].isLowPriority, 
+                [`text-red-500 dark:text-red-400 italic`]:savedTrExStore.examplesOfCurrEntry[idx].isOfLowImportance, 
                 
               }"
               >
                 <span
                   :class="{
-                    [`text-green-500 dark:text-green-400`]:savedTrExStore.examplesOfCurrEntry[idx].isGrammaticalExample, 
+                    [`text-green-500 dark:text-green-400`]:savedTrExStore.examplesOfCurrEntry[idx].isOfHighImportance, 
                   }"
                   >
                   #{{ idx + 1 }}
@@ -142,7 +142,7 @@ import { type SavedTranslationExample } from '../../../../libs/szotar_common/src
 
 
 const savedTrExStore = useSavedTrExampleStore();
-const dictStore = useDictStore();
+const dictStore = useDictStore(`dictModule`);
 
 const setEditorTo = (idxBeforeFilter: number) => {
   const entry = savedTrExStore.examplesOfCurrEntry?.at(idxBeforeFilter)
@@ -150,8 +150,8 @@ const setEditorTo = (idxBeforeFilter: number) => {
     savedTrExStore.existingElemEditor.uuid = entry.uuid;
     savedTrExStore.existingElemEditor.original = entry.original;
     savedTrExStore.existingElemEditor.translated = entry.translated;
-    savedTrExStore.existingElemEditor.isLowPriority = entry.isLowPriority;
-    savedTrExStore.existingElemEditor.isGrammaticalExample = entry.isGrammaticalExample;
+    savedTrExStore.existingElemEditor.isOfLowImportance = entry.isOfLowImportance;
+    savedTrExStore.existingElemEditor.isOfHighImportance = entry.isOfHighImportance;
   }
 }
 

@@ -1,7 +1,7 @@
 <template>
   <div 
     v-if="modalStore.openModals.has(modalStoreId)"
-    class="saved-queries-modal-container">
+    class="export-modal-container">
     <Teleport to="body">
     <div 
       class="
@@ -10,8 +10,8 @@
         dark:bg-opacity-80 
       "></div>
     <div 
-      :id="`savedQueriesModal-${type}`"  
-      :data-backdrop-for="`savedQueriesModal-${type}`"  
+      id="exportModal"  
+      data-backdrop-for="exportModal"  
       @click="$event => triggerModalBackdrop($event)"
       tabindex="-1" 
       aria-hidden="true" 
@@ -20,6 +20,7 @@
         hidden: !modalStore.openModals.has(modalStoreId),
       }" 
       class="
+        text-gray-700 dark:text-gray-300
         p-4 fixed top-0 left-0 right-0 z-[130] overflow-x-hidden overflow-y-auto 
         w-full h-[calc(100%-1rem)] max-h-full justify-center items-center
         md:inset-0 
@@ -37,12 +38,9 @@
           
           <div 
             class="
-              p-6 space-y-6
+              p-6
             ">
-            <SavedQueriesModalContent 
-              :type="type"
-              :modalStoreId="modalStoreId"
-            />
+            <ExportModalContent />
           </div>
           <div 
             class="
@@ -79,21 +77,16 @@
 <script setup lang="ts">
 
   import { useModalStore } from '@/stores/modal';
-  import SavedQueriesModalContent from '../modal-content/SavedQueriesModalContent.vue';
-  import { type DictStoreType } from '@/frontend_models/DictStoreType';
-  import type { SavedQueriesModalType } from '@/frontend_models/SavedQueriesModalType';
-  const props = defineProps<{
-    type:DictStoreType,
-  }>();
+import ExportModalContent from '../modal-content/ExportModalContent.vue';
   const modalStore = useModalStore();
-  const modalStoreId: SavedQueriesModalType = props.type ===`dictModule` ? `SAVED_QUERIES` : `SAVED_QUERIES_KNOWLEDGE`;
+  const modalStoreId = `EXPORT`;
   
   const triggerModalBackdrop = ($event: any) => {
     try {
       const attributes = 
         [...$event?.originalTarget?.attributes]?.
           map(e=>({name: e.name, value: e.value})) as {name: string, value: string}[];
-      if (attributes.filter(e=>e.name===`data-backdrop-for`,`savedQueriesModal`).length > 0) {
+      if (attributes.filter(e=>e.name===`data-backdrop-for`,`exportModal`).length > 0) {
         modalStore.openModals.delete(modalStoreId);
       }
       $event.stopPropagation();

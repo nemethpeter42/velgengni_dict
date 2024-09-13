@@ -39,7 +39,7 @@
   </div>
 </template>
 <script setup lang="ts">
- const props = defineProps({  
-    testId: {type: String, required: true,},
-  });
+ const props = defineProps<{  
+    testId: string,
+ }>();
 </script>

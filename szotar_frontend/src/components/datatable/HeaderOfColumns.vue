@@ -54,12 +54,12 @@
   
   defineEmits([`toggleSort`, `toggleAllSelection`,]);
     
-  const props = defineProps({
-      columnDefinitions: {type: Array<ColumnDefinitionArrayForm>, required: true,},
-      isAllSelected: { type: Boolean, required: true, },
-      sortCol: { type: String, required: true, },
-      sortAscending: {type: Boolean, required: true,},
-      disableAllSelection: {type: Boolean, required: false,},
-  });
+  const props = defineProps<{
+      columnDefinitions: ColumnDefinitionArrayForm[],
+      isAllSelected: boolean,
+      sortCol: string,
+      sortAscending: boolean,
+      disableAllSelection?: boolean,
+  }>();
 
 </script>

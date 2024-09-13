@@ -30,7 +30,7 @@
   </button>  
 </template>
 <script lang="ts" setup>
-  const props = defineProps({  
-    isHighlighted: {type: Boolean, required: true,},
-  });
+  const props = defineProps<{  
+    isHighlighted: boolean,
+  }>();
 </script>

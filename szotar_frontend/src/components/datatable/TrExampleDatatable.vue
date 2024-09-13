@@ -43,7 +43,7 @@
         />
         
         <DatatableBody
-          :onePageOfEntries="trExampleStore.onePageOfFilteredEntries"
+          :onePageOfEntries="trExampleStore.currPageOfFilteredEntries"
           :columnDefinitions="[{colName:`example`, colDef:{isVisible: true,isTrExamplePairCol:true,}}]"
           :displayColsAsRawString="false"
           :selectedIndices="trExampleStore.selectedIndices"

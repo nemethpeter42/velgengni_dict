@@ -5,16 +5,19 @@ import { computed, type Ref, ref } from "vue"
 import { type SavedDictQuery } from "../../../libs/szotar_common/src/models/SavedDictQuery";
 import { useDictStore } from "./dict";
 import { useNotiStore } from "./noti";
+import type { DictStoreType } from "@/frontend_models/DictStoreType";
+import { backendBaseUrl } from "@/config";
 
 export const useSavedDictQueryStore = defineStore(`savedDictQuery`, () => {
 
   const notiStore = useNotiStore();
-  const dictStore = useDictStore();
+  const dictStore = useDictStore(`dictModule`);
+  const knowledgeStore = useDictStore(`knowledgeModule`);
   
 
  
-  const entries: Ref<SavedDictQuery[]> = ref([
-    {
+  const entries: Ref<Record<string,SavedDictQuery[]>> = ref({
+    /*testgroup:[{
       uuid:`abcdef-1234-0001`,
       title:`test query hibas 1`,
       dictName:`ervenytelen`,
@@ -27,23 +30,29 @@ export const useSavedDictQueryStore = defineStore(`savedDictQuery`, () => {
       dictName:`spanyol_szoszedet`,
       searchQuery: `e.original.trim().toLowerCase().includes(\`cat\`)`,
       sortComparison: `-1*a.original.localeCompare(b.original, \`es\`)`,
-    },
-  ])
+    }]*/
+  })
   
   const newElemEditor: Ref<{
-    title: string;
+    title: string,
+    group: string,
   }> = ref({
     title: ``,
+    group: ``,
   })
 
-  const newElemIsValid = computed(() => newElemEditor.value.title !== ``)
+  const newElemIsValid = computed(
+    () => 
+      newElemEditor.value.title !== `` && 
+      newElemEditor.value.group !== ``
+  );
 
   const isLoading = ref(false);
   
   const getAllEntries = async () => {
     isLoading.value = true;
     try {
-      const res = await fetch(`http://localhost:3035/saved_queries/get_all`, {
+      const res = await fetch(`${backendBaseUrl}/saved_queries/get_all`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -51,7 +60,7 @@ export const useSavedDictQueryStore = defineStore(`savedDictQuery`, () => {
         method: `GET`, 
       })
       if (res.ok){
-        const parsedRes = await res.json() as SavedDictQuery[];
+        const parsedRes = await res.json() as Record<string,SavedDictQuery[]>;
         entries.value = parsedRes;
         isLoading.value = false;
       } else {
@@ -74,9 +83,10 @@ export const useSavedDictQueryStore = defineStore(`savedDictQuery`, () => {
       dictName: dictStore.dictNameOnForm,
       sortComparison: dictStore.sortComparison,
     };
+    const group = newElemEditor.value.group;
     isLoading.value = true
     try {
-      const res = await fetch(`http://localhost:3035/saved_queries/create`, {
+      const res = await fetch(`${backendBaseUrl}/saved_queries/create`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -84,13 +94,18 @@ export const useSavedDictQueryStore = defineStore(`savedDictQuery`, () => {
         method: `POST`,
         body: JSON.stringify({
           entry,
+          group,
         })
       });
       if (res.ok) {
         const parsedRes = await res.json() as {uuid: string};
         entry.uuid = parsedRes.uuid;
-        entries.value.push(entry);
+        if (!entries.value[group]) {
+          entries.value[group] = []
+        }
+        entries.value[group].push(entry);
         newElemEditor.value.title = ``;
+        isLoading.value = false;
       } else {
         const text = await res.text();
         throw Error(text);
@@ -102,18 +117,19 @@ export const useSavedDictQueryStore = defineStore(`savedDictQuery`, () => {
   };
   
 
-  const querySelected = (entry: SavedDictQuery) => {
-    const validDictionaries = Object.keys(dictStore.dictQueriesWithMeta)
+  const querySelected = (entry: SavedDictQuery, target: DictStoreType) => {
+    const store = target === `dictModule` ? dictStore : knowledgeStore;
+    const validDictionaries = Object.keys(store.dictQueriesWithMeta)
     if(!validDictionaries.includes(entry.dictName)) {
       notiStore.notifications.push({
         type:`error`,
         msg:`Dictonary not found: "${entry.dictName}"`,
       })
     } else {
-      dictStore.searchQuery = entry.searchQuery;
-      dictStore.dictNameOnForm = entry.dictName;
-      dictStore.sortComparison = entry.sortComparison;
-      dictStore.executeBackendSearch()
+      store.searchQuery = entry.searchQuery;
+      store.dictNameOnForm = entry.dictName;
+      store.sortComparison = entry.sortComparison;
+      store.executeBackendSearch()
     }
   }
 
