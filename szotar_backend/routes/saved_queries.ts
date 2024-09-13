@@ -10,7 +10,7 @@ const SAVED_QUERIES_FOLDER = `./saved_queries`
 
 let isInitialized: boolean = false
 
-let savedDictQueries: SavedDictQuery[] = []
+let savedDictQueries: Record<string,SavedDictQuery[]> = {}
 
 const pollInitializationStatus = async (limitInMs: number = 30000) => {
   let timeLeftInMs = limitInMs
@@ -21,7 +21,7 @@ const pollInitializationStatus = async (limitInMs: number = 30000) => {
     timeLeftInMs -= pollInterval
   }
   if (isInitialized === false) {
-    throw new Error (`Error: Saved translation example db didn't initialize after ${limitInMs} ms.`)
+    throw new Error (`Error: Saved dictionary query db didn't initialize after ${limitInMs} ms.`)
   }
 }
 const fileExists = async (path: string) => !!(await fsPromises.stat(path).catch(e => false));
@@ -42,7 +42,7 @@ async function init() {
       await writeExistingDataToFile()
     }
     const fileTextContent = await fsPromises.readFile(`${SAVED_QUERIES_FOLDER}/saved_queries.json`, {encoding: `utf8`,}) 
-    savedDictQueries = JSON.parse(fileTextContent) as SavedDictQuery[]
+    savedDictQueries = JSON.parse(fileTextContent) as Record<string,SavedDictQuery[]>
   } catch (err) {
     console.error(`Error while loading saved dictionary query file.`)
     throw err;
@@ -62,10 +62,13 @@ router.get('/get_all', async (req, res) => {
 router.post('/create', async (req,res) => {
   try{
     await pollInitializationStatus();
-    const reqBody = req.body as {entry?: SavedDictQuery};
-    if (reqBody && reqBody.entry) {
+    const reqBody = req.body as {entry?: SavedDictQuery, group?: string};
+    if (reqBody && reqBody.entry && reqBody.group) {
       reqBody.entry.uuid = uuidGenerator.v4();
-      savedDictQueries.push(reqBody.entry)
+      if (!savedDictQueries[reqBody.group]){
+        savedDictQueries[reqBody.group] = []
+      }
+      savedDictQueries[reqBody.group].push(reqBody.entry)
       await writeExistingDataToFile();
       res.json({uuid: reqBody.entry.uuid,})
     } else {

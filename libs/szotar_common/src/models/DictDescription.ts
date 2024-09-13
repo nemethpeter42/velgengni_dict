@@ -22,7 +22,11 @@ export class DictDescription {
                 sequence: -2,
             }
         }
-        if (!Object.keys(res.cols).some(key => res.cols[key]?.isMeaningForestCol) && !Object.keys(res.cols).includes(`translated`) && translatedColExistsInDict) {
+        if (
+            !Object.keys(res.cols).some(key => res.cols[key]?.isMeaningForestCol) && 
+            !Object.keys(res.cols).includes(`translated`) && 
+            translatedColExistsInDict
+        ) {
             res.cols[`translated`] = {
                 isVisible: true,
                 tailwindClasses: `w-80`,
@@ -30,6 +34,13 @@ export class DictDescription {
                 isUsedInTrExampleSearch: true,
                 sequence: -1,
             }
+        }
+        // if no default m.f. column exists, "translated" gets the role
+        if(
+            !Object.keys(res.cols).some(key => res.cols[key]?.isDefaultMeaningForestCol) && 
+            res.cols[`translated`]?.isMeaningForestCol
+        ) {
+            res.cols[`translated`].isDefaultMeaningForestCol = true;
         }
         return res;
     }

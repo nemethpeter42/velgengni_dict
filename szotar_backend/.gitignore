@@ -6,3 +6,4 @@ example_source_dbs/*
 node_modules
 config.json
 saved_queries/saved_queries.json
+saved_highlights/saved_highlights.json

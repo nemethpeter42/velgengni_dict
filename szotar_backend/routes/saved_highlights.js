@@ -1,10 +1,9 @@
 import express from 'express';
 import * as fsPromises from 'fs/promises';
-import * as uuidGenerator from "uuid";
 const router = express.Router();
-const SAVED_QUERIES_FOLDER = `./saved_queries`;
+const SAVED_HIGHLIGHTS_FOLDER = `./saved_highlights`;
 let isInitialized = false;
-let savedDictQueries = {};
+let savedHighlights = {};
 const pollInitializationStatus = async (limitInMs = 30000) => {
     let timeLeftInMs = limitInMs;
     const pollInterval = 100;
@@ -16,53 +15,49 @@ const pollInitializationStatus = async (limitInMs = 30000) => {
         timeLeftInMs -= pollInterval;
     }
     if (isInitialized === false) {
-        throw new Error(`Error: Saved dictionary query db didn't initialize after ${limitInMs} ms.`);
+        throw new Error(`Error: Saved highlights db didn't initialize after ${limitInMs} ms.`);
     }
 };
 const fileExists = async (path) => !!(await fsPromises.stat(path).catch(e => false));
 const writeExistingDataToFile = async () => {
     try {
-        await fsPromises.writeFile(`${SAVED_QUERIES_FOLDER}/saved_queries.json`, JSON.stringify(savedDictQueries, null, 2), { encoding: `utf8`, });
+        await fsPromises.writeFile(`${SAVED_HIGHLIGHTS_FOLDER}/saved_highlights.json`, JSON.stringify(savedHighlights, null, 2), { encoding: `utf8`, });
     }
     catch (err) {
-        console.error(`Error while writing saved dictionary query file.`);
+        console.error(`Error while writing saved highlights file.`);
         throw (err);
     }
 };
 async function init() {
     try {
-        const savedQueryFileAlreadyExists = await fileExists(`${SAVED_QUERIES_FOLDER}/saved_queries.json`);
-        if (!savedQueryFileAlreadyExists) {
+        const savedHighlightsFileAlreadyExists = await fileExists(`${SAVED_HIGHLIGHTS_FOLDER}/saved_highlights.json`);
+        if (!savedHighlightsFileAlreadyExists) {
             await writeExistingDataToFile();
         }
-        const fileTextContent = await fsPromises.readFile(`${SAVED_QUERIES_FOLDER}/saved_queries.json`, { encoding: `utf8`, });
-        savedDictQueries = JSON.parse(fileTextContent);
+        const fileTextContent = await fsPromises.readFile(`${SAVED_HIGHLIGHTS_FOLDER}/saved_highlights.json`, { encoding: `utf8`, });
+        savedHighlights = JSON.parse(fileTextContent);
     }
     catch (err) {
-        console.error(`Error while loading saved dictionary query file.`);
+        console.error(`Error while loading saved highlights file.`);
         throw err;
     }
-    console.log(`saved dictionary queries initialization finished`);
+    console.log(`saved highlights initialization finished`);
     isInitialized = true;
 }
 ;
 init();
 router.get('/get_all', async (req, res) => {
     await pollInitializationStatus();
-    res.json(savedDictQueries);
+    res.json(savedHighlights);
 });
-router.post('/create', async (req, res) => {
+router.post('/save_db', async (req, res) => {
     try {
         await pollInitializationStatus();
         const reqBody = req.body;
-        if (reqBody && reqBody.entry && reqBody.group) {
-            reqBody.entry.uuid = uuidGenerator.v4();
-            if (!savedDictQueries[reqBody.group]) {
-                savedDictQueries[reqBody.group] = [];
-            }
-            savedDictQueries[reqBody.group].push(reqBody.entry);
+        if (reqBody && reqBody.db) {
+            savedHighlights = reqBody.db;
             await writeExistingDataToFile();
-            res.json({ uuid: reqBody.entry.uuid, });
+            res.sendStatus(200);
         }
         else {
             throw Error(`Request body is in incorrect format.`);

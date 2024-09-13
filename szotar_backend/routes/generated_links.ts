@@ -122,6 +122,16 @@ const generateLinks = (lang: string, phrase: string) => {
         url: `https://ejje.weblio.jp/content/${phrase}`,
       },
     ],
+    'nl': [
+      {
+        title: `Wiktionary`,
+        url: `https://en.wiktionary.org/wiki/${phrase}#Dutch`,
+      },
+      {
+        title: `Images`,
+        url: `https://www.google.com/search?q=${phrase}+site%3A*.nl&tbm=isch`,
+      },
+    ],
     'zh_cn': [
       {
         title: `Wiktionary`,

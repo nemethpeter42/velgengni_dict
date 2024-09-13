@@ -18,6 +18,7 @@ import { ColumnDefinition } from '../libs/szotar_common/src/models/ColumnDefinit
 import { BackendConfig } from '../libs/szotar_common/src/models/BackendConfig.js';
 import savedExamplesRouter from './routes/saved_examples.js';
 import savedQueriesRouter from './routes/saved_queries.js';
+import savedHighlightsRouter from './routes/saved_highlights.js';
 import generatedLinksRouter from './routes/generated_links.js';
 const __dirname = path.resolve();
 XLSX.set_fs(fsPromises);
@@ -35,6 +36,9 @@ const exampleSourceFiles: ExampleSourcesByLangPairs = {
 		'es':{
 			filename: 'example_source_dbs/es_hu.txt',
 		},
+		'nl':{
+			filename: 'example_source_dbs/nl_hu.txt',
+		},
 	},
 }
 
@@ -48,6 +52,7 @@ const portNum = process.env.PORT || 3035
 app.set(`port`, portNum)
 app.use(`/saved_examples`, savedExamplesRouter)
 app.use(`/saved_queries`, savedQueriesRouter)
+app.use(`/saved_highlights`, savedHighlightsRouter)
 app.use(`/generated_links`, generatedLinksRouter)
 let wordList = fs.
 	readFileSync(`word_list.txt`).
