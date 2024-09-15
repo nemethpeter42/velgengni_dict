@@ -9,10 +9,10 @@
         bg-gray-900 bg-opacity-50 
         dark:bg-opacity-80
       "></div>
+    
     <div 
       id="dictEntryDetailsModal"  
-      data-backdrop-for="dictEntryDetailsModal"
-      @click="$event => triggerModalBackdrop($event)"
+      
       tabindex="-1" 
       aria-hidden="true" 
       :class="{
@@ -24,8 +24,40 @@
         w-full h-[calc(100%-1rem)] max-h-full justify-center items-start
         md:inset-0
       ">
+      <!--
+      <div 
+        data-backdrop-for="dictEntryDetailsModal"
+        @click="$event => triggerModalBackdrop($event)"
+        class="
+          fixed inset-0 z-[5]
+          w-[60%]
+          bg-transparent
+        ">
+      </div>-->
       <div 
         class="
+          z-[15]
+          fixed w-full max-w-[83rem] max-h-full
+        ">
+        <div style="
+          position: fixed;
+          height: 17rem;
+          width: 5px;
+          top: 50%;
+          transform: translate(0px, -50%); 
+        ">
+          <FloatingActionButtonsOnExampleModal 
+          @nextBtnClick="nextBtnClick()"
+          @scrollToTop="scrollToTop()"
+          @scrollToBottom="scrollToBottom()"
+
+          />
+        </div>
+      </div>
+      <div 
+        class="
+          scrollable-modal-content
+          z-[10]
           relative w-full max-w-7xl max-h-full overflow-x-auto
         ">
         <div 
@@ -36,7 +68,7 @@
           ">
           <div 
             class="
-              p-6 space-y-6
+              p-6 pl-7 space-y-6
             ">
             <DictEntryDetailsModalContent />
           </div>
@@ -73,9 +105,13 @@
 </template>
 
 <script setup lang="ts">
-   import { useModalStore } from '@/stores/modal';
+  import { useModalStore } from '@/stores/modal';
   import DictEntryDetailsModalContent from '../modal-content/DictEntryDetailsModalContent.vue';
-
+  import FloatingActionButtonsOnExampleModal from '../input-fields-and-buttons/FloatingActionButtonsOnExampleModal.vue';
+  import { useDictStore } from '@/stores/dict';
+import { useTranslationExampleStore } from '@/stores/translationExample';
+  
+  const dictStore = useDictStore(`dictModule`);
   const modalStore = useModalStore()
 
   
@@ -95,5 +131,23 @@
 
   const closeModal = () => {
     modalStore.openModals.delete(`DICT_ENTRY_DETAILS`)
+  }
+
+  const scrollToTop = () => {
+    document.querySelectorAll(`#dictEntryDetailsModal .scrollable-modal-content`)[0].scrollTo(0,0)
+  }
+  
+  const scrollToBottom = () => {
+    const mainContent = document.querySelectorAll(`#dictEntryDetailsModal .scrollable-modal-content`)[0]
+    const bottomY = mainContent.scrollHeight;
+    mainContent.scrollTo(0,bottomY)
+  }
+
+  const nextBtnClick = async () => {
+    if(!dictStore.isTheLastEntryActive){
+      scrollToTop();
+      await new Promise((_) => setTimeout(_, 200));
+      dictStore.setCurrentIdx(dictStore.currentIdx+1);
+    }
   }
 </script>

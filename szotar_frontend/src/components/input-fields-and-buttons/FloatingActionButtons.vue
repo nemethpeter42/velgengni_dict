@@ -1,18 +1,18 @@
 <template>
-    <div class="floating-action-button-container absolute z-[100] ">
-      <button 
-        title="Save modifications"
-        @click="savedTrExampleStore.saveDb()"
-        class="
-        save-modifications-btn
-        absolute top-1 left-5 w-9 h-9 rounded-full drop-shadow-lg
-        flex justify-center items-center text-2xl 
-        hover:drop-shadow-2xl "
-        :class="
-          savedTrExampleStore.isDirty ? 
-          `text-white bg-red-700 hover:bg-red-800` : 
-          `text-white bg-blue-700 hover:bg-blue-800`"
-        ><ArrowUpOnSquareStackIcon class="h-6 w-6" /></button>
+  <div class="floating-action-button-container absolute z-[100]">
+    <button 
+      title="Save modifications"
+      @click="savedTrExampleStore.saveDb()"
+      class="
+      save-modifications-btn
+      absolute top-1 left-5 w-9 h-9 rounded-full drop-shadow-lg
+      flex justify-center items-center text-2xl 
+      hover:drop-shadow-2xl "
+      :class="
+        savedTrExampleStore.isDirty ? 
+        `text-white bg-red-700 hover:bg-red-800` : 
+        `text-white bg-blue-700 hover:bg-blue-800`"
+      ><ArrowUpOnSquareStackIcon class="h-6 w-6" /></button>
     <div
       class="
         absolute top-1 left-16 w-16 h-9 rounded-full drop-shadow-lg 
