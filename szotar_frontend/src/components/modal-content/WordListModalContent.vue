@@ -18,6 +18,7 @@
         :columnDefinitions="[{colName:`word`, colDef:{isVisible: true,}}]"
         :displayColsAsRawString="false"
         :selectedIndices="new Set()"
+        :highlightedIndices="new Set()"
       >
         <template #rowLevelButtons="{idx,}">
           <span class="w-10">#{{ idx + 1 }}</span>

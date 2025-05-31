@@ -282,9 +282,9 @@ export const useDictStore = (id: DictStoreType) => {
     
     const isLastPage: Ref<boolean> = computed(() => currentPageIdx.value===totalPageCount.value-1);
 
-    const resultsPerPageOptions: Ref<number[]> = ref([40,80,100,160,200,500]);
+    const resultsPerPageOptions: Ref<number[]> = ref([40,80,100,160,300,500]);
 
-    const resultsPerPage: Ref<number> = ref(80);
+    const resultsPerPage: Ref<number> = ref(id === 'knowledgeModule' ? 80 : 300);
 
     const setResultsPerPage = async (num: number) => resultsPerPage.value = num;
 
@@ -391,6 +391,7 @@ export const useDictStore = (id: DictStoreType) => {
     const bulkOpMenuIsOpen = ref(false);
 
     const selectedIndices: Ref<Set<number>> = ref(new Set());
+    const highlightedIndices: Ref<Set<number>> = ref(new Set());
 
     //private, ne vezesd ki
     const selectAll = async () => {
@@ -410,6 +411,8 @@ export const useDictStore = (id: DictStoreType) => {
     const displayColsAsRawString = ref(false)
     
     const displayRowNumbers = ref(false)
+
+    const displayHighlightButtons = ref(false)
 
     const displaySavedExamples = ref(true)
 
@@ -498,6 +501,7 @@ export const useDictStore = (id: DictStoreType) => {
     const executeBackendSearch = async () => {
       await refreshEntries(searchQuery.value, sortComparison.value)
       selectedIndices.value.clear()
+      highlightedIndices.value.clear()
       jumpToPage(`FIRST`)
     }
 
@@ -565,6 +569,7 @@ export const useDictStore = (id: DictStoreType) => {
       currentPageInputForTwoWayBinding,
       currentPageOneIncremented,
       bulkOpMenuIsOpen,
+      highlightedIndices,
       selectedIndices,
       isAllSelected,
       toggleAllSelection,
@@ -585,6 +590,7 @@ export const useDictStore = (id: DictStoreType) => {
       sortCol,
       sortAscending,
       displayRowNumbers,
+      displayHighlightButtons,
       displaySavedExamples,
       entryDetailsActiveTab,
       setEntryDetailsActiveTab,

@@ -35,11 +35,19 @@
           :columnDefinitions="store.currDictVisibleCols"
           :displayColsAsRawString="store.displayColsAsRawString"
           :selectedIndices="store.selectedIndices"
+          :highlightedIndices="store.highlightedIndices"
           @toggleRowSelection="(idx: number,$event: Event) => toggleRowSelection(idx,$event)"
         >
         <template #rowLevelButtons="{idx,sortedIdx,idxOnCurrPage,}">
           <ShowDetailsModalButton 
             @click="showDictEntryDetailsModal(sortedIdx)"
+            />
+          <HighlightCurrEntryIconButton 
+            v-if="store.displayHighlightButtons"
+            @click="
+              store.highlightedIndices.has(idx) ? 
+              store.highlightedIndices.delete(idx) :
+              store.highlightedIndices.add(idx)"
             />
           <div class="flex flex-col items-end">
             <div 
@@ -120,6 +128,7 @@ import { useModalStore } from '@/stores/modal';
 import { useSavedTrExampleStore } from '@/stores/savedTrExample';
 import DictTableSavedExampleRow from './DictTableSavedExampleRow.vue';
 import ShowExportModalBtn from '../input-fields-and-buttons/ShowExportModalBtn.vue';
+import HighlightCurrEntryIconButton from '../input-fields-and-buttons/HighlightCurrEntryIconButton.vue';
 
 const store = useDictStore(`dictModule`)
 

@@ -151,7 +151,7 @@ import ExportModal from './components/modal-container/ExportModal.vue';
 
 }
 body{
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Helvetica, Arial, Liberation Sans, Avenir, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;

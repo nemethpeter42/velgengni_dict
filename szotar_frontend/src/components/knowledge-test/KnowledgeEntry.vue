@@ -20,7 +20,7 @@
   }">
     <div 
       v-if="!testMode || isEntryRevealed || !originalIsAskedInTestMode"
-      class="text-gray-800 dark:text-gray-300">
+      class="">
       <span
         class="original-col">
         {{ original }}
@@ -33,6 +33,7 @@
         v-if="translated"
         class="ml-5"
         :rawVal="translated"
+        :inheritColor="true"
         :displayColsAsRawString="false" />
     </div>
     <div 

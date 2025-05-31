@@ -46,6 +46,7 @@
           :onePageOfEntries="trExampleStore.currPageOfFilteredEntries"
           :columnDefinitions="[{colName:`example`, colDef:{isVisible: true,isTrExamplePairCol:true,}}]"
           :displayColsAsRawString="false"
+          :highlightedIndices="new Set()"
           :selectedIndices="trExampleStore.selectedIndices"
           :highlightedTexts="trExampleStore.phrasesUsedInHighlight"
           @toggleRowSelection="(idx: number,$event: Event) => toggleRowSelection(idx,$event)"

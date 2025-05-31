@@ -9,7 +9,7 @@
       />
     </div>
     <div 
-      class="flex overflow-hidden"
+      class="flex overflow-hidden slightly-bigger-font almost-inverted-color"
       :style="`width: min(100vw,${(store.pagesDisplayedInKnowledgeTest ?? 1) * 28}rem);`">
       <KnowledgeColumn
         v-for="(item, index) of currPages"
@@ -71,5 +71,24 @@ import { computed, ref, type Ref } from 'vue';
 </script>
 
 <style scoped>
+  .slightly-bigger-font {
+    font-size: 1.1rem;
+  }
 
+  .almost-inverted-color{
+    color: rgba(48, 3, 0, 0.9);
+  }
+
+  .almost-inverted-color:is(.dark *) {
+    color: rgba(225,  228, 180, 1);
+  }
+ </style>
+ 
+ <style> 
+  .almost-inverted-color .translated-col strong:is(.dark *) {
+    background-color: rgba(192,  192, 192, 0.12);
+    padding-left: 1px;
+    padding-right: 2px;
+    padding-bottom: 1px;
+  }
 </style>

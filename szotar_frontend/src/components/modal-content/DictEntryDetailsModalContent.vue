@@ -7,11 +7,11 @@
           [`
             bg-orange-200
             dark:bg-orange-900
-          `]: store.selectedIndices.has(store.currentIdx),
+          `]: store.highlightedIndices.has(store.currentIdx),
           [`
             bg-cyan-200
             dark:bg-cyan-900
-          `]: !store.selectedIndices.has(store.currentIdx) && savedTrExampleStore.examplesOfCurrEntry.length,
+          `]: !store.highlightedIndices.has(store.currentIdx) && savedTrExampleStore.examplesOfCurrEntry.length,
         }">
         {{store.entryInTrExampleModalFormat?.join(`; `) ?? ``}}
       </div>
@@ -45,6 +45,14 @@
       <SaveModificationsLargeBtn 
         @click="savedTrExampleStore.saveDb()"
         :isHighlighted="savedTrExampleStore.isDirty"
+      />
+      <HighlightCurrEntryButton 
+        v-if="store.displayHighlightButtons"
+        @click="
+          store.highlightedIndices.has(store.currentIdx) ? 
+            store.highlightedIndices.delete(store.currentIdx) :  
+            store.highlightedIndices.add(store.currentIdx)"
+        :isHighlighted="store.highlightedIndices.has(store.currentIdx)"
       />
     </div>
     <div class="flex flex-wrap -mb-px">   
@@ -99,6 +107,7 @@ import SavedTrExampleDatatable from '../datatable/SavedTrExampleDatatable.vue';
 import { type SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
 import NewSavedExampleEditor from '../input-fields-and-buttons/NewSavedExampleEditor.vue';
 import SaveModificationsLargeBtn from '../input-fields-and-buttons/SaveModificationsLargeBtn.vue';
+import HighlightCurrEntryButton from '../input-fields-and-buttons/HighlightCurrEntryButton.vue';
   const store = useDictStore(`dictModule`)
   const savedTrExampleStore = useSavedTrExampleStore()
   

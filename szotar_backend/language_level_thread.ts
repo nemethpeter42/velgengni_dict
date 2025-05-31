@@ -6,7 +6,7 @@ import {ThreadReqMessage} from '../libs/szotar_common/src/models/ThreadReqMessag
 import {ThreadResMessage} from '../libs/szotar_common/src/models/ThreadResMessage.js'
 
 
-const BACKEND_RESULT_LIMIT: number = 10000;//20000;
+const BACKEND_RESULT_LIMIT: number = 20000;//10000;
 const db: Example[] = readFileSync(workerData.filename).
 	toString().
 	split("\n").

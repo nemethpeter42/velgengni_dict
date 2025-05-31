@@ -196,7 +196,7 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
       selectedIndices.value = new Set(examplesOfCurrEntry.value?.keys())
   } 
 
-  const isAllSelected = computed(() => selectedIndices.value.size === examplesOfCurrEntry.value?.length ?? false)
+  const isAllSelected = computed(() => selectedIndices.value.size === (examplesOfCurrEntry.value?.length ?? false))
 
   const toggleAllSelection = async () => {
       if (isAllSelected.value) {

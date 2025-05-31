@@ -1,6 +1,6 @@
 import { parentPort as parentPortUnchecked, workerData } from 'worker_threads';
 import { readFileSync } from 'fs';
-const BACKEND_RESULT_LIMIT = 10000; //20000;
+const BACKEND_RESULT_LIMIT = 20000; //10000;
 const db = readFileSync(workerData.filename).
     toString().
     split("\n").

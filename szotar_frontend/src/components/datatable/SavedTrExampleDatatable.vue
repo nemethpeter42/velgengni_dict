@@ -40,6 +40,7 @@
           :onePageOfEntries="savedTrExStore.currPageOfFilteredEntries"
           :columnDefinitions="[{colName:`example`, colDef:{isVisible: true,isTrExamplePairCol:true,}}]"
           :displayColsAsRawString="false"
+          :highlightedIndices="new Set()"
           :selectedIndices="savedTrExStore.selectedIndices"
           :highlightedTexts="savedTrExStore.phrasesUsedInHighlight"
           @toggleRowSelection="(idx: number,$event: Event) => toggleRowSelection(idx,$event)"

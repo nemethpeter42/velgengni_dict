@@ -28,11 +28,27 @@
             :checked="props.selectedIndices.has(item.idx)"
             class="
               select-row-checkbox w-4 h-4 rounded 
-              text-fuchsia-600 bg-gray-200 border-gray-400 
               focus:ring-fuchsia-500 focus:ring-2 
-              dark:ring-offset-gray-700 dark:bg-gray-600 dark:border-gray-500
+              dark:ring-offset-gray-700
               dark:focus:ring-fuchsia-600 dark:focus:ring-offset-gray-700
-            ">
+            "
+            :class="{
+              [`
+                text-fuchsia-600 bg-gray-200 border-gray-400
+                dark:bg-gray-600 dark:border-gray-500
+              `]: !props.highlightedIndices.has(item.idx),
+              [`
+                text-green-600 bg-green-200 border-orange-400
+                dark:bg-green-600 dark:border-orange-500
+              `]: props.highlightedIndices.has(item.idx),
+              [`
+                appearance-none
+              `]: props.highlightedIndices.has(item.idx) && !props.selectedIndices.has(item.idx),
+              [`
+                appearance-none
+                border-4
+              `]: props.highlightedIndices.has(item.idx) && props.selectedIndices.has(item.idx)
+            }">
             <slot name="rowLevelButtons" :idx="item.idx" :sortedIdx="item.sortedIdx" :idxOnCurrPage="idxOnCurrPage"></slot>
           <label for="select-row-checkbox" class="sr-only">Sor kiválasztása</label>
         </div>
@@ -153,6 +169,7 @@ import type { ColumnDefinitionArrayForm } from '@/frontend_models/ColumnDefiniti
     
   const props = defineProps<{  
     selectedIndices: Set<number>,
+    highlightedIndices: Set<number>,
     onePageOfEntries: FilteredEntry[],
     columnDefinitions: ColumnDefinitionArrayForm[],
     displayColsAsRawString?: boolean,

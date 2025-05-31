@@ -221,7 +221,7 @@ app.post('/find', (req, res) => {
                     threadRes.entries = threadRes.entries.slice(0, q.resultLimit);
                 }
                 //console.log('DEBUG: results sent to client')
-                res.json(threadRes);
+                res.setHeader('Content-Type', 'application/json').status(200).send(JSON.stringify(threadRes, null, 2));
             });
         }
     }

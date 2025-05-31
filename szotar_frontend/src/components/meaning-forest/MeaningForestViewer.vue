@@ -2,7 +2,7 @@
   <div v-if="displayColsAsRawString">
     {{ rawVal }}
   </div>
-  <div v-else-if="parseResult.isValid" class="pt-1 dark:text-gray-200 dark:opacity-85">
+  <div v-else-if="parseResult.isValid" class="pt-1" :class="inheritColor ? ``: `dark:text-gray-200 dark:opacity-85`">
     <ul class="list-disc lvl1-item">
       <li class="py-[0.30rem]" v-for="(lvl1, lvl1Index) in parseResult.val.val" v-bind:key="lvl1Index">
         <ul 
@@ -36,7 +36,7 @@
                 <span v-for="(lvl3, lvl3Index) in (lvl2.nextLevel ?? [])" v-bind:key="lvl3Index">
                   <span>
                     <strong
-                      class="dark:text-gray-100 dark:opacity-100" 
+                      :class="inheritColor ? ``: `dark:text-gray-100 dark:opacity-100`" 
                       v-if="
                         lvl1.labels?.includes(`1`) || 
                         lvl2.labels?.includes(`1`) || 
@@ -94,7 +94,8 @@
   const store = useDictStore(`dictModule`);
   const props = defineProps<{
     // somehow if i ask for this directly here from the store, it causes a huge slowdown (maybe ref-unwrapping?)
-    displayColsAsRawString: boolean, 
+    displayColsAsRawString: boolean,
+    inheritColor?: boolean,  
     rawVal: string,
   }>();
   const parseResult = computed(() => {
