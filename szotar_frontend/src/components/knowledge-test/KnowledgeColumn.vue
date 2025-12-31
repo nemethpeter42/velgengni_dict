@@ -19,15 +19,15 @@
         <KnowledgeEntry
           :original="item.val[originalCol]"
           :translated="translatedCol ? item.val[translatedCol] : ``"
-          :isHighlighted="highlightStore.isHighlighted(dictName, item.val[uuidCol])"
+          :isHighlighted="favoritesStore.isHighlighted(dictName, item.val[uuidCol])"
           :originalIsAskedInTestMode="originalIsAskedInTestMode.has(index)"
           :testMode="testMode"
           :isEntryRevealed="revealedEntries.has(index)"
           @revealEntry="revealedEntries.add(index)"
-          :highlightMode="mode.has(`HIGHLIGHT`)"
+          :highlightMode="mode.has(`MARK_FAVORITES`)"
           
           @toggleHighlight="() => {
-            highlightStore.toggle(dictName, item.val[uuidCol]);
+            favoritesStore.toggle(dictName, item.val[uuidCol]);
           }"
         />
         <div class="item-separator">=====</div>
@@ -43,14 +43,14 @@
 
 <script setup lang="ts">
 import type { FilteredEntry } from '@/frontend_models/FilteredEntry';
-import { useHighlightStore } from '@/stores/highlight';
+import { useFavoritesStore } from '@/stores/highlight';
 import type { KnowledgeModuleMode } from '@/frontend_models/KnowledgeModuleMode';
 import { computed, ref } from 'vue';
 import TestModeButton from '../input-fields-and-buttons/knowledge/TestModeButton.vue';
 import KnowledgeEntry from './KnowledgeEntry.vue';
   defineEmits<{toggleTestMode: []}>();
 
-  const highlightStore = useHighlightStore();
+  const favoritesStore = useFavoritesStore();
 
   const props = defineProps<{
     page: FilteredEntry[],
@@ -63,7 +63,7 @@ import KnowledgeEntry from './KnowledgeEntry.vue';
   }>();
 
   const filteredPage = computed(
-    () => props.mode.has(`FILTER_HIGHLIGHTED`)? props.page.filter(e => highlightStore.isHighlighted(props.dictName,e.val[props.uuidCol])) : props.page 
+    () => props.mode.has(`FILTER_FAVORITES`)? props.page.filter(e => favoritesStore.isHighlighted(props.dictName,e.val[props.uuidCol])) : props.page 
   );
 
   const shuffleArray = <T>(arr: T[]): T[] => {

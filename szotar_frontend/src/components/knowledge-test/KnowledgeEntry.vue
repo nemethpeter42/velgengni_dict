@@ -46,7 +46,7 @@
         />
       </div>
       <div
-        v-if="testMode && isEntryRevealed"
+        v-if="false && testMode && isEntryRevealed"
         class="py-1 pl-1 pr-1.5">
         <HighlightRevealedEntryBtn
           @click="$emit(`toggleHighlight`)"

@@ -46,6 +46,7 @@
           :modelValue="store.quickSearchQueryPhrase"
           @update:modelValue="val => store.setQuickSearchQueryPhrase(val)"
           @input="store.jumpToPage(`FIRST`);"
+          label="Gyorskeresés"
           />
         <PageSizeInput 
           :options="store.resultsPerPageOptions" 

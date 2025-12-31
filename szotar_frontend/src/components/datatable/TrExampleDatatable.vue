@@ -28,6 +28,7 @@
             :modelValue="trExampleStore.quickSearchQueryPhrase"
             @update:modelValue="val => trExampleStore.setQuickSearchQueryPhrase(val)"
             @input="trExampleStore.jumpToPage(`FIRST`);"
+            label="Gyorskeresés"
           />
         </div>
       </div>

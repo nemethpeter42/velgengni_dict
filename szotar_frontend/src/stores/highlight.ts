@@ -3,7 +3,7 @@ import { backendBaseUrl } from "@/config";
 import { defineStore } from "pinia"
 import { type Ref, ref } from "vue"
 
-export const useHighlightStore = defineStore(`highlight`, () => {
+export const useFavoritesStore = defineStore(`favorites`, () => {
   
   const db: Ref<Record<string, Set<string>>> = ref({})
 

@@ -4,7 +4,9 @@
     <div class="max-w-[105rem] mx-auto">
       <KnowledgeTempMenu
         :mode="mode" 
+        :areFavoritesPrefiltered = "store.areFavoritesPrefiltered"
         @toggleMode="val => toggleMode(val)" 
+        @togglePrefilter="() => togglePrefilter()"
         @resetTestMode="pagesInTestMode.clear()"
       />
     </div>
@@ -45,6 +47,12 @@ import { computed, ref, type Ref } from 'vue';
   }
   
   const store = useDictStore(`knowledgeModule`);
+
+
+  const togglePrefilter = ()  => {
+    store.areFavoritesPrefiltered = !store.areFavoritesPrefiltered;
+  }
+  
   const currDictOriginalCol = computed(
     () => store.dictQueriesWithMeta[store.dictNameUsedInLastQuery]?.meta?.originalCol ?? ``
   );

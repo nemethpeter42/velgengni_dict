@@ -81,6 +81,7 @@ export const useWordListStore = defineStore('wordList', () => {
     trExampleStore.jumpToPage(`FIRST`);
     trExampleStore.setFilteringMode(`MARK_ONLY`);
     trExampleStore.setQuickSearchQueryPhrase(``);
+    trExampleStore.blacklistQueryPhrase = ``;
     setQuickSearchQueryPhrase(``);
   }
 

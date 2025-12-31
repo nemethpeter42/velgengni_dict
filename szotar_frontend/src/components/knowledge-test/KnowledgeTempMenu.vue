@@ -47,21 +47,27 @@
     </a>
     <a 
       class="m-1"
-      @click="resetScroll();$emit(`toggleMode`,`FILTER_HIGHLIGHTED`)">
-      <span v-if="mode.has(`FILTER_HIGHLIGHTED`)"><strong>filter</strong></span>
+      @click="resetScroll();$emit(`togglePrefilter`)">
+      <span v-if="areFavoritesPrefiltered"><strong>prefilt</strong></span>
+      <span v-else>prefilt</span>
+    </a>
+    <a 
+      class="m-1"
+      @click="resetScroll();$emit(`toggleMode`,`FILTER_FAVORITES`)">
+      <span v-if="mode.has(`FILTER_FAVORITES`)"><strong>filter</strong></span>
       <span v-else>filter</span>
     </a>
     <a 
       class="m-1"
-      @click="$emit(`toggleMode`,`HIGHLIGHT`)">
-      <span v-if="mode.has(`HIGHLIGHT`)"><strong>mark</strong></span>
+      @click="$emit(`toggleMode`,`MARK_FAVORITES`)">
+      <span v-if="mode.has(`MARK_FAVORITES`)"><strong>mark</strong></span>
       <span v-else>mark</span>
     </a>
     <a
       :class="{
-        [`font-bold text-red-400 dark:text-red-600`]:highlightStore.isDirty, 
+        [`font-bold text-red-400 dark:text-red-600`]:favoritesStore.isDirty, 
       }" 
-      @click="highlightStore.saveDb()"
+      @click="favoritesStore.saveDb()"
       class="m-1">
       save_hl
     </a>
@@ -81,22 +87,24 @@
 <script setup lang="ts">
   import type { KnowledgeModuleMode, KnowledgeModuleModeOption } from '@/frontend_models/KnowledgeModuleMode';
 import { useDictStore } from '@/stores/dict';
-import { useHighlightStore } from '@/stores/highlight';
+import { useFavoritesStore } from '@/stores/highlight';
 import { useModalStore } from '@/stores/modal';
   defineEmits<{
     toggleMode: [modeOption: KnowledgeModuleModeOption],
     resetTestMode: [],
+    togglePrefilter: [],
   }>();
 
   defineProps<{
     mode: KnowledgeModuleMode,
+    areFavoritesPrefiltered: boolean,
   }>();
 
   const modalStore = useModalStore();
 
   const store = useDictStore(`knowledgeModule`);
 
-  const highlightStore = useHighlightStore();
+  const favoritesStore = useFavoritesStore();
     
   const showSavedQueriesModal = () => {
     modalStore.openModals.add(`SAVED_QUERIES_KNOWLEDGE`)

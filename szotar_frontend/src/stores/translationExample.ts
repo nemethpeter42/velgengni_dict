@@ -81,6 +81,8 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
 
     const setQuickSearchQueryPhrase = (val: string) => quickSearchQueryPhrase.value = val
 
+    const blacklistQueryPhrase: Ref<string> = ref(``);
+
     const bigFilterInputFieldVal = ref(``)
 
     const bigFilterLastQueryVal: Ref<string[]> = ref([])
@@ -295,6 +297,16 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
         map(e => [e,e.replaceAll(/a$/gi,`á`).replaceAll(/e$/gi,`é`)]).flat()
     });
 
+    const finalPhrasesUsedInBlacklisting = computed(()=> {
+      return blacklistQueryPhrase.value.
+        split(`,`).
+        map(e=>e.trim()).
+        filter(e=>e!==``).
+        map(e=>e.toLowerCase()).
+        map(e=>e.split(`_`).join(` `)).
+        map(e => [e,e.replaceAll(/a$/gi,`á`).replaceAll(/e$/gi,`é`)]).flat()
+    });
+
     const filteredEntries = computed(() => {
         let res
         res = exampleList.value?.map(
@@ -304,6 +316,7 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
               val:{'example': `${e.original.split(`\t`).join(` `)}\t${e.translated.split(`\t`).join(` `)}`,},
             })
         );
+        //TODO retire INVERSE_FILTER, upgrade design to icons
         if (
             quickSearchQueryPhrase.value.trim() !== `` ||
             [`FILTER`, `INVERSE_FILTER`].includes(filteringMode.value) && 
@@ -332,6 +345,20 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
                           includes(phrase)
                   ):
                   true
+              );
+        } 
+        if (
+            finalPhrasesUsedInBlacklisting.value.length
+          ) {
+            res = res.
+              filter(
+                e=> 
+                  !finalPhrasesUsedInBlacklisting.value.
+                  some( 
+                      phrase =>
+                          (e.val?.example?.toLowerCase() ?? ``).
+                          includes(phrase)
+                  )
               );
         } 
         const typeSafeResult = res ?? []
@@ -381,7 +408,7 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
         selectedIndices.value = new Set(exampleList.value?.keys())
     }; 
 
-    const isAllSelected = computed(() => selectedIndices.value.size === exampleList.value?.length ?? false);
+    const isAllSelected = computed(() => !!(selectedIndices.value.size === (exampleList.value?.length ?? 0)));
 
     const toggleAllSelection = async () => {
         if (isAllSelected.value) {
@@ -412,6 +439,7 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
 
 
     return {
+      blacklistQueryPhrase,
       isLoading,
       exampleList,
       refreshExampleList,

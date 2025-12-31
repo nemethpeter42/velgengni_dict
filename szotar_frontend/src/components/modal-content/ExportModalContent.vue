@@ -18,6 +18,7 @@
         <input 
           :data-group="groupName"
           :data-index="index"
+          data-type="all"
           class="
             export-title-for-saved-query
             w-24 px-2 py-1.5 m-0.5 
@@ -28,7 +29,22 @@
             dark:bg-gray-600 dark:text-white dark:border-gray-300 
             dark:focus:ring-blue-500 dark:focus:border-blue-500
           " 
-          placeholder="">
+          placeholder="All">
+        <input 
+          :data-group="groupName"
+          :data-index="index"
+          data-type="favorited"
+          class="
+            export-title-for-saved-query
+            w-24 px-2 py-1.5 m-0.5 
+            shadow-sm border block text-sm rounded-lg
+            bg-gray-50 text-gray-900 border-gray-300 
+            focus:ring-blue-500 focus:border-blue-500  
+            dark:shadow-sm-light dark:placeholder-gray-400 
+            dark:bg-gray-600 dark:text-white dark:border-gray-300 
+            dark:focus:ring-blue-500 dark:focus:border-blue-500
+          " 
+          placeholder="Favorites">
         <div class="p-2 text-sm">
           {{ item.title }}
         </div>
@@ -57,9 +73,10 @@ import { useNotiStore } from '@/stores/noti';
 import { obtainDictQueryResult, useDictStore } from '@/stores/dict';
 import type { ExportModuleRequest } from '../../../../libs/szotar_common/src/models/ExportModuleRequest';
 import { downloadBlob, exportToHtmlFormat } from '@/helpers/download';
+import { useFavoritesStore } from '@/stores/highlight';
 
   const savedDictQueryStore = useSavedDictQueryStore()
-
+  const favoritesStore = useFavoritesStore();
   const notiStore = useNotiStore()
   const dictStore = useDictStore(`dictModule`)
 
@@ -72,7 +89,9 @@ import { downloadBlob, exportToHtmlFormat } from '@/helpers/download';
         return {
           exportTitle: e?.value ?? ``, 
           group: e.attributes?.getNamedItem("data-group")?.value ?? ``, 
-          idx: +(e.attributes?.getNamedItem("data-index")?.value ?? NaN)}
+          idx: +(e.attributes?.getNamedItem("data-index")?.value ?? NaN),
+          type: e.attributes?.getNamedItem("data-type")?.value ?? ``, 
+        }  
     });
     const fields = fieldsRaw.filter(e=>e.exportTitle.trim() !== ``);
     if (fields.length === 0) {
@@ -96,18 +115,25 @@ import { downloadBlob, exportToHtmlFormat } from '@/helpers/download';
         if (isNaN(field.idx) || !savedQuery) {
           throw new Error(`Error while retrieving saved queries.`)
         }
+        const favorites: Set<string> = savedQuery.dictName in favoritesStore.db ? favoritesStore.db[savedQuery.dictName] : new Set();
         const queryResult = 
           await obtainDictQueryResult(
             savedQuery.dictName, 
             savedQuery.searchQuery, 
             savedQuery.sortComparison
-          );
+          );      
         const currDictMetadata = dictStore.dictQueriesWithMeta[savedQuery.dictName]?.meta;
         const originalColName: string = currDictMetadata?.originalCol ?? ``;
+        const idColName: string = currDictMetadata?.idCol ?? ``;
         const translatedColName: string = dictStore.meaningForestColsInPrioOrder[savedQuery.dictName]?.at(0) ?? ``
         if (!originalColName) {
           throw new Error(
             `No source language column found for dictionary "${savedQuery.dictName}" (default name: original)`
+          );
+        }
+        if (!idColName) {
+          throw new Error(
+            `No ID column found for dictionary "${savedQuery.dictName}" (default name: uuid)`
           );
         }
         if (!translatedColName) {
@@ -116,7 +142,14 @@ import { downloadBlob, exportToHtmlFormat } from '@/helpers/download';
           );
         }
 
-        const exportDataForQueryResult = queryResult.map(e => ({
+        const queryResultAfterFiltering = 
+          field.type === `favorited` ? 
+          queryResult.filter(e =>
+            favorites.has(e[idColName] ?? ``)
+          ):
+          queryResult;
+
+        const exportDataForQueryResult = queryResultAfterFiltering.map(e => ({
           originalCol: e[originalColName] ?? ``,
           translatedCol: e[translatedColName] ?? ``,
         }));

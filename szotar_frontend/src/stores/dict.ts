@@ -13,6 +13,7 @@ import type { SavedTranslationExample } from "../../../libs/szotar_common/src/mo
 import type { DictStoreType } from "@/frontend_models/DictStoreType.js";
 import { backendBaseUrl } from "@/config.js";
 import type { ExampleFindReq } from "../../../libs/szotar_common/src/models/ExampleFindReq.js";
+import { useFavoritesStore } from "./highlight.js";
 
 export const obtainDictQueryResult = async (
   dictName: string, 
@@ -51,7 +52,6 @@ export const useDictStore = (id: DictStoreType) => {
 
     const dictQueriesWithMeta: Ref<Record<string,Dict>> = ref({})
 
-    const lastDictQueryResult = computed(() => dictQueriesWithMeta.value[dictNameUsedInLastQuery.value])
 
     const refreshDictMetas = async () => {
       //console.log(`DEBUG getDictMetas egyszer lefut`)
@@ -95,10 +95,11 @@ export const useDictStore = (id: DictStoreType) => {
     const entryInTrExampleModalFormat: ComputedRef<string[]> = computed(()=>{
       if (
         Array.isArray(filteredEntries.value) && 
-        currentIdx.value !== -1 
+        currentIdx.value !== -1 &&
+        currDict.value
       ){
         const entry = filteredEntries.value[currentIdx.value]
-        const originalCol = currDict.value.meta.originalCol
+        const originalCol = currDict.value.meta.originalCol 
         const res = currDictColsAsSortedArray.value.
           filter(
             e=>
@@ -180,12 +181,14 @@ export const useDictStore = (id: DictStoreType) => {
       currentIdx.value = idx;
       isAllQuickAccessBtnVisible.value = false;
       await trExampleStore.resetBigFilter(lang2PhrasesRaw.value.join(`; `));
-      const words = lang1PhrasesWithoutParentheses.value[0]?.split(` `).filter(e=>e.trim()!==``) ?? []
+      //TODO default separate/join provided by config
+      //const words = lang1PhrasesWithoutParentheses.value[0]?.split(` `).filter(e=>e.trim()!==``) ?? []
+      const words = [lang1PhrasesWithoutParentheses.value[0] ?? ``]
       const conditions = words.map(
         expression => ({
           expression, 
           onlyWithSpaceDotOrCommaSuffix: false,//TODO provided by config
-          onlyWithSpacePrefix: false, //TODO provided by config
+          onlyWithSpacePrefix: true, //TODO provided by config
         } as SearchCondition)
       )
       await trExampleStore.resetSearchConditions(conditions)
@@ -193,6 +196,7 @@ export const useDictStore = (id: DictStoreType) => {
       trExampleStore.jumpToPage(`FIRST`);
       trExampleStore.setFilteringMode(`MARK_ONLY`);
       trExampleStore.setQuickSearchQueryPhrase(``);
+      trExampleStore.blacklistQueryPhrase = ``;
       //TODO wordList.ts-bol atepiteni
     }
 
@@ -205,9 +209,9 @@ export const useDictStore = (id: DictStoreType) => {
         dictNameUsedInLastQuery.value = dictNameOnForm.value;
         dictQueriesWithMeta.value[dictNameUsedInLastQuery.value].main = [...queryResult];
         const currSourceLang = 
-          dictQueriesWithMeta.value[dictNameUsedInLastQuery.value].meta.sourceLang
+          currDict.value?.meta.sourceLang ?? ``
         const currTargetLang = 
-          dictQueriesWithMeta.value[dictNameUsedInLastQuery.value].meta.targetLang
+          currDict.value?.meta.targetLang ?? ``
         const pairExists = 
           trExampleStore.languagePairs.filter(
             e => e.lang1===currSourceLang && e.lang2===currTargetLang
@@ -303,42 +307,48 @@ export const useDictStore = (id: DictStoreType) => {
       }
     }
 
+    const favoritesStore = useFavoritesStore();
+    
+    const areFavoritesPrefiltered = ref(false);
+
     const filteredEntries = computed(() => {
       let res
-      if (quickSearchQueryPhrase.value!==``) {
-        res = lastDictQueryResult.value?.
-          main?.
-          map(
-            (e,i)=>
-              ({
-                idx:i,
-                val:e,
-              })
-          ).
-          filter(
-            e=>Object.keys(currDictColsUsedInQuickSearch.value).
-              some(
-                key => 
-                  quickSearchQueryPhrase.value.
-                  toLowerCase().
-                  split(`,`).
-                  map(e=>e.trim()).
-                  some( 
-                    phrase =>
-                      (e.val[key]?.toString().toLowerCase() ?? ``).
-                      includes(phrase)
-                  )
-              )
-          );
-      } else {
-        res = lastDictQueryResult.value?.main?.map(
+      const idCol = currDict.value?.meta.idCol;
+      res = currDict.value?.
+        main?.
+        map(
           (e,i)=>
             ({
               idx:i,
               val:e,
             })
+        ).
+        filter(
+          e=>
+            quickSearchQueryPhrase.value===`` ?
+            true:
+            Object.keys(currDictColsUsedInQuickSearch.value).
+            some(
+              key => 
+                quickSearchQueryPhrase.value.
+                toLowerCase().
+                split(`,`).
+                map(e=>e.trim()).
+                some( 
+                  phrase =>
+                    (e.val[key]?.toString().toLowerCase() ?? ``).
+                    includes(phrase)
+                )
+            )
+        ).filter(e=> 
+          areFavoritesPrefiltered.value && 
+          idCol && 
+          e.val[idCol] && 
+          dictNameUsedInLastQuery.value && 
+          favoritesStore.db[dictNameUsedInLastQuery.value]?
+          favoritesStore.db[dictNameUsedInLastQuery.value].has(e.val[idCol]):
+          true
         );
-      }
       const typeSafeResult = res ?? []
       const sortedResult = 
         sortCol.value!==`` ? 
@@ -377,15 +387,18 @@ export const useDictStore = (id: DictStoreType) => {
     });
 
     const nonLowPrioExamplesOfCurrDict: ComputedRef<SavedTranslationExample[][]> = 
-      computed( () => 
-        filteredEntries.value.map(
+      computed( () => {
+       if (!currDict.value){ return [];}
+        const idCol = currDict.value.meta.idCol
+        return filteredEntries.value.map(
           filteredEntry => 
-            filteredEntry.val[currDict.value.meta.idCol] ?
-            (savedTrExStore.examplesOfCurrDict[filteredEntry.val[currDict.value.meta.idCol]] ?? []).
+            filteredEntry.val[idCol] ?
+            (savedTrExStore.examplesOfCurrDict[filteredEntry.val[idCol]] ?? []).
             filter(e=> !e.isOfLowImportance).
             slice().sort((a,b)=>Number(b.isOfHighImportance ?? false) - Number(a.isOfHighImportance ?? false)):
             []
         )
+      }
       );
 
     const bulkOpMenuIsOpen = ref(false);
@@ -395,10 +408,10 @@ export const useDictStore = (id: DictStoreType) => {
 
     //private, ne vezesd ki
     const selectAll = async () => {
-      selectedIndices.value = new Set(lastDictQueryResult.value?.main.keys())
+      selectedIndices.value = new Set(currDict.value?.main.keys())
     } 
 
-    const isAllSelected = computed(() => selectedIndices.value.size === lastDictQueryResult.value?.main.length)
+    const isAllSelected = computed(() => selectedIndices.value.size === currDict.value?.main.length)
 
     const toggleAllSelection = async () => {
       if (isAllSelected.value) {
@@ -417,10 +430,10 @@ export const useDictStore = (id: DictStoreType) => {
     const displaySavedExamples = ref(true)
 
     const currDict = 
-      computed(() => dictQueriesWithMeta.value[dictNameUsedInLastQuery.value]);
+      computed(() => dictNameUsedInLastQuery.value in dictQueriesWithMeta.value ? dictQueriesWithMeta.value[dictNameUsedInLastQuery.value]: undefined);
     
     const currDictCols = 
-      computed(() => (dictQueriesWithMeta.value[dictNameUsedInLastQuery.value]?.meta?.cols ?? {}));
+      computed(() => (currDict.value?.meta?.cols ?? {}));
 
     const dictColsAsSortedArray: ComputedRef<Record<string,ColumnDefinitionArrayForm[]>> = 
     computed(
@@ -449,7 +462,7 @@ export const useDictStore = (id: DictStoreType) => {
     const currDictColsUsedInQuickSearch: ComputedRef<Record<string, ColumnDefinition>> = computed(() => Object.fromEntries(Object.entries(currDictCols.value).filter(e=>e[1]?.isUsedInTrExampleSearch)))
     
     const toggleVisibility = async (colName: string) => {
-      const colDef = (dictQueriesWithMeta.value[dictNameUsedInLastQuery.value]?.meta?.cols ?? {})[colName]
+      const colDef = currDictCols.value[colName]
       if (colDef!==undefined){
         colDef.isVisible = !colDef.isVisible;
         if(colDef.isVisible) {
@@ -458,7 +471,7 @@ export const useDictStore = (id: DictStoreType) => {
       }
     }
     const toggleQuickSearchEnabled = async (colName: string) => {
-      const colDef = (dictQueriesWithMeta.value[dictNameUsedInLastQuery.value]?.meta?.cols ?? {})[colName]
+      const colDef = currDictCols.value[colName]
       if (colDef!==undefined){
         colDef.isUsedInTrExampleSearch = !colDef.isUsedInTrExampleSearch;
       }
@@ -508,19 +521,25 @@ export const useDictStore = (id: DictStoreType) => {
     const pagesDisplayedInKnowledgeTest = ref(3);
 
     const runFrequencySearch = async () => {
+      if (!currDict.value) {
+        return Promise.reject(`currDict variable is undefined in the store.`)
+      }
       const currSourceLang = 
-        dictQueriesWithMeta.value[dictNameUsedInLastQuery.value].meta.sourceLang
+        currDict.value.meta.sourceLang;
       const currTargetLang = 
-        dictQueriesWithMeta.value[dictNameUsedInLastQuery.value].meta.targetLang
+        currDict.value.meta.targetLang;
+      const originalCol = currDict.value.meta.originalCol;
       frequencySearchResult.value = {}
-      for (const [idx, entry] of currPageOfFilteredEntries.value.entries()) {
-        await new Promise((_) => setTimeout(_, 1000));
-        const originalColValue = 
-          entry.val[currDict.value.meta.originalCol].
+      for (const {idx, originalColValue} of currPageOfFilteredEntries.value.map((e,idx)=>({
+        idx,
+        originalColValue:
+          (e.val[originalCol] ?? ``).
             replaceAll(/\[[^\]]*\]/g,``).
             replaceAll(/\([^)]*\)/g,``).
             replaceAll(/\{[^}]*\}/g,``).
-            trim();
+            trim()
+      }))) {
+        await new Promise((_) => setTimeout(_, 1000));
         
         const exampleFindReq: ExampleFindReq = {
           lang1: currSourceLang,
@@ -614,6 +633,7 @@ export const useDictStore = (id: DictStoreType) => {
       selectedMeaningForestCol,
       runFrequencySearch,
       frequencySearchResult,
+      areFavoritesPrefiltered,
     }
 
   })();

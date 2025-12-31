@@ -193,6 +193,15 @@
       idValue="is-result-lang-highligted"
       labelText="célnyelv"
     />
+    <div class="m-1 flex items-center">
+      <!-- TODO separate data-test id-->
+      <QuickSearch 
+          :icon-hidden="true"
+          v-model="trExampleStore.blacklistQueryPhrase"
+          @input="trExampleStore.jumpToPage(`FIRST`);"
+          label="Feketelista"
+          />
+      </div>
   </div>
 
 </template>
@@ -216,6 +225,7 @@
   import LanguagePairDropdown from '@/components/input-fields-and-buttons/LanguagePairDropdown.vue';
   import { useModalStore } from '@/stores/modal';
   import type { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';
+  import QuickSearch from '@/components/datatable/QuickSearch.vue';
 
   const prioButtonsEnabled = ref(false)
   const props = defineProps<{  
