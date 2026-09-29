@@ -94,6 +94,24 @@ const generateLinks = (lang, phrase) => {
                 url: `http://digicoll.library.wisc.edu/cgi-bin/IcelOnline/IcelOnline.TEId-idx?type=simple&size=First+100&rgn=lemma&q1=${encodeURI(phrase, 'iso-8859-1')}&submit=Search`,
             },
         ],
+        'it': [
+            {
+                title: `Wiktionary`,
+                url: `https://en.wiktionary.org/wiki/${phrase}#Italian`,
+            },
+            {
+                title: `Images`,
+                url: `https://www.google.com/search?q=${phrase}+site%3A*.it&tbm=isch`,
+            },
+            {
+                title: `AI`,
+                url: `https://www.google.com/search?q=${phrase}+jelentése+olasz`,
+            },
+            {
+                title: `MTA`,
+                url: `https://szotar.sztaki.hu/search?fromlang=ita&tolang=hun&searchWord=${phrase?.split(' ')?.join('+')}&langcode=hu&u=0&langprefix=&searchMode=WORD_PREFIX&viewMode=full&ignoreAccents=1`,
+            },
+        ],
         'ja': [
             {
                 title: `Wiktionary`,
@@ -133,7 +151,7 @@ const generateLinks = (lang, phrase) => {
             },
             {
                 title: `Images`,
-                url: `https://www.google.com/search?q=${phrase}+site%3A*.jp&tbm=isch`
+                url: `https://www.google.com/search?q=${phrase}+site%3A*.cn&tbm=isch`
             },
         ]
     };

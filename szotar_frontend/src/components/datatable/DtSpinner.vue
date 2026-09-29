@@ -4,7 +4,9 @@
     class="absolute w-full h-full 
       bg-gray-300 opacity-50
       dark:bg-gray-600
-    ">
+    "
+    :data-spinner-backdrop-for="props.testId"
+    >
   </div>
   <div 
     role="status" 

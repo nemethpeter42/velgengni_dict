@@ -132,7 +132,8 @@ export const useDictStore = (id: DictStoreType) => {
         map(e => e.
           replaceAll(/\[[^\]]*\]/g,'').
           replaceAll(/\([^)]*\)/g,'').
-          replaceAll(/\{[^}]*\}/g,'')
+          replaceAll(/\{[^}]*\}/g,'').
+          trim()
         )  
     )
     

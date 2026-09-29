@@ -36,6 +36,9 @@ const exampleSourceFiles: ExampleSourcesByLangPairs = {
 		'es':{
 			filename: 'example_source_dbs/es_hu.txt',
 		},
+		'it':{
+			filename: 'example_source_dbs/it_hu.txt',
+		},
 		'nl':{
 			filename: 'example_source_dbs/nl_hu.txt',
 		},

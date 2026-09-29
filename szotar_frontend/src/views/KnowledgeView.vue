@@ -2,7 +2,7 @@
   <div
     class="knowledge-view prefer-serif overflow-hidden flex flex-col text-gray-900 dark:text-gray-100">
     <div class="max-w-[105rem] mx-auto">
-      <KnowledgeTempMenu
+      <KnowledgeMainPanel
         :mode="mode" 
         :areFavoritesPrefiltered = "store.areFavoritesPrefiltered"
         @toggleMode="val => toggleMode(val)" 
@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import KnowledgeColumn from '@/components/knowledge-test/KnowledgeColumn.vue';
-import KnowledgeTempMenu from '@/components/knowledge-test/KnowledgeTempMenu.vue';
+import KnowledgeMainPanel from '@/components/knowledge-test/KnowledgeMainPanel.vue';
 import type { KnowledgeModuleMode, KnowledgeModuleModeOption } from '@/frontend_models/KnowledgeModuleMode';
 import { useDictStore } from '@/stores/dict';
 import { computed, ref, type Ref } from 'vue';
