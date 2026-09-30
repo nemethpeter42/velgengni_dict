@@ -19,6 +19,7 @@
           dark:hover:bg-gray-600
         `]: idxOnCurrPage % 2 !== 0,
         }"
+        :data-row-index="idxOnCurrPage"
       >
       <td class="w-4 pl-4 pr-2 py-1.5">
         <div class="flex items-center">

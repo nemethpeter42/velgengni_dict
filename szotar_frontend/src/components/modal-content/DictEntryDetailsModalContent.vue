@@ -46,6 +46,9 @@
         @click="savedTrExampleStore.saveDb()"
         :isHighlighted="savedTrExampleStore.isDirty"
       />
+      <JumpToEntryButton
+        @click="jumpToEntry()"
+      />
       <HighlightCurrEntryButton 
         v-if="store.displayHighlightButtons"
         @click="
@@ -82,7 +85,7 @@
         storeId="dictModal" 
         :wordListStoreDisabled="true"
         :addExistingButtonVisible="true"
-        @createSavedTrExample="val => createSavedTrExample(val)"
+        @createSavedTrExample="(val: Example) => createSavedTrExample(val)"
         />
       </div>
     </div>
@@ -103,13 +106,16 @@
   import ModalTrExampleFilterPanel from '../datatable/filter-panel/ModalTrExampleFilterPanel.vue';
   import { type Example } from '../../../../libs/szotar_common/src/models/Example';
   import { useSavedTrExampleStore } from '@/stores/savedTrExample';
+  import { useModalStore } from '@/stores/modal';
 import SavedTrExampleDatatable from '../datatable/SavedTrExampleDatatable.vue';
 import { type SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
 import NewSavedExampleEditor from '../input-fields-and-buttons/NewSavedExampleEditor.vue';
 import SaveModificationsLargeBtn from '../input-fields-and-buttons/SaveModificationsLargeBtn.vue';
+import JumpToEntryButton from '../input-fields-and-buttons/JumpToEntryButton.vue';
 import HighlightCurrEntryButton from '../input-fields-and-buttons/HighlightCurrEntryButton.vue';
   const store = useDictStore(`dictModule`)
   const savedTrExampleStore = useSavedTrExampleStore()
+  const modalStore = useModalStore()
   
   const createSavedTrExample = async (example: Example) => {
     const dictName = store.dictNameUsedInLastQuery;
@@ -123,5 +129,23 @@ import HighlightCurrEntryButton from '../input-fields-and-buttons/HighlightCurrE
         isOfHighImportance: false,
       } as SavedTranslationExample
     );
+  }
+
+  const jumpToEntry = async () => {
+    const currSortedIdx = store.currentIdx;
+    const currEntryIdxBeforeSort = store.currPageOfFilteredEntries[currSortedIdx]?.idx;
+    store.quickSearchQueryPhrase = ``;
+    modalStore.openModals.delete(`DICT_ENTRY_DETAILS`);
+    await new Promise((_) => setTimeout(_, 2500));
+    const pageIdx = store.pagesOfFilteredEntries.findIndex(
+      page => page.some(e => e.idx === currEntryIdxBeforeSort)
+    );
+    const entrySubIndex = 
+      store.pagesOfFilteredEntries[pageIdx]?.
+        findIndex(e => e.idx === currEntryIdxBeforeSort) ?? -1;
+    if (pageIdx === -1) {return}
+    store.currentPageInputForTwoWayBinding = ''+(pageIdx+1);
+    await new Promise((_) => setTimeout(_, 2500));
+    document.querySelector(`#datatable-table-top-anchor [data-row-index="${entrySubIndex}"]`)?.scrollIntoView();
   }
 </script>

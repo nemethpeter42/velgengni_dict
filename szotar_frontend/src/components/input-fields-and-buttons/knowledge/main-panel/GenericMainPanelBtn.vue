@@ -15,7 +15,7 @@
       [`
         bg-sky-200 hover:bg-sky-300 
         dark:bg-teal-700 dark:hover:bg-teal-600 
-      `]: !primary && !active,
+      `]: !primary && !active && !danger,
       [`
         bg-purple-200 hover:bg-purple-300 
         dark:bg-blue-700 dark:hover:bg-blue-600 
