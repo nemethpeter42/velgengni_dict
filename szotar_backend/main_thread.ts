@@ -1,6 +1,6 @@
 import { Worker, isMainThread, parentPort, workerData } from 'worker_threads';
 import * as uuid from "uuid";
-import XLSX from 'xlsx'
+import { readOds, sheetToObjects } from './ods_reader.js'
 import * as vm from 'node:vm'
 import express, { json } from 'express';
 import fs from 'fs'
@@ -21,7 +21,6 @@ import savedQueriesRouter from './routes/saved_queries.js';
 import savedHighlightsRouter from './routes/saved_highlights.js';
 import generatedLinksRouter from './routes/generated_links.js';
 const __dirname = path.resolve();
-XLSX.set_fs(fsPromises);
 
 type ExampleSource = {filename: string,workerThread?: Worker, workerStarted?: boolean}
 type ExampleSourcesByLangPairs = Record<string,Record<string, ExampleSource>>
@@ -118,9 +117,8 @@ const startExampleDbThreadsAndReadDicts = async (): Promise<void> => {
 					console.log(`reading dictionary: "${dictName}"`)
 					const descFileRawContent = await fsPromises.readFile(`${DICTS_FOLDER}/${descFilename}`, {encoding: `utf8`,}) 
 					const buffer: Buffer = await fsPromises.readFile(`${DICTS_FOLDER}/${dictName}.ods`)
-					const workbook = XLSX.read(buffer);
-					const sheetName = workbook.SheetNames[0];
-					const main = XLSX.utils.sheet_to_json<Record<string, string>>(workbook.Sheets[sheetName], { raw: true, defval: ``, });
+					const [firstSheet] = readOds(buffer);
+					const main = sheetToObjects<Record<string, string>>(firstSheet?.rows ?? []);
 					const colsInDict = Object.keys(main[0] ?? {});
 					const meta = DictDescription.fromJson(descFileRawContent, colsInDict.includes(`translated`)); // JSON.parse(descFileRawContent) as DictDescription
 					for (const col of colsInDict) {
@@ -326,7 +324,7 @@ app.post('/dict', async (req, res) =>  {
 
 		//const code = `/tuh/.test(e.original)`;
 		//const code = `e.original.includes('steig')`;
-		const searchQuery: string = req.body?.searchQuery!==`` ? req.body?.searchQuery : undefined ?? `e`;
+		const searchQuery: string = (req.body?.searchQuery!==`` ? req.body?.searchQuery : undefined) ?? `e`;
 		const customSortComparison = req.body?.customSortComparison;
 		let dict = JSON.parse(JSON.stringify(dicts[dictName].main))
 		const codeBox = `dict = dict.filter((e, idx, arr) => ${searchQuery}); ${customSortComparison ? `dict = dict.sort((a,b) => ${customSortComparison})` : ``}`;
