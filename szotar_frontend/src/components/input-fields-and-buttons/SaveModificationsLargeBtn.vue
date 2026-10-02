@@ -26,7 +26,7 @@
         `]: !props.isHighlighted,
       }"
     >
-    Változtatások mentése
+    {{ $t('actions.saveChanges') }}
   </button>  
 </template>
 <script lang="ts" setup>

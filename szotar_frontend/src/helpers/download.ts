@@ -3,6 +3,9 @@
 import {downloadZip} from 'client-zip';
 import { type ExportedEntry, type ExportModuleRequest } from 'szotar_common/models/ExportModuleRequest.js';
 import { MeaningForest } from 'szotar_common/models/MeaningForest.js';
+import { i18n } from '@/i18n';
+
+const escapeHtml = (s: string) => s.replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`);
 
 
 //source: https://blog.logrocket.com/programmatically-downloading-files-browser/
@@ -217,7 +220,7 @@ const renderTestModeHtml = () => {
 	const transl = getTransl() 
 	let result = ''
 	for (const idx of randomOrderedIndices) {
-		result += '<div><button onclick=\\\'[...document.querySelectorAll(".orig-'+idx+'"), ...document.querySelectorAll(".transl-'+idx+'")].forEach(function(e){e.classList.remove("hidden")})\\\'>Megoldás</button></div>'
+		result += '<div><button onclick=\\\'[...document.querySelectorAll(".orig-'+idx+'"), ...document.querySelectorAll(".transl-'+idx+'")].forEach(function(e){e.classList.remove("hidden")})\\\'>Reveal</button></div>'
 		
 		result += '<div class="original-word orig-'+idx+" "+(originalIsAskedInTestMode.has(idx) ? 'hidden':'')+'">'
 		result += orig[idx]
@@ -251,7 +254,7 @@ const chunk = JSON.parse(${'\u0060'+JSON.stringify(entries, null, 2).replaceAll(
 </script>
 <body>
 <div>
-<button onclick="toggleTestMode()">Teszt mód kapcsoló</button><br>
+<button onclick="toggleTestMode()">Toggle test mode</button><br>
 =====
 </div>
 <div class="test-rendering-area">

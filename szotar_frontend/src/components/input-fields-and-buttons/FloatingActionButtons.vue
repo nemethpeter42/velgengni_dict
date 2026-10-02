@@ -1,7 +1,7 @@
 <template>
   <div class="floating-action-button-container absolute z-[100]">
     <button 
-      title="Save modifications"
+      :title="$t('actions.saveModifications')"
       @click="savedTrExampleStore.saveDb()"
       class="
       save-modifications-btn
@@ -20,7 +20,7 @@
       "
     >
       <button 
-        title="Scroll to top"
+        :title="$t('actions.scrollToTop')"
         class="
           scroll-to-top-btn
           inline-flex justify-center items-center text-2xl rounded-l-3xl p-0.5 pl-2
@@ -29,7 +29,7 @@
         @click="scrollToTop()"
       ><ArrowUpIcon class="h-6 w-6" /></button>
       <button 
-        title="Scroll to bottom"
+        :title="$t('actions.scrollToBottom')"
         class="
           scroll-to-bottom-btn
           inline-flex justify-center items-center text-2xl rounded-r-3xl p-0.5 pr-2

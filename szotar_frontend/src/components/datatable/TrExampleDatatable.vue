@@ -28,7 +28,7 @@
             :modelValue="trExampleStore.quickSearchQueryPhrase"
             @update:modelValue="val => trExampleStore.setQuickSearchQueryPhrase(val)"
             @input="trExampleStore.jumpToPage(`FIRST`);"
-            label="Gyorskeresés"
+            :label="$t('common.quickSearch')"
           />
         </div>
       </div>
@@ -73,7 +73,7 @@
           dark:border-indigo-900
           sm:rounded-b-lg
         " 
-        aria-label="Table navigation"
+        :aria-label="$t('common.tableNavigation')"
         >
         <PageSizeInput 
           :options="trExampleStore.resultsPerPageOptions" 

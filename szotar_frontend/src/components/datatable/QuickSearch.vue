@@ -6,7 +6,7 @@
         class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
         <MagnifyingGlassIcon class="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true"/>
       </div>
-      <label for="quick-search-examples" class="sr-only">Gyorskeresés</label>
+      <label for="quick-search-examples" class="sr-only">{{ $t('common.quickSearch') }}</label>
       <input 
         type="text"  
         id="quick-search-examples"

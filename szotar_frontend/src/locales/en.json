@@ -1,0 +1,123 @@
+{
+  "nav": {
+    "dictionaries": "Dictionaries",
+    "knowledgeTest": "Knowledge",
+    "examples": "Examples",
+    "switchLanguage": "Switch language"
+  },
+  "common": {
+    "close": "Close",
+    "search": "Search",
+    "save": "Save",
+    "quickSearch": "Quick search",
+    "highlight": "Highlight",
+    "highlightLabel": "Highlight:",
+    "previous": "Previous",
+    "next": "Next",
+    "tableNavigation": "Table navigation",
+    "loading": "Loading...",
+    "eg": "E.g.",
+    "noActiveQuery": "No active query."
+  },
+  "pagination": {
+    "first": "First",
+    "previous": "Previous",
+    "next": "Next",
+    "last": "Last",
+    "pageSize": "Page size:"
+  },
+  "datatable": {
+    "selectRow": "Select row",
+    "selectAll": "Select all",
+    "bulkActions": "Bulk actions",
+    "bulkActionsShort": "Bulk actions",
+    "interactiveHtmlExport": "Interactive HTML export"
+  },
+  "dictFilter": {
+    "searchCommandLabel": "Search command:",
+    "searchCommandPlaceholder": "Search command",
+    "dictionary": "Dictionary:",
+    "sortFunctionLabel": "Sort function:",
+    "sortFunctionPlaceholder": "Sort function"
+  },
+  "trExample": {
+    "markOnly": "Highlight only",
+    "filter": "Filter",
+    "inverseFilter": "Inverse filter",
+    "sourceLangSeparately": "source language separately",
+    "sourceLangJoined": "source language joined",
+    "targetLang": "target language",
+    "blacklist": "Blacklist",
+    "languagePair": "Language pair:",
+    "resultLimit": "Result limit:",
+    "otherLanguage": "Other language",
+    "wordPicker": "Word picker",
+    "bigFilter": "Big filter",
+    "statsError": "ERR!",
+    "statsTotal": "TOTAL:",
+    "statsFiltered": "FILTERED:",
+    "statsAll": "[All]"
+  },
+  "savedExample": {
+    "sourceText": "Text (source language)",
+    "targetText": "Text (target language)",
+    "grammatical": "Grammatical example",
+    "lowImportance": "Example of low importance",
+    "new": "+ New saved example"
+  },
+  "searchCondition": {
+    "prefixSpace": "prefix space",
+    "postfixSpace": "postfix space/punctuation",
+    "expression": "Search expression",
+    "new": "+ New condition",
+    "joinedOrSeparate": "Joined / separate"
+  },
+  "actions": {
+    "saveModifications": "Save modifications",
+    "saveChanges": "Save changes",
+    "scrollToTop": "Scroll to top",
+    "scrollToBottom": "Scroll to bottom",
+    "closeModal": "Close modal",
+    "highlightButton": "Highlight button",
+    "jump": "Jump"
+  },
+  "knowledge": {
+    "reveal": "Solution",
+    "toggleTestMode": "Toggle test mode"
+  },
+  "savedQueries": {
+    "title": "Saved queries",
+    "createNew": "Create new (from current data)",
+    "filterName": "Saved filter name:",
+    "groupName": "Group name:",
+    "dictNotFound": "Dictionary not found: \"{name}\""
+  },
+  "tableConfig": {
+    "title": "Table settings",
+    "visibleColumns": "Visible columns",
+    "quickSearchColumns": "Columns used by quick search",
+    "otherSettings": "Other settings",
+    "showRawString": "Show raw string",
+    "showRowNumbers": "Show row number",
+    "showHighlightButton": "Show highlight button",
+    "showSavedExamples": "Show saved examples",
+    "wordCount": "Word count (experimental)"
+  },
+  "export": {
+    "title": "HTML export",
+    "allPlaceholder": "All",
+    "favoritesPlaceholder": "Favorites",
+    "submit": "Export",
+    "errorNoField": "At least one field must be filled in!",
+    "errorInvalidName": "Allowed characters in the export name: English lowercase and uppercase letters, digits, hyphen, underscore.",
+    "errorFlow": "Error in export flow. See console for details."
+  },
+  "entryDetails": {
+    "details": "Details",
+    "examples": "Examples",
+    "savedExamples": "Saved examples"
+  },
+  "meaningForest": {
+    "parseError": "PARSE ERROR"
+  }
+}

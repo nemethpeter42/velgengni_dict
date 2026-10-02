@@ -8,7 +8,7 @@
       dark:text-gray-300 dark:bg-gray-700 dark:border-gray-500 
       dark:hover:text-white dark:hover:bg-gray-600
     ">
-    Kiemelés
+    {{ $t('common.highlight') }}
   </button>
 </template>
 

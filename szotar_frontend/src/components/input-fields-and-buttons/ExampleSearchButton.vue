@@ -12,7 +12,7 @@
       dark:focus:ring-blue-800
     "
     >
-    Keresés
+    {{ $t('common.search') }}
   </button>
 </template>
 

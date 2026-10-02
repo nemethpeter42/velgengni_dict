@@ -15,7 +15,7 @@
         dark:focus:ring-gray-700 
         "
       @click="openEditor()"
-      >+ Új mentett példa</button>
+      >{{ $t('savedExample.new') }}</button>
     <div
       v-if="savedTrExStore.newElemEditor.visible" 
       class="m-1"
@@ -31,7 +31,7 @@
           dark:bg-gray-700 dark:text-white dark:border-gray-600 
           dark:focus:ring-blue-500 dark:focus:border-blue-500
         " 
-        placeholder="Szöveg (forrásnyelv)"
+        :placeholder="$t('savedExample.sourceText')"
         >
     </div>
     <div
@@ -49,7 +49,7 @@
           dark:bg-gray-700 dark:text-white dark:border-gray-600 
           dark:focus:ring-blue-500 dark:focus:border-blue-500
         " 
-        placeholder="Szöveg (célnyelv)"
+        :placeholder="$t('savedExample.targetText')"
         >
     </div>
     <div 
@@ -74,7 +74,7 @@
           text-gray-900 
           dark:text-gray-300
         ">
-        Nyelvtani példa
+        {{ $t('savedExample.grammatical') }}
       </label>
     </div>
     <div 
@@ -99,7 +99,7 @@
           text-gray-900 
           dark:text-gray-300
         ">
-        Nem jelentős példa
+        {{ $t('savedExample.lowImportance') }}
       </label>
     </div>
     <button 
@@ -117,7 +117,7 @@
           dark:focus:ring-gray-700 
           "
         @click="createSavedTrExample()"
-        >Rögzítés</button>
+        >{{ $t('common.save') }}</button>
   </div>
 </template>
 <script setup lang="ts">

@@ -1,6 +1,6 @@
 <template>
   <div class="text-sm font-normal text-gray-500 dark:text-gray-400"> 
-    Találati limit: <span
+    {{ $t('trExample.resultLimit') }} <span
       class="font-semibold text-gray-900 dark:text-white">
       <select 
         id="resultLimit" 

@@ -13,7 +13,7 @@
             :modelValue="store.quickSearchQueryPhrase"
             @update:modelValue="val => store.setQuickSearchQueryPhrase(val)"
             @input="store.jumpToPage(`FIRST`);"
-            label="Gyorskeresés"
+            :label="$t('common.quickSearch')"
           />
           <ShowConfigModalButton 
             @click="showConfigModal()"
@@ -92,7 +92,7 @@
           dark:border-indigo-900
           sm:rounded-b-lg
         " 
-        aria-label="Table navigation"
+        :aria-label="$t('common.tableNavigation')"
         >
         <PageSizeInput 
           :options="store.resultsPerPageOptions" 

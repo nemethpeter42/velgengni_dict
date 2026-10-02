@@ -20,7 +20,7 @@
               dark:ring-offset-gray-700 dark:bg-gray-600 dark:border-gray-500
               dark:focus:ring-fuchsia-600 dark:focus:ring-offset-gray-700"
               >
-          <label for="checkbox-all-search" class="sr-only">checkbox</label>
+          <label for="checkbox-all-search" class="sr-only">{{ $t('datatable.selectAll') }}</label>
         </div>
       </th>
       <th 

@@ -9,7 +9,7 @@
       dark:text-gray-300 dark:bg-gray-700 dark:border-gray-500 
       dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600
     ">
-    Teszt mód kapcsoló
+    {{ $t('knowledge.toggleTestMode') }}
   </button>
 </template>
 

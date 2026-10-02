@@ -56,8 +56,8 @@
                 dark:focus:ring-red-800
               `]: noti.type===`error`,
             }"
-            aria-label="Close">
-            Close
+            :aria-label="$t('common.close')">
+            {{ $t('common.close') }}
           </button>
         </div>
       </div>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div text="Tömeges műv.">
+    <div :text="$t('datatable.bulkActionsShort')">
           <button 
             id="dropdownActionButton" 
             class="
@@ -15,8 +15,8 @@
               dark:focus:ring-gray-700
             "
             type="button">
-            <span class="sr-only">Tömeges műveletek</span>
-            Tömeges műv.
+            <span class="sr-only">{{ $t('datatable.bulkActions') }}</span>
+            {{ $t('datatable.bulkActionsShort') }}
             <ChevronDownIcon class="w-3 h-3 ml-2" />
           </button>
         <ul
@@ -35,7 +35,7 @@
             dark:hover:bg-gray-600 dark:hover:text-white 
             dark:focus:ring-gray-500 dark:focus:text-white
             ">
-            <div class="mr-2"><CloudArrowDownIcon class="w-4 h-4 fill-current" /></div> Interaktív HTML export
+            <div class="mr-2"><CloudArrowDownIcon class="w-4 h-4 fill-current" /></div> {{ $t('datatable.interactiveHtmlExport') }}
           </li>
         </ul>
       </div>

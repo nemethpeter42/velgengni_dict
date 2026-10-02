@@ -1,7 +1,7 @@
 <template>
   <div class="floating-action-buttons-on-example-modal absolute z-[100]">
     <button 
-      title="Close modal"
+      :title="$t('actions.closeModal')"
       @click="modalStore.openModals.delete(`DICT_ENTRY_DETAILS`)"
       class="
         floating-close-modal-btn
@@ -15,7 +15,7 @@
       ><XMarkIcon class="h-6 w-6" /></button>
 
     <button 
-      title="Next"
+      :title="$t('common.next')"
       @click="$emit(`nextBtnClick`)"
       class="
         floating-next-btn
@@ -28,7 +28,7 @@
       ><ChevronRightIcon class="h-6 w-6" /></button>
 
     <button 
-      title="Highlight button"
+      :title="$t('actions.highlightButton')"
       @click="$emit(`highlightBtnClick`)"
       class="
         floating-next-btn
@@ -56,7 +56,7 @@
       "
     >
       <button 
-        title="Scroll to top"
+        :title="$t('actions.scrollToTop')"
         class="
           scroll-to-top-btn
           inline-flex justify-center items-center text-2xl rounded-t-3xl p-0.5 pb-1 pt-1
@@ -66,7 +66,7 @@
         @click="$emit(`scrollToTop`)"
       ><ArrowUpIcon class="h-6 w-6" /></button>
       <button 
-        title="Scroll to bottom"
+        :title="$t('actions.scrollToBottom')"
         class="
           scroll-to-bottom-btn
           inline-flex justify-center items-center text-2xl rounded-b-3xl p-0.5 pt-1 pb-1
@@ -78,7 +78,7 @@
     </div>
     
     <button 
-      title="Save modifications"
+      :title="$t('actions.saveModifications')"
       @click="savedTrExampleStore.saveDb()"
       class="
         save-modifications-btn

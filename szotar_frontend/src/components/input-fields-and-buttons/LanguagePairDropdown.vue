@@ -6,7 +6,7 @@
           text-sm font-normal 
           text-gray-500 
           dark:text-gray-400
-          ">Nyelvpár: </span>
+          ">{{ $t('trExample.languagePair') }} </span>
       
       <button 
         :id="props.idOfToggleBtn" 

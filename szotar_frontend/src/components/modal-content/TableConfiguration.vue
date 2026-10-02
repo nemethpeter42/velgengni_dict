@@ -9,7 +9,7 @@
       <div class="m-2">
         <div class="
           font-normal mx-1 my-3
-          ">Látható oszlopok</div>
+          ">{{ $t('tableConfig.visibleColumns') }}</div>
         <div  v-if="store.dictNameUsedInLastQuery">
           <div v-for="(colDef, colName) of store.currDictCols" v-bind:key="colName">
             <input type="checkbox"
@@ -32,13 +32,13 @@
             dark:text-red-300
           " 
           v-else
-          >Nincs aktív lekérdezés.</div>
+          >{{ $t('common.noActiveQuery') }}</div>
       </div>
       <div class="m-2">
         
         <div class="
           font-normal mx-1 my-3
-          ">Gyorskeresésnél használt oszlopok</div>
+          ">{{ $t('tableConfig.quickSearchColumns') }}</div>
         <div  v-if="store.dictNameUsedInLastQuery">
           <div v-for="(colDef, colName) of store.currDictCols" v-bind:key="colName">
             <input type="checkbox"
@@ -61,7 +61,7 @@
             dark:text-red-300
           " 
           v-else
-          >Nincs aktív lekérdezés.</div>
+          >{{ $t('common.noActiveQuery') }}</div>
       </div>
       
     </div>
@@ -74,7 +74,7 @@
     <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-600">
     <div class="
       font-normal mx-1 my-3
-      ">Egyéb beállítások</div>
+      ">{{ $t('tableConfig.otherSettings') }}</div>
     <div>
       <label class="relative inline-flex items-center cursor-pointer">
         <input type="checkbox" v-model="store.displayColsAsRawString" class="sr-only peer">
@@ -89,7 +89,7 @@
           dark:bg-gray-800 dark:border-gray-600
           dark:peer-focus:ring-blue-800 
         "></div>
-        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Nyers sztring megjelenítés</span>
+        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">{{ $t('tableConfig.showRawString') }}</span>
       </label>
     </div>
     <div class="mt-2">
@@ -106,7 +106,7 @@
           dark:bg-gray-800 dark:border-gray-600
           dark:peer-focus:ring-blue-800 
         "></div>
-        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Sorszám megjelenítés</span>
+        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">{{ $t('tableConfig.showRowNumbers') }}</span>
       </label>
     </div>
     <div class="mt-2">
@@ -123,7 +123,7 @@
           dark:bg-gray-800 dark:border-gray-600
           dark:peer-focus:ring-blue-800 
         "></div>
-        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Kiemelés gomb megjelenítése</span>
+        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">{{ $t('tableConfig.showHighlightButton') }}</span>
       </label>
     </div>
     <div class="mt-2">
@@ -140,14 +140,14 @@
           dark:bg-gray-800 dark:border-gray-600
           dark:peer-focus:ring-blue-800 
         "></div>
-        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Mentett példák megjelenítése</span>
+        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">{{ $t('tableConfig.showSavedExamples') }}</span>
       </label>
     </div>
     <div class="mt-2">
       <WordListPrevNextButton 
         @click="store.runFrequencySearch()"
         id="word-count-btn" 
-        text="Word count (experimental)"/>
+        :text="$t('tableConfig.wordCount')"/>
     </div>
   </div>
 </template>

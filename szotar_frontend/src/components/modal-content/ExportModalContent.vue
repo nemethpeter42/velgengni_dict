@@ -2,7 +2,7 @@
   <div 
     class="
       font-normal pb-2
-    ">HTML export
+    ">{{ $t('export.title') }}
   </div>
   <div
     class="main-content">
@@ -29,7 +29,7 @@
             dark:bg-gray-600 dark:text-white dark:border-gray-300 
             dark:focus:ring-blue-500 dark:focus:border-blue-500
           " 
-          placeholder="All">
+          :placeholder="$t('export.allPlaceholder')">
         <input 
           :data-group="groupName"
           :data-index="index"
@@ -44,7 +44,7 @@
             dark:bg-gray-600 dark:text-white dark:border-gray-300 
             dark:focus:ring-blue-500 dark:focus:border-blue-500
           " 
-          placeholder="Favorites">
+          :placeholder="$t('export.favoritesPlaceholder')">
         <div class="p-2 text-sm">
           {{ item.title }}
         </div>
@@ -53,7 +53,7 @@
     <div class="pt-5 pb-1">
       <WordListPrevNextButton 
         id="newSavedQuerySubmitBtn"
-        text="Exportálás"
+        :text="$t('export.submit')"
         :isDisabled="isDisabled"
         @click="() => {
           if(!isDisabled) {
@@ -74,7 +74,9 @@ import { obtainDictQueryResult, useDictStore } from '@/stores/dict';
 import type { ExportModuleRequest } from 'szotar_common/models/ExportModuleRequest.js';
 import { downloadBlob, exportToHtmlFormat } from '@/helpers/download';
 import { useFavoritesStore } from '@/stores/highlight';
+import { useI18n } from 'vue-i18n';
 
+  const { t } = useI18n()
   const savedDictQueryStore = useSavedDictQueryStore()
   const favoritesStore = useFavoritesStore();
   const notiStore = useNotiStore()
@@ -97,14 +99,14 @@ import { useFavoritesStore } from '@/stores/highlight';
     if (fields.length === 0) {
       notiStore.notifications.push({
         type: `error`,
-        msg: `Legalább egy mezőt ki kell tölteni!`
+        msg: t(`export.errorNoField`)
       })
       return;
     }
     if (fields.some(e=>RegExp(`.*[^a-zA-Z0-9_\-].*`,`i`).test(e.exportTitle))) {
       notiStore.notifications.push({
         type: `error`,
-        msg: `Az export névnél megengedett karakterek: angol kis- ill. nagybetűk, számok, kötőjel, aláhúzás.`
+        msg: t(`export.errorInvalidName`)
       })
       return;
     }
@@ -168,7 +170,7 @@ import { useFavoritesStore } from '@/stores/highlight';
       console.error(error)
       notiStore.notifications.push({
         type: `error`,
-        msg: `Error in export flow. See console for details.`
+        msg: t(`export.errorFlow`)
       })
       return;
     }

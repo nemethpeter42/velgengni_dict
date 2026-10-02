@@ -7,6 +7,7 @@ import { useDictStore } from "./dict";
 import { useNotiStore } from "./noti";
 import type { DictStoreType } from "@/frontend_models/DictStoreType";
 import { backendBaseUrl } from "@/config";
+import { i18n } from "@/i18n";
 
 export const useSavedDictQueryStore = defineStore(`savedDictQuery`, () => {
 
@@ -123,7 +124,7 @@ export const useSavedDictQueryStore = defineStore(`savedDictQuery`, () => {
     if(!validDictionaries.includes(entry.dictName)) {
       notiStore.notifications.push({
         type:`error`,
-        msg:`Dictonary not found: "${entry.dictName}"`,
+        msg:i18n.global.t(`savedQueries.dictNotFound`, { name: entry.dictName }),
       })
     } else {
       store.searchQuery = entry.searchQuery;

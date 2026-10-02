@@ -3,7 +3,7 @@
   <div>
     <div class="flex flex-wrap ">
         <div class="m-2"> 
-          <label for="searchQuery" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Keresési parancs:</label>
+          <label for="searchQuery" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">{{ $t('dictFilter.searchCommandLabel') }}</label>
           <textarea 
             id="searchQuery" 
             rows="2" 
@@ -15,13 +15,13 @@
               dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
               dark:focus:ring-blue-500 dark:focus:border-blue-500 
             " 
-            placeholder='Keresési parancs'
+            :placeholder="$t('dictFilter.searchCommandPlaceholder')"
             v-model="store.searchQuery"
           ></textarea>
-          <div class="text-gray-600 dark:text-gray-400 text-sm my-1">Pl.&nbsp; e.original.trim().toLowerCase().includes(`cat`)</div>
+          <div class="text-gray-600 dark:text-gray-400 text-sm my-1">{{ $t('common.eg') }}&nbsp;e.original.trim().toLowerCase().includes(`cat`)</div>
         </div>
         <div class="m-2">
-          <label for="dictName" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Szótár:</label>
+          <label for="dictName" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">{{ $t('dictFilter.dictionary') }}</label>
           <select 
             id="dictName" 
             class="
@@ -41,7 +41,7 @@
           </select>
         </div>
         <div class="m-2"> 
-          <label for="sortComparison" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">Rendezési függvény:</label>
+          <label for="sortComparison" class="block mb-2 text-sm font-semibold text-gray-700 dark:text-white">{{ $t('dictFilter.sortFunctionLabel') }}</label>
           <textarea 
             id="sortComparison" 
             rows="2" 
@@ -53,10 +53,10 @@
               dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
               dark:focus:ring-blue-500 dark:focus:border-blue-500 
             " 
-            placeholder='Rendezési függvény'
+            :placeholder="$t('dictFilter.sortFunctionPlaceholder')"
             v-model="store.sortComparison"
           ></textarea>
-          <div class="text-gray-600 dark:text-gray-400 text-sm my-1">Pl.&nbsp; -1*a.original.localeCompare(b.original, `es`)</div>
+          <div class="text-gray-600 dark:text-gray-400 text-sm my-1">{{ $t('common.eg') }}&nbsp;-1*a.original.localeCompare(b.original, `es`)</div>
         </div>
       </div>
 

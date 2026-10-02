@@ -26,7 +26,7 @@
         `]: !props.isHighlighted,
       }"
     >
-    Kiemelés
+    {{ $t('common.highlight') }}
   </button>  
 </template>
 <script lang="ts" setup>

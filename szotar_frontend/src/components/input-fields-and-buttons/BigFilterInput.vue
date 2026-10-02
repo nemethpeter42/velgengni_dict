@@ -12,7 +12,7 @@
         dark:bg-gray-700 dark:text-white dark:border-gray-600 
         dark:focus:ring-blue-500 dark:focus:border-blue-500
       " 
-      placeholder="Nagy szűrő"
+      :placeholder="$t('trExample.bigFilter')"
       :value="modelValue"
       @input="$emit('update:modelValue', ($event?.target as HTMLInputElement)?.value)"
       v-on:keyup.enter="$emit(`goButtonClicked`)"

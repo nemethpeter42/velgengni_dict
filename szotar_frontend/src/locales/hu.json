@@ -1,0 +1,123 @@
+{
+  "nav": {
+    "dictionaries": "Szótárak",
+    "knowledgeTest": "Tudásteszt",
+    "examples": "Példák",
+    "switchLanguage": "Nyelv váltása"
+  },
+  "common": {
+    "close": "Bezárás",
+    "search": "Keresés",
+    "save": "Rögzítés",
+    "quickSearch": "Gyorskeresés",
+    "highlight": "Kiemelés",
+    "highlightLabel": "Kiemelés:",
+    "previous": "Előző",
+    "next": "Következő",
+    "tableNavigation": "Táblázat navigáció",
+    "loading": "Betöltés...",
+    "eg": "Pl.",
+    "noActiveQuery": "Nincs aktív lekérdezés."
+  },
+  "pagination": {
+    "first": "Első",
+    "previous": "Előző",
+    "next": "Következő",
+    "last": "Utolsó",
+    "pageSize": "Lapméret:"
+  },
+  "datatable": {
+    "selectRow": "Sor kiválasztása",
+    "selectAll": "Összes kiválasztása",
+    "bulkActions": "Tömeges műveletek",
+    "bulkActionsShort": "Tömeges műv.",
+    "interactiveHtmlExport": "Interaktív HTML export"
+  },
+  "dictFilter": {
+    "searchCommandLabel": "Keresési parancs:",
+    "searchCommandPlaceholder": "Keresési parancs",
+    "dictionary": "Szótár:",
+    "sortFunctionLabel": "Rendezési függvény:",
+    "sortFunctionPlaceholder": "Rendezési függvény"
+  },
+  "trExample": {
+    "markOnly": "Csak kiemelés",
+    "filter": "Szűrés",
+    "inverseFilter": "Inverz szűrés",
+    "sourceLangSeparately": "forrásnyelv külön",
+    "sourceLangJoined": "forrásnyelv egyben",
+    "targetLang": "célnyelv",
+    "blacklist": "Feketelista",
+    "languagePair": "Nyelvpár:",
+    "resultLimit": "Találati limit:",
+    "otherLanguage": "Másik nyelv",
+    "wordPicker": "Szóválasztó",
+    "bigFilter": "Nagy szűrő",
+    "statsError": "ERR!",
+    "statsTotal": "ÖSSZES:",
+    "statsFiltered": "SZŰRT:",
+    "statsAll": "[Mind]"
+  },
+  "savedExample": {
+    "sourceText": "Szöveg (forrásnyelv)",
+    "targetText": "Szöveg (célnyelv)",
+    "grammatical": "Nyelvtani példa",
+    "lowImportance": "Nem jelentős példa",
+    "new": "+ Új mentett példa"
+  },
+  "searchCondition": {
+    "prefixSpace": "prefix space",
+    "postfixSpace": "postfix space/írásjel",
+    "expression": "Keresési kifejezés",
+    "new": "+ Új feltétel",
+    "joinedOrSeparate": "Egybe / külön"
+  },
+  "actions": {
+    "saveModifications": "Módosítások mentése",
+    "saveChanges": "Változtatások mentése",
+    "scrollToTop": "Ugrás a oldal tetejére",
+    "scrollToBottom": "Ugrás az oldal aljára",
+    "closeModal": "Ablak bezárása",
+    "highlightButton": "Kiemelés gomb",
+    "jump": "Ugrás"
+  },
+  "knowledge": {
+    "reveal": "Megoldás",
+    "toggleTestMode": "Teszt mód kapcsoló"
+  },
+  "savedQueries": {
+    "title": "Mentett lekérdezések",
+    "createNew": "Új létrehozása (a jelenlegi adatokból)",
+    "filterName": "Mentett szűrő neve:",
+    "groupName": "Csoport neve:",
+    "dictNotFound": "Szótár nem található: \"{name}\""
+  },
+  "tableConfig": {
+    "title": "Táblázat beállításai",
+    "visibleColumns": "Látható oszlopok",
+    "quickSearchColumns": "Gyorskeresésnél használt oszlopok",
+    "otherSettings": "Egyéb beállítások",
+    "showRawString": "Nyers sztring megjelenítés",
+    "showRowNumbers": "Sorszám megjelenítés",
+    "showHighlightButton": "Kiemelés gomb megjelenítése",
+    "showSavedExamples": "Mentett példák megjelenítése",
+    "wordCount": "Előfordulások (kísérleti)"
+  },
+  "export": {
+    "title": "HTML export",
+    "allPlaceholder": "Mind",
+    "favoritesPlaceholder": "Kedvencek",
+    "submit": "Exportálás",
+    "errorNoField": "Legalább egy mezőt ki kell tölteni!",
+    "errorInvalidName": "Az export névnél megengedett karakterek: angol kis- ill. nagybetűk, számok, kötőjel, aláhúzás.",
+    "errorFlow": "Hiba az exportálás során. A részletek a konzolon láthatók."
+  },
+  "entryDetails": {
+    "details": "Részletek",
+    "examples": "Példák",
+    "savedExamples": "Mentett példák"
+  },
+  "meaningForest": {
+    "parseError": "HIBÁS FORMÁTUM"
+  }
+}

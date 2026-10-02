@@ -40,13 +40,13 @@
           dark:border-indigo-900
           sm:rounded-b-lg
         " 
-        aria-label="Table navigation"
+        :aria-label="$t('common.tableNavigation')"
         >
         <QuickSearch 
           :modelValue="store.quickSearchQueryPhrase"
           @update:modelValue="val => store.setQuickSearchQueryPhrase(val)"
           @input="store.jumpToPage(`FIRST`);"
-          label="Gyorskeresés"
+          :label="$t('common.quickSearch')"
           />
         <PageSizeInput 
           :options="store.resultsPerPageOptions" 

@@ -7,7 +7,7 @@
     <div 
       class="
         font-normal px-1 py-3
-      ">Mentett lekérdezések
+      ">{{ $t('savedQueries.title') }}
     </div>
     <div
       class="p-1"
@@ -56,7 +56,7 @@
     <div 
       class="
         font-normal mx-1 my-3
-      ">Új létrehozása (a jelenlegi adatokból)
+      ">{{ $t('savedQueries.createNew') }}
     </div>
     <div 
       class="flex flex-wrap items-end">
@@ -68,7 +68,7 @@
             text-gray-700 
             dark:text-white
           ">
-        Mentett szűrő neve:
+        {{ $t('savedQueries.filterName') }}
         </label>
         <input 
           v-model="savedDictQueryStore.newElemEditor.title"
@@ -92,7 +92,7 @@
             text-gray-700 
             dark:text-white
           ">
-        Csoport neve:
+        {{ $t('savedQueries.groupName') }}
         </label>
         <input 
           v-model="savedDictQueryStore.newElemEditor.group"
@@ -111,7 +111,7 @@
       <div class="m-1">
       <WordListPrevNextButton 
         id="newSavedQuerySubmitBtn"
-        text="Rögzítés"
+        :text="$t('common.save')"
         :isDisabled="!savedDictQueryStore.newElemIsValid"
         @click="() => {
           if(savedDictQueryStore.newElemIsValid) {

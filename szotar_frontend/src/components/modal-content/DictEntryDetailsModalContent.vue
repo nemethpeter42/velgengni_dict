@@ -19,7 +19,7 @@
             
     <div class="flex flex-wrap items-center">
       <WordListPrevNextButton 
-        text="Előző" 
+        :text="$t('common.previous')" 
         id="prevWordBtn"
         data-button-for="previous-entry"
         :isDisabled="store.isTheFirstEntryActive" 
@@ -32,7 +32,7 @@
             }"
         />
       <WordListPrevNextButton 
-        text="Következő" 
+        :text="$t('common.next')" 
         id="nextWordBtn"
         data-button-for="next-entry"
         :isDisabled="store.isTheLastEntryActive" 
@@ -63,19 +63,19 @@
     </div>
     <div class="flex flex-wrap -mb-px">   
       <TabOption 
-        text="Details" 
+        :text="$t('entryDetails.details')" 
         :is-active="store.entryDetailsActiveTab === 1"
         @click="store.setEntryDetailsActiveTab(1)" 
         data-tab-option-for="details"
       />
       <TabOption 
-        text="Examples" 
+        :text="$t('entryDetails.examples')" 
         :is-active="store.entryDetailsActiveTab === 2"
         @click="store.setEntryDetailsActiveTab(2)" 
         data-tab-option-for="examples"
       />
       <TabOption 
-        text="Saved examples" 
+        :text="$t('entryDetails.savedExamples')" 
         :is-active="store.entryDetailsActiveTab === 3"
         :labelText="savedTrExampleStore.examplesOfCurrEntry.length ? savedTrExampleStore.examplesOfCurrEntry.length : undefined"
         @click="store.setEntryDetailsActiveTab(3)" 

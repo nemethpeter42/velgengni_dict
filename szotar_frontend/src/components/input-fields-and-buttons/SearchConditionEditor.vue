@@ -21,7 +21,7 @@
             text-gray-900 
             dark:text-gray-300
           ">
-          prefix space
+          {{ $t('searchCondition.prefixSpace') }}
         </label>
       </div>
       <div class="m-2">
@@ -37,7 +37,7 @@
             dark:bg-gray-700 dark:text-white dark:border-gray-600 
             dark:focus:ring-blue-500 dark:focus:border-blue-500
           " 
-          placeholder="Keresési kifejezés"
+          :placeholder="$t('searchCondition.expression')"
           >
       </div>
       <div class="flex items-center m-2">
@@ -60,7 +60,7 @@
             text-gray-900 
             dark:text-gray-300
           ">
-          postfix space/írásjel
+          {{ $t('searchCondition.postfixSpace') }}
         </label>
       </div>
       <div class="m-2">
@@ -84,7 +84,7 @@
           dark:focus:ring-gray-700 
           "
         @click="$emit('update:modelValue',modelValue.concat([{onlyWithSpaceDotOrCommaSuffix: false,onlyWithSpacePrefix: false, expression: ``}]))"
-        >+ Új feltétel</button>
+        >{{ $t('searchCondition.new') }}</button>
       <button 
         id="splitOrJoinButton"
         class="
@@ -114,7 +114,7 @@
               }] 
             )
           }}"
-        >Egybe / külön</button>
+        >{{ $t('searchCondition.joinedOrSeparate') }}</button>
     </div>
   </div>
 </template>

@@ -21,21 +21,21 @@
        
         <FilteringModeOption 
           :is-checked="trExampleStore.filteringMode === `MARK_ONLY`" 
-          label-text="Csak kiemelés"
+          :label-text="$t('trExample.markOnly')"
           id-value="view-mode-mark-only"
           @click="trExampleStore.setFilteringMode(`MARK_ONLY`)"
          />
          
         <FilteringModeOption 
           :is-checked="trExampleStore.filteringMode === `FILTER`" 
-          :label-text="`\u00A0\u00A0Szűrés\u00A0\u00A0`"
+          :label-text="`\u00A0\u00A0${$t('trExample.filter')}\u00A0\u00A0`"
           id-value="view-mode-filter"
           @click="trExampleStore.setFilteringMode(`FILTER`)"
          />
 
          <FilteringModeOption 
           :is-checked="trExampleStore.filteringMode === `INVERSE_FILTER`" 
-          label-text="Inverz szűrés"
+          :label-text="$t('trExample.inverseFilter')"
           id-value="view-mode-inverted-filter"
           @click="trExampleStore.setFilteringMode(`INVERSE_FILTER`)"
          />
@@ -99,22 +99,22 @@
       
     </div>
     <div class="flex items-center m-1">
-      <span class="text-sm font-normal text-gray-500 dark:text-gray-400">Kiemelés:&nbsp;</span>
+      <span class="text-sm font-normal text-gray-500 dark:text-gray-400">{{ $t('common.highlightLabel') }}&nbsp;</span>
     </div>
     <HighlightModeOption 
       v-model="trExampleStore.isQueryLangHighlightedSeparately"
       idValue="is-query-lang-highligted-separately"
-      labelText="forrásnyelv külön"
+      :labelText="$t('trExample.sourceLangSeparately')"
     />
     <HighlightModeOption 
       v-model="trExampleStore.isQueryLangHighlightedJoined"
       idValue="is-query-lang-highligted-joined"
-      labelText="forrásnyelv egyben"
+      :labelText="$t('trExample.sourceLangJoined')"
     />
     <HighlightModeOption 
       v-model="trExampleStore.isResultLangHighlited"
       idValue="is-result-lang-highligted"
-      labelText="célnyelv"
+      :labelText="$t('trExample.targetLang')"
     />
     <div class="m-1 flex items-center">
       <!-- TODO separate data-test id-->
@@ -122,7 +122,7 @@
           :icon-hidden="true"
           v-model="trExampleStore.blacklistQueryPhrase"
           @input="trExampleStore.jumpToPage(`FIRST`);"
-          label="Feketelista"
+          :label="$t('trExample.blacklist')"
           />
       </div>
   </div>

@@ -51,7 +51,7 @@
               `]: props.highlightedIndices.has(item.idx) && props.selectedIndices.has(item.idx)
             }">
             <slot name="rowLevelButtons" :idx="item.idx" :sortedIdx="item.sortedIdx" :idxOnCurrPage="idxOnCurrPage"></slot>
-          <label for="select-row-checkbox" class="sr-only">Sor kiválasztása</label>
+          <label for="select-row-checkbox" class="sr-only">{{ $t('datatable.selectRow') }}</label>
         </div>
       </td>
       <td 

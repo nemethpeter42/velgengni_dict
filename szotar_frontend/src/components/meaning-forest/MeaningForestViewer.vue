@@ -81,7 +81,7 @@
     </ul>
   </div>
   <div v-else class="text-red-500 text-bold">
-    PARSE ERROR
+    {{ $t('meaningForest.parseError') }}
   </div>
 </template>
 

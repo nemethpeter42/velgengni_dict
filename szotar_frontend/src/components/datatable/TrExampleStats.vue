@@ -8,11 +8,11 @@
     <span 
       class="font-bold text-red-700"
       v-if="store.lastTrExampleQueryErrored">
-      ERR!
+      {{ $t('trExample.statsError') }}
     </span>
-    TOTAL: {{ store.exampleList.length }},
+    {{ $t('trExample.statsTotal') }} {{ store.exampleList.length }},
     <span :class="{'font-bold text-red-700': store.filteredEntries.length !== store.exampleList.length}">
-      FILTERED:
+      {{ $t('trExample.statsFiltered') }}
     </span>
     {{ store.filteredEntries.length }},
     <span 
@@ -29,7 +29,7 @@
       class="phrase-stat-container cursor-pointer ml-1"
       @click="addToQuickSearch(store.bigFilterLastQueryVal)">
       <Squares2X2Icon class="w-4 h-4 inline mr-1" />
-      [Mind]
+      {{ $t('trExample.statsAll') }}
     </span>
     <span class="text-blue-800 dark:text-blue-300">
       <!-- TODO ezeket vmi normalis helyre, backendrol lekerdezve megcsinalni-->

@@ -13,7 +13,7 @@
       dark:focus:ring-gray-700 
       "
     >
-    Másik nyelv
+    {{ $t('trExample.otherLanguage') }}
   </button>  
 </template>
 <script lang="ts" setup>

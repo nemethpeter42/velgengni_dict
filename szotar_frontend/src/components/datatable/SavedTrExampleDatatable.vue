@@ -22,7 +22,7 @@
             :modelValue="savedTrExStore.quickSearchQueryPhrase"
             @update:modelValue="val => savedTrExStore.setQuickSearchQueryPhrase(val)"
             @input="savedTrExStore.jumpToPage(`FIRST`);"
-            label="Gyorskeresés"
+            :label="$t('common.quickSearch')"
           />
         </div>
       </div>
@@ -102,7 +102,7 @@
           dark:border-indigo-900
           sm:rounded-b-lg
         " 
-        aria-label="Table navigation"
+        :aria-label="$t('common.tableNavigation')"
         >
         <PageSizeInput 
           :options="savedTrExStore.resultsPerPageOptions" 

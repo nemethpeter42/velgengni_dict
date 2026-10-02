@@ -1,7 +1,7 @@
 <template>
   <ul class="inline-flex items-center -space-x-px">
     <li>
-      <span class="sr-only">Első</span>
+      <span class="sr-only">{{ $t('pagination.first') }}</span>
       <button 
         aria-hidden="true"
         @click="$emit('jumpToPage','FIRST');"
@@ -26,7 +26,7 @@
         >&#x23EE;</button>
     </li>
     <li>
-      <span class="sr-only">Előző</span>
+      <span class="sr-only">{{ $t('pagination.previous') }}</span>
       <button
         aria-hidden="true"
         @click="$emit('jumpToPage','PREVIOUS');"
@@ -71,7 +71,7 @@
         >
     </li>
     <li>
-      <span class="sr-only">Következő</span>
+      <span class="sr-only">{{ $t('pagination.next') }}</span>
       <button 
         aria-hidden="true"
         @click="$emit('jumpToPage','NEXT');"
@@ -93,7 +93,7 @@
         >&#x23F5;</button>
     </li>
     <li>
-      <span class="sr-only">Utolsó</span>
+      <span class="sr-only">{{ $t('pagination.last') }}</span>
       <button 
         aria-hidden="true"
         @click="$emit('jumpToPage','LAST');"

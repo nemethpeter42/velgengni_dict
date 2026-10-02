@@ -27,24 +27,24 @@
       <DictEntryDetailsModal />
       <WordListModal />
       
-      <nav class="m-auto text-center">
+      <nav class="m-auto text-center bg-[#06b6d4] opacity-15">
         <router-link 
           class="font-bold" 
           :class="route.name===`home` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
           to="/"
-          >Dictionaries
+          >{{ $t('nav.dictionaries') }}
         </router-link> |
         <router-link 
           class="font-bold" 
           :class="route.name===`knowledge` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
           to="/knowledge"
-          >Knowledge
+          >{{ $t('nav.knowledgeTest') }}
         </router-link> |
         <router-link 
           class="font-bold" 
           :class="route.name===`examples` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
           to="/examples"
-          >Examples
+          >{{ $t('nav.examples') }}
         </router-link> |
         <!--<router-link 
           class="font-bold" 
@@ -67,6 +67,7 @@
           <MoonIcon class="w-5 h-5" :class="{'hidden':!darkMode,}"></MoonIcon>
           <SunIcon class="w-5 h-5" :class="{'hidden':darkMode,}"></SunIcon>
         </button>
+        <LocaleToggle />
 
       
       </nav>
@@ -107,6 +108,7 @@
   import DictEntryDetailsModal from './components/modal-container/DictEntryDetailsModal.vue';
   import WordListModal from './components/modal-container/WordListModal.vue';
 import ExportModal from './components/modal-container/ExportModal.vue';
+import LocaleToggle from './components/input-fields-and-buttons/LocaleToggle.vue';
 
   const modalStore = useModalStore();
   const darkModeRef = ref(false)

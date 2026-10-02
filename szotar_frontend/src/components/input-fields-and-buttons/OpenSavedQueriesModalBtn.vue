@@ -12,7 +12,7 @@
         dark:hover:text-white dark:hover:bg-gray-700
         dark:focus:ring-gray-700 
       "
-      >Mentett lekérdezések</button>
+      >{{ $t('savedQueries.title') }}</button>
 </template>
 <script setup lang="ts">
   
