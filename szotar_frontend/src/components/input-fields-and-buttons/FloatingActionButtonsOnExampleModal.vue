@@ -4,38 +4,50 @@
       title="Close modal"
       @click="modalStore.openModals.delete(`DICT_ENTRY_DETAILS`)"
       class="
-      floating-close-modal-btn
-      text-white bg-orange-500 
-      dark:bg-orange-600 
-      absolute top-[0.25rem] left-1 w-9 h-9 rounded-full drop-shadow-lg
-      flex justify-center items-center text-2xl 
-      hover:drop-shadow-2xl hover:bg-orange-600
-      dark:hover:bg-orange-500"
+        floating-close-modal-btn
+        text-white bg-orange-500 
+        dark:bg-orange-600 
+        absolute top-[0.25rem] left-1 w-9 h-9 rounded-full drop-shadow-lg
+        flex justify-center items-center text-2xl 
+        hover:drop-shadow-2xl hover:bg-orange-600
+        dark:hover:bg-orange-500"
+      data-button-for="close-modal"
       ><XMarkIcon class="h-6 w-6" /></button>
 
     <button 
       title="Next"
       @click="$emit(`nextBtnClick`)"
       class="
-      floating-next-btn
-      text-white bg-blue-700
-      absolute top-[3rem] left-1 w-9 h-14 rounded-full drop-shadow-lg
-      flex justify-center items-center text-2xl 
-      hover:drop-shadow-2xl 
-      hover:bg-blue-800"
+        floating-next-btn
+        text-white bg-blue-700
+        absolute top-[3rem] left-1 w-9 h-14 rounded-full drop-shadow-lg
+        flex justify-center items-center text-2xl 
+        hover:drop-shadow-2xl 
+        hover:bg-blue-800"
+      data-button-for="next"
       ><ChevronRightIcon class="h-6 w-6" /></button>
 
     <button 
-      title="Mode button"
-      @click="modeBtnClick()"
+      title="Highlight button"
+      @click="$emit(`highlightBtnClick`)"
       class="
-      floating-next-btn
-      text-white bg-blue-700
-      absolute top-[7rem] left-1 w-9 h-9 rounded-full drop-shadow-lg
-      flex justify-center items-center text-2xl 
-      hover:drop-shadow-2xl 
-      hover:bg-blue-800"
-      ><ArrowPathRoundedSquareIcon class="h-6 w-6" /></button>
+        floating-next-btn
+        text-white
+        absolute top-[7rem] left-1 w-9 h-9 rounded-full drop-shadow-lg
+        flex justify-center items-center text-2xl 
+        hover:drop-shadow-2xl" 
+      :class="{
+        [`
+          bg-orange-500 
+          dark:bg-orange-600 
+        `]: props.isEntryHighlighted,  
+        [`
+          bg-blue-700 
+          dark:bg-blue-800 
+        `]: !props.isEntryHighlighted,  
+      }"
+      data-button-for="highlight"
+      ><PaintBrushIcon class="h-6 w-6" /></button>
 
     <div
       class="
@@ -50,6 +62,7 @@
           inline-flex justify-center items-center text-2xl rounded-t-3xl p-0.5 pb-1 pt-1
           text-white bg-blue-700
           hover:drop-shadow-2xl hover:bg-blue-800"
+        data-button-for="scroll-to-top"
         @click="$emit(`scrollToTop`)"
       ><ArrowUpIcon class="h-6 w-6" /></button>
       <button 
@@ -59,6 +72,7 @@
           inline-flex justify-center items-center text-2xl rounded-b-3xl p-0.5 pt-1 pb-1
           text-white bg-blue-700
           hover:drop-shadow-2xl hover:bg-blue-800"
+        data-button-for="scroll-to-bottom"
         @click="$emit(`scrollToBottom`)"
       ><ArrowDownIcon class="h-6 w-6" /></button>
     </div>
@@ -67,14 +81,15 @@
       title="Save modifications"
       @click="savedTrExampleStore.saveDb()"
       class="
-      save-modifications-btn
-      absolute top-[14.25rem] left-1 w-9 h-9 rounded-full drop-shadow-lg
-      flex justify-center items-center text-2xl 
-      hover:drop-shadow-2xl "
+        save-modifications-btn
+        absolute top-[14.25rem] left-1 w-9 h-9 rounded-full drop-shadow-lg
+        flex justify-center items-center text-2xl 
+        hover:drop-shadow-2xl "
       :class="
         savedTrExampleStore.isDirty ? 
         `text-white bg-red-700 hover:bg-red-800` : 
         `text-white bg-blue-700 hover:bg-blue-800`"
+      data-button-for="save-modifications"
       ><ArrowUpOnSquareStackIcon class="h-6 w-6" /></button>
   </div>
 </template>
@@ -83,15 +98,21 @@
   import { useModalStore } from '@/stores/modal';
   import { useSavedTrExampleStore } from '@/stores/savedTrExample';
   import { useTranslationExampleStore } from '@/stores/translationExample';
-  import { ArrowUpOnSquareStackIcon, ArrowUpIcon, ArrowDownIcon, XMarkIcon, ChevronRightIcon, ArrowPathRoundedSquareIcon } from '@heroicons/vue/24/solid'
+  import { ArrowUpOnSquareStackIcon, ArrowUpIcon, ArrowDownIcon, XMarkIcon, ChevronRightIcon, PaintBrushIcon } from '@heroicons/vue/24/solid'
   
-  defineEmits(['nextBtnClick','scrollToTop','scrollToBottom'])
+  const props = defineProps<{  
+    isEntryHighlighted: boolean,
+ }>();
+
+  defineEmits(['nextBtnClick','scrollToTop','scrollToBottom',`highlightBtnClick`])
 
   const savedTrExampleStore = useSavedTrExampleStore();
   
   const trExampleStore = useTranslationExampleStore(`dictModal`);
   const modalStore = useModalStore();
 
+  // deprecated. 
+  // however, i keep it for possible future reuse
   const modeBtnClick = async () => {
     const conditions = trExampleStore.exampleFindReq.conditions;
     const conditionsClone = JSON.parse(JSON.stringify(conditions));

@@ -63,7 +63,7 @@
         >
         <MeaningForestViewer 
           v-if="col.colDef.isMeaningForestCol" 
-          :raw-val="item.val.translated" 
+          :raw-val="item.val[col.colName]" 
           :displayColsAsRawString="props.displayColsAsRawString" 
           />
         <div v-else-if="col.colDef.isTrExamplePairCol && !props.displayColsAsRawString" >

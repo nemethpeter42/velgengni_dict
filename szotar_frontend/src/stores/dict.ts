@@ -355,7 +355,7 @@ export const useDictStore = (id: DictStoreType) => {
         sortCol.value!==`` ? 
         typeSafeResult.sort(
           (a,b) => 
-            (sortAscending.value ? 1 : -1) * (a.val[sortCol.value].toLowerCase() > b.val[sortCol.value].toLowerCase() ? 1 : -1)
+            (sortAscending.value ? 1 : -1) * (a.val[sortCol.value]?.toLowerCase() > b.val[sortCol.value]?.toLowerCase() ? 1 : -1)
         ): 
         typeSafeResult;
       const finalResult: FilteredEntry[] = sortedResult.map((e,i)=> ({idx:e.idx, val:e.val, sortedIdx:i,}))
@@ -376,13 +376,9 @@ export const useDictStore = (id: DictStoreType) => {
 
     const totalPageCount: ComputedRef<number> = computed(()=> {
       if (filteredEntries.value===undefined || filteredEntries.value.length===0){
-        //console.log('hopp')
         return 1;
       } else {
         const res = Math.ceil(filteredEntries.value.length / resultsPerPage.value)
-        //console.log(filteredEntries.value.length)
-        //console.log(resultsPerPage.value)
-        //console.log(res)
         return res;
       }
     });
@@ -516,6 +512,7 @@ export const useDictStore = (id: DictStoreType) => {
       await refreshEntries(searchQuery.value, sortComparison.value)
       selectedIndices.value.clear()
       highlightedIndices.value.clear()
+      sortCol.value = ``;
       jumpToPage(`FIRST`)
     }
 

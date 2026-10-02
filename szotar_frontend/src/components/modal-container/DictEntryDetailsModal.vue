@@ -47,11 +47,12 @@
           transform: translate(0px, -50%); 
         ">
           <FloatingActionButtonsOnExampleModal 
-          @nextBtnClick="nextBtnClick()"
-          @scrollToTop="scrollToTop()"
-          @scrollToBottom="scrollToBottom()"
-
-          />
+            @nextBtnClick="nextBtnClick()"
+            @highlightBtnClick="highlightBtnClick()"
+            @scrollToTop="scrollToTop()"
+            @scrollToBottom="scrollToBottom()"
+            :isEntryHighlighted="dictStore.highlightedIndices.has(dictStore.currentIdx)"
+            />
         </div>
       </div>
       <div 
@@ -109,7 +110,6 @@
   import DictEntryDetailsModalContent from '../modal-content/DictEntryDetailsModalContent.vue';
   import FloatingActionButtonsOnExampleModal from '../input-fields-and-buttons/FloatingActionButtonsOnExampleModal.vue';
   import { useDictStore } from '@/stores/dict';
-import { useTranslationExampleStore } from '@/stores/translationExample';
   
   const dictStore = useDictStore(`dictModule`);
   const modalStore = useModalStore()
@@ -150,4 +150,13 @@ import { useTranslationExampleStore } from '@/stores/translationExample';
       dictStore.setCurrentIdx(dictStore.currentIdx+1);
     }
   }
+
+  const highlightBtnClick = async () => {
+    const idx = dictStore.currentIdx;
+    dictStore.highlightedIndices.has(idx) ? 
+      dictStore.highlightedIndices.delete(idx) :
+      dictStore.highlightedIndices.add(idx);
+    await nextBtnClick();
+  }
+
 </script>

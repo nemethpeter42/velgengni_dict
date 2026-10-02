@@ -21,6 +21,7 @@
       <WordListPrevNextButton 
         text="Előző" 
         id="prevWordBtn"
+        data-button-for="previous-entry"
         :isDisabled="store.isTheFirstEntryActive" 
         @click=" 
           async () => 
@@ -33,6 +34,7 @@
       <WordListPrevNextButton 
         text="Következő" 
         id="nextWordBtn"
+        data-button-for="next-entry"
         :isDisabled="store.isTheLastEntryActive" 
         @click=" 
           async () => 
@@ -46,16 +48,17 @@
         @click="savedTrExampleStore.saveDb()"
         :isHighlighted="savedTrExampleStore.isDirty"
       />
-      <JumpToEntryButton
-        @click="jumpToEntry()"
-      />
       <HighlightCurrEntryButton 
-        v-if="store.displayHighlightButtons"
         @click="
           store.highlightedIndices.has(store.currentIdx) ? 
             store.highlightedIndices.delete(store.currentIdx) :  
             store.highlightedIndices.add(store.currentIdx)"
         :isHighlighted="store.highlightedIndices.has(store.currentIdx)"
+        data-button-for="highligh-current-entry"
+      />
+      <JumpToEntryButton
+        @click="jumpToEntry()"
+        data-button-for="jump-to-entry"
       />
     </div>
     <div class="flex flex-wrap -mb-px">   
@@ -63,17 +66,20 @@
         text="Details" 
         :is-active="store.entryDetailsActiveTab === 1"
         @click="store.setEntryDetailsActiveTab(1)" 
+        data-tab-option-for="details"
       />
       <TabOption 
         text="Examples" 
         :is-active="store.entryDetailsActiveTab === 2"
         @click="store.setEntryDetailsActiveTab(2)" 
+        data-tab-option-for="examples"
       />
       <TabOption 
         text="Saved examples" 
         :is-active="store.entryDetailsActiveTab === 3"
         :labelText="savedTrExampleStore.examplesOfCurrEntry.length ? savedTrExampleStore.examplesOfCurrEntry.length : undefined"
         @click="store.setEntryDetailsActiveTab(3)" 
+        data-tab-option-for="saved-examples"
       />
     </div>
     <div v-if="store.entryDetailsActiveTab === 2">
