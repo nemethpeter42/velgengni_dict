@@ -124,8 +124,8 @@
 import { useDictStore } from '@/stores/dict';
 import { useSavedTrExampleStore } from '@/stores/savedTrExample';
 import { ref } from 'vue';
-import { type Example } from '../../../../libs/szotar_common/src/models/Example';
-import { type SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
+import { type Example } from 'szotar_common/models/Example.js';
+import { type SavedTranslationExample } from 'szotar_common/models/SavedTranslationExample.js';
   const savedTrExStore = useSavedTrExampleStore();
   const store = useDictStore(`dictModule`)
   

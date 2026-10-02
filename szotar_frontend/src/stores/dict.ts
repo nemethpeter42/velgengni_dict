@@ -1,18 +1,18 @@
 import { type ComputedRef, type Ref, type WritableComputedRef, computed, ref } from "vue"
 import { defineStore } from 'pinia'
-import { type Dict } from '../../../libs/szotar_common/src/models/Dict.js';
-import { DictDescription } from "../../../libs/szotar_common/src/models/DictDescription.js";
-import { ColumnDefinition } from "../../../libs/szotar_common/src/models/ColumnDefinition.js";
+import { type Dict } from 'szotar_common/models/Dict.js';
+import { DictDescription } from "szotar_common/models/DictDescription.js";
+import { ColumnDefinition } from "szotar_common/models/ColumnDefinition.js";
 import { type PageJumpType } from "@/frontend_models/PageJumpType.js";
 import { type FilteredEntry } from "@/frontend_models/FilteredEntry.js";
 import { obtainTrExampleFindResult, useTranslationExampleStore } from "./translationExample";
 import { type ColumnDefinitionArrayForm } from "@/frontend_models/ColumnDefinitionArrayForm.js";
-import { type SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition.js";
+import { type SearchCondition } from "szotar_common/models/SearchCondition.js";
 import { useSavedTrExampleStore } from "./savedTrExample";
-import type { SavedTranslationExample } from "../../../libs/szotar_common/src/models/SavedTranslationExample.js";
+import type { SavedTranslationExample } from "szotar_common/models/SavedTranslationExample.js";
 import type { DictStoreType } from "@/frontend_models/DictStoreType.js";
 import { backendBaseUrl } from "@/config.js";
-import type { ExampleFindReq } from "../../../libs/szotar_common/src/models/ExampleFindReq.js";
+import type { ExampleFindReq } from "szotar_common/models/ExampleFindReq.js";
 import { useFavoritesStore } from "./highlight.js";
 
 export const obtainDictQueryResult = async (

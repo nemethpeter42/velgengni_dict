@@ -100,7 +100,7 @@
 <script setup lang="ts">
 import { useSavedTrExampleStore } from '@/stores/savedTrExample';
 import { ref } from 'vue';
-import { type SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
+import { type SavedTranslationExample } from 'szotar_common/models/SavedTranslationExample.js';
 import { useDictStore } from '@/stores/dict';
 const savedTrExStore = useSavedTrExampleStore();
   const store = useDictStore(`dictModule`)

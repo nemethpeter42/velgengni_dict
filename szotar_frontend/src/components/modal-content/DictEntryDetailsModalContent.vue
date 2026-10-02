@@ -110,11 +110,11 @@
   import TrExampleDatatable from '../datatable/TrExampleDatatable.vue';
   import StandaloneTrExampleFilterPanel from '../datatable/filter-panel/StandaloneTrExampleFilterPanel.vue';
   import ModalTrExampleFilterPanel from '../datatable/filter-panel/ModalTrExampleFilterPanel.vue';
-  import { type Example } from '../../../../libs/szotar_common/src/models/Example';
+  import { type Example } from 'szotar_common/models/Example.js';
   import { useSavedTrExampleStore } from '@/stores/savedTrExample';
   import { useModalStore } from '@/stores/modal';
 import SavedTrExampleDatatable from '../datatable/SavedTrExampleDatatable.vue';
-import { type SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
+import { type SavedTranslationExample } from 'szotar_common/models/SavedTranslationExample.js';
 import NewSavedExampleEditor from '../input-fields-and-buttons/NewSavedExampleEditor.vue';
 import SaveModificationsLargeBtn from '../input-fields-and-buttons/SaveModificationsLargeBtn.vue';
 import JumpToEntryButton from '../input-fields-and-buttons/JumpToEntryButton.vue';

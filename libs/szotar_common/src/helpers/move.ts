@@ -1,4 +1,4 @@
-import { SavedTranslationExample } from "../models/SavedTranslationExample.js";
+import type { SavedTranslationExample } from "../models/SavedTranslationExample.js";
 
 export const move = (arr: SavedTranslationExample[], direction: `UP` | `DOWN`, uuid?: string): SavedTranslationExample[] => {
   const res = [...arr];

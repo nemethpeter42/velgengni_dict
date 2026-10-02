@@ -1,5 +1,5 @@
 import { DictDescription } from "./DictDescription.js"
-import { DictMainTable } from "./DictMainTable.js";
+import type { DictMainTable } from "./DictMainTable.js";
 
 export type Dict = {
     meta: DictDescription;

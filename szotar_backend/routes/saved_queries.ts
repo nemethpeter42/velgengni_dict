@@ -2,7 +2,7 @@ import express, { json } from 'express';
 import * as fsPromises from 'fs/promises'
 import * as uuidGenerator from "uuid";
 
-import { SavedDictQuery } from '../../libs/szotar_common/src/models/SavedDictQuery.js';
+import { SavedDictQuery } from 'szotar_common/models/SavedDictQuery.js';
 
 const router = express.Router()
 

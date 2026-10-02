@@ -1,4 +1,4 @@
-import { ColumnDefinition } from "../../../libs/szotar_common/src/models/ColumnDefinition"
+import { ColumnDefinition } from "szotar_common/models/ColumnDefinition.js"
 
 export type ColumnDefinitionArrayForm = {
   colName: string,

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { type PageJumpType } from "@/frontend_models/PageJumpType.js";
 import { type FilteredEntry } from "@/frontend_models/FilteredEntry.js";
 import { useTranslationExampleStore } from "./translationExample";
-import { type SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition";
+import { type SearchCondition } from "szotar_common/models/SearchCondition.js";
 import { backendBaseUrl } from "@/config";
 
 export const useWordListStore = defineStore('wordList', () => {

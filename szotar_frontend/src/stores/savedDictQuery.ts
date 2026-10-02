@@ -2,7 +2,7 @@ import type { Noti } from "@/frontend_models/Noti"
 import { defineStore } from "pinia"
 import { computed, type Ref, ref } from "vue"
 
-import { type SavedDictQuery } from "../../../libs/szotar_common/src/models/SavedDictQuery";
+import { type SavedDictQuery } from "szotar_common/models/SavedDictQuery.js";
 import { useDictStore } from "./dict";
 import { useNotiStore } from "./noti";
 import type { DictStoreType } from "@/frontend_models/DictStoreType";

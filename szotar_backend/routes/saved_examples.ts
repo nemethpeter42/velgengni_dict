@@ -1,6 +1,6 @@
 import express, { json } from 'express';
-import { SavedTranslationExample } from '../../libs/szotar_common/src/models/SavedTranslationExample.js';
-import { move } from '../../libs/szotar_common/src/helpers/move.js';
+import { SavedTranslationExample } from 'szotar_common/models/SavedTranslationExample.js';
+import { move } from 'szotar_common/helpers/move.js';
 
 import * as uuidGenerator from "uuid";
 import * as fsPromises from 'fs/promises'

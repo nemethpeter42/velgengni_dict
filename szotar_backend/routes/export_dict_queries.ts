@@ -1,6 +1,6 @@
 import express, { json } from 'express';
 import * as fsPromises from 'fs/promises'
-import { ExportModuleRequest } from '../../libs/szotar_common/src/models/ExportModuleRequest.js';
+import { ExportModuleRequest } from 'szotar_common/models/ExportModuleRequest.js';
 
 const router = express.Router()
 //TODO !!! .post

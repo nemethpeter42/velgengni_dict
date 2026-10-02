@@ -30,7 +30,7 @@
 </template>
 <script setup lang="ts">
   import { computed } from 'vue';
-  import type { SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
+  import type { SavedTranslationExample } from 'szotar_common/models/SavedTranslationExample.js';
 
 
   const props = defineProps<{  

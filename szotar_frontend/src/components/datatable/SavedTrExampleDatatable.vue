@@ -140,7 +140,7 @@ import RemoveSavedExampleButton from '../input-fields-and-buttons/RemoveSavedExa
 import { useDictStore } from '@/stores/dict';
 import EditSavedExampleButton from '../input-fields-and-buttons/EditSavedExampleButton.vue';
 import ExistingSavedExampleEditor from '../input-fields-and-buttons/ExistingSavedExampleEditor.vue';
-import { type SavedTranslationExample } from '../../../../libs/szotar_common/src/models/SavedTranslationExample';
+import { type SavedTranslationExample } from 'szotar_common/models/SavedTranslationExample.js';
 
 
 const savedTrExStore = useSavedTrExampleStore();

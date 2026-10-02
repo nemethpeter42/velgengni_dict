@@ -217,7 +217,7 @@
   import GeneratedQuickAccessBtnList from '@/components/input-fields-and-buttons/GeneratedQuickAccessBtnList.vue';
   import BigFilterInput from '@/components/input-fields-and-buttons/BigFilterInput.vue';
   import { type QuickAccessSelectionResult } from '@/frontend_models/QuickAccessSelectionResult';
-  import { type SearchCondition } from '../../../../../libs/szotar_common/src/models/SearchCondition';
+  import { type SearchCondition } from 'szotar_common/models/SearchCondition.js';
   import ExampleSearchAltLangButton from '@/components/input-fields-and-buttons/ExampleSearchAltLangButton.vue';
   import WordListPrevNextButton from '@/components/input-fields-and-buttons/WordListPrevNextButton.vue';
   import FilteringModeOption from '@/components/input-fields-and-buttons/FilteringModeOption.vue';

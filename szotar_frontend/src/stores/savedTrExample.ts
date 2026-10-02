@@ -1,7 +1,7 @@
 import { defineStore } from "pinia"
 import { type ComputedRef, type Ref, type WritableComputedRef, computed, ref } from "vue"
-import { type SavedTranslationExample } from "../../../libs/szotar_common/src/models/SavedTranslationExample.js";
-import { move } from "../../../libs/szotar_common/src/helpers/move.js";
+import { type SavedTranslationExample } from "szotar_common/models/SavedTranslationExample.js";
+import { move } from "szotar_common/helpers/move.js";
 import { type PageJumpType } from "@/frontend_models/PageJumpType.js";
 import { type FilteredEntry } from "@/frontend_models/FilteredEntry.js";
 import { useDictStore } from "./dict";

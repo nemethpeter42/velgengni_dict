@@ -71,7 +71,7 @@ import WordListPrevNextButton from '../input-fields-and-buttons/WordListPrevNext
 import { useSavedDictQueryStore } from '@/stores/savedDictQuery';
 import { useNotiStore } from '@/stores/noti';
 import { obtainDictQueryResult, useDictStore } from '@/stores/dict';
-import type { ExportModuleRequest } from '../../../../libs/szotar_common/src/models/ExportModuleRequest';
+import type { ExportModuleRequest } from 'szotar_common/models/ExportModuleRequest.js';
 import { downloadBlob, exportToHtmlFormat } from '@/helpers/download';
 import { useFavoritesStore } from '@/stores/highlight';
 

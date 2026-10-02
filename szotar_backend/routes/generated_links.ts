@@ -1,6 +1,6 @@
 import express, { json } from 'express';
 import iconv from 'iconv-lite';
-import {GeneratedLink} from '../../libs/szotar_common/src/models/GeneratedLink.js'
+import {GeneratedLink} from 'szotar_common/models/GeneratedLink.js'
 
 const router = express.Router()
 

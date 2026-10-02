@@ -1,12 +1,18 @@
 {
   "name": "szotar_common",
   "version": "1.0.0",
+  "private": true,
   "description": "",
-  "main": "index.js",
+  "type": "module",
+  "exports": {
+    "./*": "./src/*"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc --build"
   },
   "author": "Peter Nemeth",
   "license": "MIT",
-  "type": "module"
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
 }

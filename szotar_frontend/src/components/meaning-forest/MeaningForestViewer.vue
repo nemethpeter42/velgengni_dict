@@ -89,7 +89,7 @@
 
   import { useDictStore } from '@/stores/dict';
   import { computed, } from 'vue';
-  import { MeaningForest } from '../../../../libs/szotar_common/src/models/MeaningForest.js';
+  import { MeaningForest } from 'szotar_common/models/MeaningForest.js';
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const store = useDictStore(`dictModule`);
   const props = defineProps<{

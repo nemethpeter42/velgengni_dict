@@ -1,5 +1,5 @@
 import express from 'express';
-import { move } from '../../libs/szotar_common/src/helpers/move.js';
+import { move } from 'szotar_common/helpers/move.js';
 import * as uuidGenerator from "uuid";
 import * as fsPromises from 'fs/promises';
 let isInitialized = false;

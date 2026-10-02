@@ -1,9 +1,9 @@
 import { Worker, isMainThread, parentPort as parentPortUnchecked, workerData, MessagePort } from 'worker_threads';
 import { readFileSync } from 'fs';
-import {SearchCondition} from '../libs/szotar_common/src/models/SearchCondition.js'
-import {Example} from '../libs/szotar_common/src/models/Example.js'
-import {ThreadReqMessage} from '../libs/szotar_common/src/models/ThreadReqMessage.js'
-import {ThreadResMessage} from '../libs/szotar_common/src/models/ThreadResMessage.js'
+import {SearchCondition} from 'szotar_common/models/SearchCondition.js'
+import {Example} from 'szotar_common/models/Example.js'
+import {ThreadReqMessage} from 'szotar_common/models/ThreadReqMessage.js'
+import {ThreadResMessage} from 'szotar_common/models/ThreadResMessage.js'
 
 
 const BACKEND_RESULT_LIMIT: number = 20000;//10000;

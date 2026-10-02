@@ -1,8 +1,8 @@
 
 
 import {downloadZip} from 'client-zip';
-import { type ExportedEntry, type ExportModuleRequest } from '../../../libs/szotar_common/src/models/ExportModuleRequest';
-import { MeaningForest } from '../../../libs/szotar_common/src/models/MeaningForest';
+import { type ExportedEntry, type ExportModuleRequest } from 'szotar_common/models/ExportModuleRequest.js';
+import { MeaningForest } from 'szotar_common/models/MeaningForest.js';
 
 
 //source: https://blog.logrocket.com/programmatically-downloading-files-browser/

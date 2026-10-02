@@ -1,1 +1,1 @@
-npm run dev
+pnpm --filter szotar_frontend dev

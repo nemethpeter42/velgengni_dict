@@ -1,4 +1,4 @@
-import { Example } from "./Example.js";
+import type { Example } from "./Example.js";
 export type SavedTranslationExample = Example & {
     dictEntryUuid: string;
     uuid: string;

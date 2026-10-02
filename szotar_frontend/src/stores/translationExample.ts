@@ -1,12 +1,12 @@
 import { type ComputedRef, type Ref, type WritableComputedRef, computed, ref } from "vue"
 import { defineStore } from 'pinia'
-import { type ExampleFindReq } from '../../../libs/szotar_common/src/models/ExampleFindReq';
-import { type ExampleArrayWithBackendLimit } from "../../../libs/szotar_common/src/models/ExampleArrayWithBackendLimit.js";
-import { type Example } from "../../../libs/szotar_common/src/models/Example.js";
-import { type GeneratedLink } from "../../../libs/szotar_common/src/models/GeneratedLink.js";
+import { type ExampleFindReq } from 'szotar_common/models/ExampleFindReq.js';
+import { type ExampleArrayWithBackendLimit } from "szotar_common/models/ExampleArrayWithBackendLimit.js";
+import { type Example } from "szotar_common/models/Example.js";
+import { type GeneratedLink } from "szotar_common/models/GeneratedLink.js";
 import { type PageJumpType } from "@/frontend_models/PageJumpType.js";
 import { type FilteredEntry } from "@/frontend_models/FilteredEntry.js";
-import { type SearchCondition } from "../../../libs/szotar_common/src/models/SearchCondition.js";
+import { type SearchCondition } from "szotar_common/models/SearchCondition.js";
 import { type HighlightDefinition } from "@/frontend_models/HighlightDefinition.js";
 import { type LanguagePair } from "@/frontend_models/LanguagePair.js";
 import type { TrExampleStoreType } from "@/frontend_models/TrExampleStoreTypes";

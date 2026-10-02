@@ -7,15 +7,15 @@ import fs from 'fs'
 import cors from 'cors'
 import * as fsPromises from 'fs/promises'
 import path from 'path';
-import { ThreadReqMessage } from '../libs/szotar_common/src/models/ThreadReqMessage.js';
-import { ThreadResMessage } from '../libs/szotar_common/src/models/ThreadResMessage.js';
-import { ExampleArrayWithBackendLimit } from '../libs/szotar_common/src/models/ExampleArrayWithBackendLimit.js';
-import { ExampleFindReq } from '../libs/szotar_common/src/models/ExampleFindReq.js';
-import { Dict } from '../libs/szotar_common/src/models/Dict.js';
-import { flattenTwoDimArray } from '../libs/szotar_common/src/helpers/flattenTwoDimArray.js';
-import { DictDescription } from '../libs/szotar_common/src/models/DictDescription.js';
-import { ColumnDefinition } from '../libs/szotar_common/src/models/ColumnDefinition.js';
-import { BackendConfig } from '../libs/szotar_common/src/models/BackendConfig.js';
+import { ThreadReqMessage } from 'szotar_common/models/ThreadReqMessage.js';
+import { ThreadResMessage } from 'szotar_common/models/ThreadResMessage.js';
+import { ExampleArrayWithBackendLimit } from 'szotar_common/models/ExampleArrayWithBackendLimit.js';
+import { ExampleFindReq } from 'szotar_common/models/ExampleFindReq.js';
+import { Dict } from 'szotar_common/models/Dict.js';
+import { flattenTwoDimArray } from 'szotar_common/helpers/flattenTwoDimArray.js';
+import { DictDescription } from 'szotar_common/models/DictDescription.js';
+import { ColumnDefinition } from 'szotar_common/models/ColumnDefinition.js';
+import { BackendConfig } from 'szotar_common/models/BackendConfig.js';
 import savedExamplesRouter from './routes/saved_examples.js';
 import savedQueriesRouter from './routes/saved_queries.js';
 import savedHighlightsRouter from './routes/saved_highlights.js';

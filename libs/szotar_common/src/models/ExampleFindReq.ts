@@ -1,4 +1,4 @@
-import { SearchCondition } from "./SearchCondition.js"
+import type { SearchCondition } from "./SearchCondition.js"
 
 export type ExampleFindReq = {
     conditions: SearchCondition[],
