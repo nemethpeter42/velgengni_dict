@@ -27,31 +27,38 @@
       <DictEntryDetailsModal />
       <WordListModal />
       
-      <nav class="m-auto text-center bg-[#06b6d4] opacity-15">
-        <router-link 
-          class="font-bold" 
-          :class="route.name===`home` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
-          to="/"
-          >{{ $t('nav.dictionaries') }}
-        </router-link> |
-        <router-link 
-          class="font-bold" 
-          :class="route.name===`knowledge` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
-          to="/knowledge"
-          >{{ $t('nav.knowledgeTest') }}
-        </router-link> |
-        <router-link 
-          class="font-bold" 
-          :class="route.name===`examples` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
-          to="/examples"
-          >{{ $t('nav.examples') }}
-        </router-link> |
+      <nav class="m-auto text-center main-navigation-bar flex items-center justify-center">
+        <div class="mx-1">
+          <router-link 
+            class="font-bold" 
+            :class="route.name===`home` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
+            to="/"
+            >{{ $t('nav.dictionaries') }}
+          </router-link>
+        </div>
+        <div class="mx-1">
+          <router-link 
+            class="font-bold" 
+            :class="route.name===`knowledge` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
+            to="/knowledge"
+            >{{ $t('nav.knowledgeTest') }}
+          </router-link>
+        </div>
+        <div class="mx-1">
+          <router-link 
+            class="font-bold" 
+            :class="route.name===`examples` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
+            to="/examples"
+            >{{ $t('nav.examples') }}
+          </router-link>
+        </div>
         <!--<router-link 
           class="font-bold" 
           :class="route.name===`about` ? `text-green-500 dark:text-green-400` : `text-gray-500 dark:text-gray-400`" 
           to="/about"
           >Sandbox
         </router-link>-->
+        <div>
         <button 
           id="theme-toggle" 
           type="button" 
@@ -67,8 +74,10 @@
           <MoonIcon class="w-5 h-5" :class="{'hidden':!darkMode,}"></MoonIcon>
           <SunIcon class="w-5 h-5" :class="{'hidden':darkMode,}"></SunIcon>
         </button>
+      </div>
+      <div>
         <LocaleToggle />
-
+      </div>
       
       </nav>
       </div>
@@ -152,7 +161,7 @@ import LocaleToggle from './components/input-fields-and-buttons/LocaleToggle.vue
   height: 100%;
 
 }
-body{
+body {
   font-family: Helvetica, Arial, Liberation Sans, Avenir, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -160,6 +169,15 @@ body{
   overflow: hidden;
   height: 100%;
   width: 100%;
+}
+
+.main-navigation-bar {
+  background: rgb(6 182 212 / 0.10);
+  border-color: rgb(6 182 212 / 0.07);
+  border-style: solid;
+  border-width: 6px;
+  border-top-style: none;
+  border-radius: 0px 0px 6px 6px;
 }
 
 </style>
