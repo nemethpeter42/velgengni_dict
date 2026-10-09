@@ -48,25 +48,20 @@ parentPort.on('message', (q: ThreadReqMessage) => {
 		if (searchCondition.onlyWithSpacePrefix){
 			genExpression = genExpression.map(e=>' '+e)
 		}
-		console.log(genExpression)
-		console.log(filteredEntries[0])
+		
 		filteredEntries = filteredEntries.filter(e=>{
+			let subtitleStr = q.searchInTargetLanguage===true ? e.translated : e.original;
+			//return /(^|[ ])la($|[ \\.,;\?!])/g.test(subtitleStr)
+			
 			return genExpression.some( ph => {
-				let subtitleStr = q.searchInTargetLanguage===true ? e.translated : e.original
-				//console.log(e)
-				//console.log(typeof q.searchInTargetLanguage)
-				//console.log(subtitleStr)
 				if (subtitleStr.includes(ph)){
-					//console.log('bingó')
 					return true
 				}
 			})
 		})
-		console.log(filteredEntries.length)
 	}
 
 	filteredEntries = filteredEntries.slice(0,BACKEND_RESULT_LIMIT)
-	console.log(JSON.stringify(q))
 	const threadResMessage: ThreadResMessage = {
 		requestType:q.requestType,
 		requestId:q.requestId,

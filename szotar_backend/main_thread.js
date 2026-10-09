@@ -19,16 +19,16 @@ const exampleSourceFiles = {
     'hu': {
         //source language
         'de': {
-            filename: 'example_source_dbs/de_hu.txt',
+            filename: 'example_source_dbs/de-hu.txt',
         },
         'es': {
-            filename: 'example_source_dbs/es_hu.txt',
+            filename: 'example_source_dbs/es-hu.txt',
         },
         'it': {
-            filename: 'example_source_dbs/it_hu.txt',
+            filename: 'example_source_dbs/it-hu.txt',
         },
         'nl': {
-            filename: 'example_source_dbs/nl_hu.txt',
+            filename: 'example_source_dbs/nl-hu.txt',
         },
     },
 };

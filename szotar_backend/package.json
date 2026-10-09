@@ -20,12 +20,13 @@
     "typescript": "^5.4.0"
   },
   "dependencies": {
-    "szotar_common": "workspace:*",
-    "fast-xml-parser": "^5.11.2",
-    "fflate": "^0.8.3",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "fast-xml-parser": "^5.11.2",
+    "fflate": "^0.8.3",
     "iconv-lite": "^0.6.3",
+    "mongodb": "^7.7.0",
+    "szotar_common": "workspace:*",
     "uuid": "^9.0.0"
   }
 }

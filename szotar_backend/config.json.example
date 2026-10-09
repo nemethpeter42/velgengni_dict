@@ -1,5 +1,17 @@
 {
   "defaultTrExampleLang1": "es",
   "defaultTrExampleLang2": "hu",
-  "defaultDictionary": "spanyol_szoszedet"
+  "defaultDictionary": "spanyol_szoszedet",
+  "translationPairFilesUsed": [
+    "de-hu",
+    "es-hu"
+  ],
+  "mongoCredentials": {
+    "host": "",
+    "port": 27017,
+    "username": "",
+    "password": "",
+    "database": "",
+    "authSource": ""
+  }
 }
