@@ -88,6 +88,7 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
 
   
   const finalPhrasesUsedInFiltering = computed(()=> {
+    //TODO a language_level_thread.ts regexes logikajat atultetni ide is
     return quickSearchQueryPhrase.value.
       split(`,`).
       map(e=>e.trim()).
@@ -95,7 +96,17 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
       // concat(...(filteringMode.value===`FILTER` ? bigFilterLastQueryVal.value: [])).
       map(e=>e.toLowerCase()).
       map(e=>e.split(`_`).join(` `)).
-      map(e => [e,e.replaceAll(/a$/gi,`á`).replaceAll(/e$/gi,`é`)]).flat()
+      map(e => [
+        e,
+        e.
+          replaceAll(/a$/gi,`á`).
+          replaceAll(/e$/gi,`é`).
+          replaceAll(/à$/gi,`a'`).
+          replaceAll(/è$/gi,`e'`).
+          replaceAll(/ì$/gi,`i'`).
+          replaceAll(/ò$/gi,`o'`).
+          replaceAll(/ù$/gi,`u'`)
+      ]).flat()
   })
   
   const dictStore = useDictStore(`dictModule`)

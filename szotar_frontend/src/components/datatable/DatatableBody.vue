@@ -131,7 +131,17 @@ import type { ColumnDefinitionArrayForm } from '@/frontend_models/ColumnDefiniti
   const encloseIntoTagsInHtml = (html: string, textToEnclose: string, tagOpen: string, tagClose: string) => {
     //html = html.split(`<`).join(`&lt;`)
     //html = html.split(`>`).join(`&gt;`)
-    const variants = new Set([textToEnclose,textToEnclose.replaceAll(/a$/gi,`á`).replaceAll(/e$/gi,`é`)])
+    const variants = new Set([
+      textToEnclose,
+      textToEnclose.
+        replaceAll(/a$/gi,`á`).
+        replaceAll(/e$/gi,`é`).
+        replaceAll(/à$/gi,`a'`).
+        replaceAll(/è$/gi,`e'`).
+        replaceAll(/ì$/gi,`i'`).
+        replaceAll(/ò$/gi,`o'`).
+        replaceAll(/ù$/gi,`u'`)
+    ])
     const tagAreas = getHtmlTagAreas(html)
     for (const variant of variants){
       for (let i = html.length-1; i>=0; i--) {

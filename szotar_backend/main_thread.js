@@ -7,12 +7,14 @@ import fs from 'fs';
 import cors from 'cors';
 import * as fsPromises from 'fs/promises';
 import path from 'path';
-import { flattenTwoDimArray } from 'szotar_common/helpers/flattenTwoDimArray.js';
 import { DictDescription } from 'szotar_common/models/DictDescription.js';
 import savedExamplesRouter from './routes/saved_examples.js';
 import savedQueriesRouter from './routes/saved_queries.js';
 import savedHighlightsRouter from './routes/saved_highlights.js';
 import generatedLinksRouter from './routes/generated_links.js';
+import { createReadStream } from 'fs';
+import { createInterface } from 'readline';
+const TOTAL_NUMBER_OF_WORKERS = 8;
 const __dirname = path.resolve();
 const exampleSourceFiles = {
     //target language
@@ -20,15 +22,19 @@ const exampleSourceFiles = {
         //source language
         'de': {
             filename: 'example_source_dbs/de-hu.txt',
+            workerThreads: [],
         },
         'es': {
             filename: 'example_source_dbs/es-hu.txt',
+            workerThreads: [],
         },
         'it': {
             filename: 'example_source_dbs/it-hu.txt',
+            workerThreads: [],
         },
         'nl': {
             filename: 'example_source_dbs/nl-hu.txt',
+            workerThreads: [],
         },
     },
 };
@@ -59,34 +65,58 @@ const descFilenames = fs.readdirSync(DICTS_FOLDER, { withFileTypes: true })
     .map(item => item.name);
 console.log(descFilenames);
 const dicts = {};
-const startExampleDbThreadsAndReadDicts = async () => {
-    const promises = [
+const generateChunks = async (filename) => {
+    const readLines = (filename) => createInterface({
+        input: createReadStream(filename, { encoding: 'utf8' }),
+        crlfDelay: Infinity,
+    });
+    // only non-empty lines are counted, the worker skips empty lines too
+    let lineCount = 0;
+    for await (const line of readLines(filename)) {
+        if (line.trim() !== '') {
+            lineCount++;
+        }
+    }
+    const result = [];
+    for (let i = 0; i < TOTAL_NUMBER_OF_WORKERS; i++) {
+        result.push({
+            threadNumber: i + 1,
+            firstLineToKeep: Math.floor(i * lineCount / TOTAL_NUMBER_OF_WORKERS),
+            lastLineToKeepExclusive: Math.floor((i + 1) * lineCount / TOTAL_NUMBER_OF_WORKERS),
+        });
+    }
+    return result;
+};
+const startExampleDbThreadsAndReadDicts = () => {
+    return [
         //load example-pair db files
-        ...flattenTwoDimArray(Object.keys(exampleSourceFiles).map(targetLang => {
-            return Object.keys(exampleSourceFiles[targetLang]).map(sourceLang => {
-                return new Promise((resolve, reject) => {
+        ...Object.keys(exampleSourceFiles).flatMap(targetLang => {
+            return Object.keys(exampleSourceFiles[targetLang]).map(async (sourceLang) => {
+                const chunks = await generateChunks(exampleSourceFiles[targetLang][sourceLang].filename);
+                await Promise.all(chunks.map(chunk => new Promise((resolve, reject) => {
                     try {
-                        exampleSourceFiles[targetLang][sourceLang].workerThread = new Worker(`./language_level_thread.js`, { workerData: {
+                        const worker = new Worker(`./language_level_thread.js`, { workerData: {
                                 sourceLang: sourceLang,
                                 targetLang: targetLang,
                                 filename: exampleSourceFiles[targetLang][sourceLang].filename,
+                                threadNumber: chunk.threadNumber,
+                                firstLineToKeep: chunk.firstLineToKeep,
+                                lastLineToKeepExclusive: chunk.lastLineToKeepExclusive,
                                 requestType: `START_WORKER`
                             } });
-                        const workerThread = exampleSourceFiles[targetLang][sourceLang].workerThread;
-                        workerThread.once(`message`, (message) => {
-                            exampleSourceFiles[targetLang][sourceLang].workerStarted = true;
-                            console.log(message);
+                        exampleSourceFiles[targetLang][sourceLang].workerThreads.push(worker);
+                        worker.once(`message`, (message) => {
                             resolve();
                         });
                     }
                     catch (error) {
-                        console.log(`Error while loading thread "${sourceLang}"->"${targetLang}". Details: ${error}`);
+                        console.error(`Error while loading thread #${chunk.threadNumber} "${sourceLang}"->"${targetLang}". Details: ${error}`);
                         reject(error);
                     }
-                });
+                })));
             });
-        })),
-        descFilenames.map(descFilename => {
+        }),
+        ...descFilenames.map(descFilename => {
             const fn = async () => {
                 const dictName = descFilename.replaceAll(/\.desc\.json$/gi, ``);
                 try {
@@ -108,18 +138,16 @@ const startExampleDbThreadsAndReadDicts = async () => {
                     console.log(`reading dictionary "${dictName}" finished`);
                 }
                 catch (error) {
-                    console.log(`Error while reading dictionary "${dictName}"`);
+                    console.error(`Error while reading dictionary "${dictName}"`);
                     throw (error);
                 }
             };
             return fn();
         }),
     ];
-    //console.log(promises)
-    await Promise.all(promises);
-    console.log(`all threads ready`);
 };
-(startExampleDbThreadsAndReadDicts()).then(() => {
+Promise.all(startExampleDbThreadsAndReadDicts()).then(() => {
+    console.log(`all threads ready`);
     console.log(`listening on port: ${portNum}`);
     app.listen(app.get(`port`));
 });
@@ -186,8 +214,8 @@ app.post('/find', (req, res) => {
                 reverseFieldOrder = !reverseFieldOrder;
                 searchInTargetLanguage = !searchInTargetLanguage;
             }
-            const getResultFromThread = async (workerThread) => {
-                return new Promise((resolve, reject) => {
+            const getResultFromThreads = async (workerThreads) => {
+                const result = await Promise.all(workerThreads.map(workerThread => new Promise((resolve, reject) => {
                     try {
                         const requestId = uuid.v4();
                         const requestType = `FIND_ENTRIES`;
@@ -201,7 +229,7 @@ app.post('/find', (req, res) => {
                         workerThread.postMessage(threadReqMessage);
                         const listener = (message) => {
                             if (message.requestType === requestType && message.requestId === requestId) {
-                                console.log(`DEBUG: response for message with request type '${message.requestType}' and request id '${message.requestId}' received`);
+                                //console.log(`DEBUG: response for message with request type '${message.requestType}' and request id '${message.requestId}' received`);
                                 resolvePromiseThenSelfDestruct(message.resultData);
                             }
                         };
@@ -215,9 +243,13 @@ app.post('/find', (req, res) => {
                         console.error(`Error while getting result from a thread. Details: ${error}`);
                         reject(error);
                     }
-                });
+                })));
+                return {
+                    entries: result.flatMap(e => e.entries),
+                    backendResultLimit: result?.at(0)?.backendResultLimit ?? -1,
+                };
             };
-            getResultFromThread(exampleSource.workerThread).then((threadRes) => {
+            getResultFromThreads(exampleSource.workerThreads).then((threadRes) => {
                 if (q.resultLimit !== undefined && q.resultLimit !== 0) {
                     threadRes.entries = threadRes.entries.slice(0, q.resultLimit);
                 }

@@ -20,9 +20,14 @@ import savedExamplesRouter from './routes/saved_examples.js';
 import savedQueriesRouter from './routes/saved_queries.js';
 import savedHighlightsRouter from './routes/saved_highlights.js';
 import generatedLinksRouter from './routes/generated_links.js';
+import { createReadStream } from 'fs';
+import { createInterface } from 'readline';
+
+const TOTAL_NUMBER_OF_WORKERS = 8;
+
 const __dirname = path.resolve();
 
-type ExampleSource = {filename: string,workerThread?: Worker, workerStarted?: boolean}
+type ExampleSource = {filename: string,workerThreads: Worker[]}
 type ExampleSourcesByLangPairs = Record<string,Record<string, ExampleSource>>
 
 const exampleSourceFiles: ExampleSourcesByLangPairs = {
@@ -31,15 +36,19 @@ const exampleSourceFiles: ExampleSourcesByLangPairs = {
 		//source language
 		'de':{
 			filename: 'example_source_dbs/de-hu.txt',
+			workerThreads: [],
 		},
 		'es':{
 			filename: 'example_source_dbs/es-hu.txt',
+			workerThreads: [],
 		},
 		'it':{
 			filename: 'example_source_dbs/it-hu.txt',
+			workerThreads: [],
 		},
 		'nl':{
 			filename: 'example_source_dbs/nl-hu.txt',
+			workerThreads: [],
 		},
 	},
 }
@@ -80,37 +89,64 @@ console.log(descFilenames)
 
 const dicts: Record<string,Dict> = {}
 
+type Chunk = {threadNumber: number, firstLineToKeep: number, lastLineToKeepExclusive: number}
 
-const startExampleDbThreadsAndReadDicts = async (): Promise<void> => {
-	const promises = [
+const generateChunks = async (filename: string): Promise<Chunk[]> =>{
+	const readLines = (filename: string) => createInterface({
+		input: createReadStream(filename, {encoding: 'utf8'}),
+		crlfDelay: Infinity,
+	})
+
+	// only non-empty lines are counted, the worker skips empty lines too
+	let lineCount = 0
+	for await (const line of readLines(filename)) {
+		if (line.trim()!=='') {
+			lineCount++
+		}
+	}
+	const result: Chunk[] = [];
+
+	for (let i = 0; i< TOTAL_NUMBER_OF_WORKERS; i++) {
+		result.push({
+			threadNumber: i + 1,
+			firstLineToKeep: Math.floor(i * lineCount / TOTAL_NUMBER_OF_WORKERS), 
+			lastLineToKeepExclusive: Math.floor((i + 1) * lineCount / TOTAL_NUMBER_OF_WORKERS),
+		})
+	}
+	return result
+}
+
+const startExampleDbThreadsAndReadDicts = (): Promise<void>[] => {
+	return [
 		//load example-pair db files
-		...flattenTwoDimArray(
-			Object.keys(exampleSourceFiles).map(targetLang => {
-				return Object.keys(exampleSourceFiles[targetLang]).map(sourceLang => {
-					return new Promise<void>((resolve,reject) => {
+			...Object.keys(exampleSourceFiles).flatMap(targetLang => {
+				return Object.keys(exampleSourceFiles[targetLang]).map(async sourceLang => {
+					const chunks = await generateChunks(exampleSourceFiles[targetLang][sourceLang].filename)
+					await Promise.all(chunks.map(chunk => new Promise<void>((resolve,reject) => {
 						try{
-							exampleSourceFiles[targetLang][sourceLang].workerThread = new Worker(`./language_level_thread.js`, { workerData: {
-							sourceLang: sourceLang,
-							targetLang: targetLang,
-							filename: exampleSourceFiles[targetLang][sourceLang].filename,
-							requestType: `START_WORKER`
-							}});
-							const workerThread = exampleSourceFiles[targetLang][sourceLang].workerThread as Worker
+							const worker = new Worker(`./language_level_thread.js`, { workerData: {
+									sourceLang: sourceLang,
+									targetLang: targetLang,
+									filename: exampleSourceFiles[targetLang][sourceLang].filename,
+									threadNumber: chunk.threadNumber,
+									firstLineToKeep: chunk.firstLineToKeep,
+									lastLineToKeepExclusive: chunk.lastLineToKeepExclusive,
+									requestType: `START_WORKER`
+								}});
 
-							workerThread.once(`message`,(message)=>{
-								exampleSourceFiles[targetLang][sourceLang].workerStarted=true
-								console.log(message)
+							exampleSourceFiles[targetLang][sourceLang].workerThreads.push(worker);
+								
+							worker.once(`message`,(message)=>{
 								resolve()
 							})
 						} catch(error) {
-							console.log(`Error while loading thread "${sourceLang}"->"${targetLang}". Details: ${error}`);
+							console.error(`Error while loading thread #${chunk.threadNumber} "${sourceLang}"->"${targetLang}". Details: ${error}`);
 							reject(error);
 						}
-					})
+					})))
 				})
-			})
-		),
-		descFilenames.map(descFilename => {
+			}),
+		...descFilenames.map(descFilename => {
 			const fn = async() => {
 				const dictName = descFilename.replaceAll(/\.desc\.json$/gi, ``)
 				try {
@@ -131,19 +167,17 @@ const startExampleDbThreadsAndReadDicts = async (): Promise<void> => {
 					dicts[dictName] = {main, meta,}
 					console.log(`reading dictionary "${dictName}" finished`)
 				} catch (error) {
-					console.log(`Error while reading dictionary "${dictName}"`)
+					console.error(`Error while reading dictionary "${dictName}"`)
 					throw (error)
 				}
 			}
 			return fn()
 		}),
-	]
-	//console.log(promises)
-	await Promise.all(promises)
-	console.log(`all threads ready`)
+	];
 }
 
-(startExampleDbThreadsAndReadDicts()).then(() => {
+Promise.all(startExampleDbThreadsAndReadDicts()).then(() => {
+	console.log(`all threads ready`)
 	console.log(`listening on port: ${portNum}`)
 	app.listen(app.get(`port`))
 })
@@ -218,37 +252,45 @@ app.post('/find', (req, res) =>  {
 				reverseFieldOrder = !reverseFieldOrder
 				searchInTargetLanguage = !searchInTargetLanguage
 			}
-			const getResultFromThread = async (workerThread: Worker): Promise<ExampleArrayWithBackendLimit> => {
-				return new Promise((resolve,reject) => {
-					try {
-						const requestId = uuid.v4();
-						const requestType = `FIND_ENTRIES`
-						const threadReqMessage : ThreadReqMessage = {
-							requestType: requestType,
-							requestId: requestId,
-							conditions: q.conditions,
-							reverseFieldOrder: reverseFieldOrder,
-							searchInTargetLanguage: searchInTargetLanguage,
-						};
-						workerThread.postMessage(threadReqMessage)
-						const listener = (message: ThreadResMessage)=>{
-							if (message.requestType===requestType && message.requestId===requestId){
-								console.log(`DEBUG: response for message with request type '${message.requestType}' and request id '${message.requestId}' received`);
-								resolvePromiseThenSelfDestruct(message.resultData);
+			const getResultFromThreads = async (workerThreads: Worker[]): Promise<ExampleArrayWithBackendLimit> => {
+				const result: ExampleArrayWithBackendLimit[] = await Promise.all(
+					workerThreads.map(workerThread => new Promise<ExampleArrayWithBackendLimit>((resolve,reject) => {
+						try {
+							const requestId = uuid.v4();
+							const requestType = `FIND_ENTRIES`
+							const threadReqMessage : ThreadReqMessage = {
+								requestType: requestType,
+								requestId: requestId,
+								conditions: q.conditions,
+								reverseFieldOrder: reverseFieldOrder,
+								searchInTargetLanguage: searchInTargetLanguage,
+							};
+							workerThread.postMessage(threadReqMessage)
+							const listener = (message: ThreadResMessage)=>{
+								if (message.requestType===requestType && message.requestId===requestId){
+									//console.log(`DEBUG: response for message with request type '${message.requestType}' and request id '${message.requestId}' received`);
+									resolvePromiseThenSelfDestruct(message.resultData);
+								}
+							} 
+							const resolvePromiseThenSelfDestruct = (threadRes: ExampleArrayWithBackendLimit) => {
+								workerThread.removeListener(`message`,listener)
+								resolve(threadRes)
 							}
-						} 
-						const resolvePromiseThenSelfDestruct = (threadRes: ExampleArrayWithBackendLimit) => {
-							workerThread.removeListener(`message`,listener)
-							resolve(threadRes)
+							workerThread.on(`message`,listener)
+						} catch (error) {
+							console.error(`Error while getting result from a thread. Details: ${error}`);
+							reject(error)
 						}
-						workerThread.on(`message`,listener)
-					} catch (error) {
-						console.error(`Error while getting result from a thread. Details: ${error}`);
-						reject(error)
-					}
-				})
+					}))
+				)
+
+				return {
+					entries: result.flatMap(e=>e.entries),
+					backendResultLimit: result?.at(0)?.backendResultLimit ?? -1,
+				}
+
 			}
-			getResultFromThread(exampleSource.workerThread as Worker).then((threadRes: ExampleArrayWithBackendLimit) =>{
+			getResultFromThreads(exampleSource.workerThreads).then((threadRes: ExampleArrayWithBackendLimit) =>{
 				if(q.resultLimit !== undefined && q.resultLimit !== 0){
 					threadRes.entries=threadRes.entries.slice(0,q.resultLimit)
 				}

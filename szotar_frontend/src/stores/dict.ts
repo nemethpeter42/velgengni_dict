@@ -537,7 +537,7 @@ export const useDictStore = (id: DictStoreType) => {
             replaceAll(/\{[^}]*\}/g,``).
             trim()
       }))) {
-        await new Promise((_) => setTimeout(_, 1000));
+        await new Promise((_) => setTimeout(_, 100));
         
         const exampleFindReq: ExampleFindReq = {
           lang1: currSourceLang,

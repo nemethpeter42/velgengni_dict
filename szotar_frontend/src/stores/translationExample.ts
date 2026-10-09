@@ -294,9 +294,20 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
         // concat(...(filteringMode.value===`FILTER` ? bigFilterLastQueryVal.value: [])).
         map(e=>e.toLowerCase()).
         map(e=>e.split(`_`).join(` `)).
-        map(e => [e,e.replaceAll(/a$/gi,`á`).replaceAll(/e$/gi,`é`)]).flat()
+        flatMap(e => [
+          e,
+          e.
+            replaceAll(/a$/gi,`á`).
+            replaceAll(/e$/gi,`é`).
+            replaceAll(/à$/gi,`a'`).
+            replaceAll(/è$/gi,`e'`).
+            replaceAll(/ì$/gi,`i'`).
+            replaceAll(/ò$/gi,`o'`).
+            replaceAll(/ù$/gi,`u'`)
+        ])
     });
 
+    //TODO ezt is lecserelni full regexesre
     const finalPhrasesUsedInBlacklisting = computed(()=> {
       return blacklistQueryPhrase.value.
         split(`,`).
@@ -304,7 +315,17 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
         filter(e=>e!==``).
         map(e=>e.toLowerCase()).
         map(e=>e.split(`_`).join(` `)).
-        map(e => [e,e.replaceAll(/a$/gi,`á`).replaceAll(/e$/gi,`é`)]).flat()
+        flatMap(e => [
+          e,
+          e.
+            replaceAll(/a$/gi,`á`).
+            replaceAll(/e$/gi,`é`).
+            replaceAll(/à$/gi,`a'`).
+            replaceAll(/è$/gi,`e'`).
+            replaceAll(/ì$/gi,`i'`).
+            replaceAll(/ò$/gi,`o'`).
+            replaceAll(/ù$/gi,`u'`)
+        ])
     });
 
     const filteredEntries = computed(() => {
@@ -326,7 +347,17 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
                 [`FILTER`, `INVERSE_FILTER`].includes(filteringMode.value) ?
                 (filteringMode.value===`INVERSE_FILTER`) !==
                 !!bigFilterLastQueryVal.value.
-                  map(e => [e,e.replaceAll(/a$/gi,`á`).replaceAll(/e$/gi,`é`)]).flat().
+                  flatMap(e => [
+                    e,
+                    e.
+                      replaceAll(/a$/gi,`á`).
+                      replaceAll(/e$/gi,`é`).
+                      replaceAll(/à$/gi,`a'`).
+                      replaceAll(/è$/gi,`e'`).
+                      replaceAll(/ì$/gi,`i'`).
+                      replaceAll(/ò$/gi,`o'`).
+                      replaceAll(/ù$/gi,`u'`)
+                  ]).
                   some( 
                   phrase =>
                       (e.val?.example?.toLowerCase() ?? ``).
