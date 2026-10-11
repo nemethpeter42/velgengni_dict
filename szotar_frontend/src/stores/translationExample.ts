@@ -11,6 +11,7 @@ import { type HighlightDefinition } from "@/frontend_models/HighlightDefinition.
 import { type LanguagePair } from "@/frontend_models/LanguagePair.js";
 import type { TrExampleStoreType } from "@/frontend_models/TrExampleStoreTypes";
 import { backendBaseUrl } from "@/config";
+import { getPatternForSearchCondition } from "szotar_common/helpers/getPatternForSearchCondition.js";
 
 export const obtainTrExampleFindResult = async (
   exampleFindReq: ExampleFindReq
@@ -235,18 +236,18 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
 
     
     const HIGHLIGHT_STYLES = [
-      `background-color: rgba(255, 255,   0, 0.35);`, // sarga
+      `background-color: rgba(255 255   0 / 0.35);`, // sarga
       
-      `background-color: rgba(0,   204, 153, 0.50);`, // turkizeszold
-      `background-color: rgba(255,   0, 255, 0.40);`, // rozsa-magenta
-      `background-color: rgba(128,   0, 255, 0.45);`, // lila
-      `background-color: rgba(0,     0, 255, 0.50);`, // sotetkek
-      `background-color: rgba(204, 153,   0, 0.50);`, // vilagosbarna
-      `background-color: rgba(0,   128, 255, 0.55);`, // kozepes kek
-      `background-color: rgba(255, 102,   0, 0.50);`, // narancs
-      `background-color: rgba(255,   0,   0, 0.45);`, // piros
-      `background-color: rgba(0,   201, 255, 0.55);`, // vilagoskek
-      `background-color: rgba(0,   128,   0, 0.65);`, // fenyozold
+      `background-color: rgba(0   204 153 / 0.50);`, // turkizeszold
+      `background-color: rgba(255   0 255 / 0.40);`, // rozsa-magenta
+      `background-color: rgba(128   0 255 / 0.45);`, // lila
+      `background-color: rgba(0     0 255 / 0.50);`, // sotetkek
+      `background-color: rgba(204 153   0 / 0.50);`, // vilagosbarna
+      `background-color: rgba(0   128 255 / 0.55);`, // kozepes kek
+      `background-color: rgba(255 102   0 / 0.50);`, // narancs
+      `background-color: rgba(255   0   0 / 0.45);`, // piros
+      `background-color: rgba(0   201 255 / 0.55);`, // vilagoskek
+      `background-color: rgba(0   128   0 / 0.65);`, // fenyozold
     ];
 
 
@@ -291,20 +292,13 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
         split(`,`).
         map(e=>e.trim()).
         filter(e=>e!==``).
-        // concat(...(filteringMode.value===`FILTER` ? bigFilterLastQueryVal.value: [])).
-        map(e=>e.toLowerCase()).
-        map(e=>e.split(`_`).join(` `)).
-        flatMap(e => [
-          e,
-          e.
-            replaceAll(/a$/gi,`á`).
-            replaceAll(/e$/gi,`é`).
-            replaceAll(/à$/gi,`a'`).
-            replaceAll(/è$/gi,`e'`).
-            replaceAll(/ì$/gi,`i'`).
-            replaceAll(/ò$/gi,`o'`).
-            replaceAll(/ù$/gi,`u'`)
-        ])
+        map(e=>
+          new RegExp(getPatternForSearchCondition({
+            expression:e.split(`_`).join(` `), 
+            onlyWithSpaceDotOrCommaSuffix: false, 
+            onlyWithSpacePrefix: false
+          }), 'i')
+        );
     });
 
     //TODO ezt is lecserelni full regexesre
@@ -313,19 +307,14 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
         split(`,`).
         map(e=>e.trim()).
         filter(e=>e!==``).
-        map(e=>e.toLowerCase()).
         map(e=>e.split(`_`).join(` `)).
-        flatMap(e => [
-          e,
-          e.
-            replaceAll(/a$/gi,`á`).
-            replaceAll(/e$/gi,`é`).
-            replaceAll(/à$/gi,`a'`).
-            replaceAll(/è$/gi,`e'`).
-            replaceAll(/ì$/gi,`i'`).
-            replaceAll(/ò$/gi,`o'`).
-            replaceAll(/ù$/gi,`u'`)
-        ])
+        map(e=>
+          RegExp(getPatternForSearchCondition({
+            expression:e.split(`_`).join(` `), 
+            onlyWithSpaceDotOrCommaSuffix: false, 
+            onlyWithSpacePrefix: false
+          }), 'i')
+        );
     });
 
     const filteredEntries = computed(() => {
@@ -344,38 +333,25 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
             bigFilterLastQueryVal.value.length > 0
           ) {
             res = res.filter(e=>
-                [`FILTER`, `INVERSE_FILTER`].includes(filteringMode.value) ?
-                (filteringMode.value===`INVERSE_FILTER`) !==
-                !!bigFilterLastQueryVal.value.
-                  flatMap(e => [
-                    e,
-                    e.
-                      replaceAll(/a$/gi,`á`).
-                      replaceAll(/e$/gi,`é`).
-                      replaceAll(/à$/gi,`a'`).
-                      replaceAll(/è$/gi,`e'`).
-                      replaceAll(/ì$/gi,`i'`).
-                      replaceAll(/ò$/gi,`o'`).
-                      replaceAll(/ù$/gi,`u'`)
-                  ]).
-                  some( 
-                  phrase =>
-                      (e.val?.example?.toLowerCase() ?? ``).
-                      includes(phrase)
-                ):
+              [`FILTER`, `INVERSE_FILTER`].includes(filteringMode.value) ?
+                (
+                  filteringMode.value===`INVERSE_FILTER`) !==
+                  !!bigFilterLastQueryVal.value.
+                    map(e=>
+                      RegExp(getPatternForSearchCondition({
+                        expression:e, 
+                        onlyWithSpaceDotOrCommaSuffix: false, 
+                        onlyWithSpacePrefix: false
+                      }), 'i')
+                    ).some(regex => regex.test(e.val?.example ?? ``)
+                  ):
                 true  
               ).
-              filter(
-                e=> 
-                  !([`FILTER`, `INVERSE_FILTER`].includes(filteringMode.value) && quickSearchQueryPhrase.value.trim() === ``) ?
-                  finalPhrasesUsedInFiltering.value.
-                  //map(e => [e,e.replaceAll(/a$/gi,`á`).replaceAll(/e$/gi,`é`)]).flat().
-                  some( 
-                      phrase =>
-                          (e.val?.example?.toLowerCase() ?? ``).
-                          includes(phrase)
-                  ):
-                  true
+              filter(e=> 
+                !([`FILTER`, `INVERSE_FILTER`].includes(filteringMode.value) && quickSearchQueryPhrase.value.trim() === ``) ?
+                finalPhrasesUsedInFiltering.value.
+                  some(regex => regex.test(e.val?.example ?? ``)):
+                true
               );
         } 
         if (
@@ -385,11 +361,7 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
               filter(
                 e=> 
                   !finalPhrasesUsedInBlacklisting.value.
-                  some( 
-                      phrase =>
-                          (e.val?.example?.toLowerCase() ?? ``).
-                          includes(phrase)
-                  )
+                  some(regex => regex.test(e.val?.example ?? ``))
               );
         } 
         const typeSafeResult = res ?? []

@@ -6,6 +6,7 @@ import { type PageJumpType } from "@/frontend_models/PageJumpType.js";
 import { type FilteredEntry } from "@/frontend_models/FilteredEntry.js";
 import { useDictStore } from "./dict";
 import { backendBaseUrl } from "@/config";
+import { getPatternForSearchCondition } from "szotar_common/helpers/getPatternForSearchCondition.js";
 
 export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
   
@@ -86,28 +87,19 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
     }
   }
 
-  
   const finalPhrasesUsedInFiltering = computed(()=> {
-    //TODO a language_level_thread.ts regexes logikajat atultetni ide is
     return quickSearchQueryPhrase.value.
       split(`,`).
       map(e=>e.trim()).
       filter(e=>e!==``).
-      // concat(...(filteringMode.value===`FILTER` ? bigFilterLastQueryVal.value: [])).
-      map(e=>e.toLowerCase()).
-      map(e=>e.split(`_`).join(` `)).
-      map(e => [
-        e,
-        e.
-          replaceAll(/a$/gi,`á`).
-          replaceAll(/e$/gi,`é`).
-          replaceAll(/à$/gi,`a'`).
-          replaceAll(/è$/gi,`e'`).
-          replaceAll(/ì$/gi,`i'`).
-          replaceAll(/ò$/gi,`o'`).
-          replaceAll(/ù$/gi,`u'`)
-      ]).flat()
-  })
+      map(e=>
+        RegExp(getPatternForSearchCondition({
+          expression:e.split(`_`).join(` `), 
+          onlyWithSpaceDotOrCommaSuffix: false, 
+          onlyWithSpacePrefix: false
+        }), 'i')
+      );
+  });
   
   const dictStore = useDictStore(`dictModule`)
 
@@ -147,15 +139,9 @@ export const useSavedTrExampleStore = defineStore(`savedTrExample`, () => {
     );
 
     if (quickSearchQueryPhrase.value.trim() !== ``) {
-      res =  res.filter(
-        e=> 
-         finalPhrasesUsedInFiltering.value.
-          //map(e => [e,e.replaceAll(/a$/gi,`á`).replaceAll(/e$/gi,`é`)]).flat().
-          some( 
-              phrase =>
-                  (e.val?.example?.toLowerCase() ?? ``).
-                  includes(phrase)
-          )
+      res =  res.filter(e=> 
+        finalPhrasesUsedInFiltering.value.
+          some(regex => regex.test(e.val?.example ?? ``))
       );
     }
     

@@ -101,7 +101,7 @@
 </template>
 
 <script lang="ts" setup>
-  
+  import {getPatternForSearchCondition} from 'szotar_common/helpers/getPatternForSearchCondition.js'
   import MeaningForestViewer from '@/components/meaning-forest/MeaningForestViewer.vue';
   import * as sanitizeHtml from 'sanitize-html';
 
@@ -129,27 +129,18 @@ import type { ColumnDefinitionArrayForm } from '@/frontend_models/ColumnDefiniti
   }
 
   const encloseIntoTagsInHtml = (html: string, textToEnclose: string, tagOpen: string, tagClose: string) => {
-    //html = html.split(`<`).join(`&lt;`)
-    //html = html.split(`>`).join(`&gt;`)
-    const variants = new Set([
-      textToEnclose,
-      textToEnclose.
-        replaceAll(/a$/gi,`á`).
-        replaceAll(/e$/gi,`é`).
-        replaceAll(/à$/gi,`a'`).
-        replaceAll(/è$/gi,`e'`).
-        replaceAll(/ì$/gi,`i'`).
-        replaceAll(/ò$/gi,`o'`).
-        replaceAll(/ù$/gi,`u'`)
-    ])
-    const tagAreas = getHtmlTagAreas(html)
-    for (const variant of variants){
-      for (let i = html.length-1; i>=0; i--) {
-        if (html.substring(i, i + variant.length).toLowerCase() === variant.toLowerCase() && !tagAreas.some(pair => pair.start<=i && i<=pair.end)) {
-          html = html.substring(0, i) + tagOpen + html.substring(i, i + variant.length) + tagClose + html.substring(i + variant.length)
-        }
+       
+    const pattern = getPatternForSearchCondition({expression:textToEnclose, onlyWithSpaceDotOrCommaSuffix: false, onlyWithSpacePrefix: false})
+    const regex = new RegExp(pattern, 'gi');
+    const matches = [...html.matchAll(regex)].map(m => ({start: m.index, end: m.index + m[0].length - 1})).reverse()
+    
+    for (const match of matches) {
+      const tagAreas = getHtmlTagAreas(html)
+      if ( !tagAreas.some(pair => pair.start<=match.start && match.end <= pair.end)) {
+          html = html.substring(0, match.start) + tagOpen + html.substring(match.start, match.end + 1) + tagClose + html.substring(match.end + 1)
       }
     }
+
     return html
   }
 

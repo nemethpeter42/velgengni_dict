@@ -19,11 +19,12 @@
       @click="$emit(`nextBtnClick`)"
       class="
         floating-next-btn
-        text-white bg-blue-700
+        text-white bg-blue-600 
         absolute top-[3rem] left-1 w-9 h-14 rounded-full drop-shadow-lg
         flex justify-center items-center text-2xl 
-        hover:drop-shadow-2xl 
-        hover:bg-blue-800"
+        hover:drop-shadow-2xl hover:bg-blue-700
+        dark:bg-blue-600
+        dark:hover:bg-blue-500"
       data-button-for="next"
       ><ChevronRightIcon class="h-6 w-6" /></button>
 
@@ -31,7 +32,7 @@
       :title="$t('actions.highlightButton')"
       @click="$emit(`highlightBtnClick`)"
       class="
-        floating-next-btn
+        floating-highlight-btn
         text-white
         absolute top-[7rem] left-1 w-9 h-9 rounded-full drop-shadow-lg
         flex justify-center items-center text-2xl 
@@ -39,11 +40,15 @@
       :class="{
         [`
           bg-orange-500 
+          hover:bg-orange-600 
           dark:bg-orange-600 
+          dark:hover:bg-orange-500 
         `]: props.isEntryHighlighted,  
         [`
-          bg-blue-700 
-          dark:bg-blue-800 
+          bg-blue-600 
+          hover:bg-blue-700
+          dark:bg-blue-600
+          dark:hover:bg-blue-500
         `]: !props.isEntryHighlighted,  
       }"
       data-button-for="highlight"
@@ -60,8 +65,10 @@
         class="
           scroll-to-top-btn
           inline-flex justify-center items-center text-2xl rounded-t-3xl p-0.5 pb-1 pt-1
-          text-white bg-blue-700
-          hover:drop-shadow-2xl hover:bg-blue-800"
+          text-white bg-blue-600
+          hover:drop-shadow-2xl hover:bg-blue-700
+          dark:bg-blue-600
+          dark:hover:bg-blue-500"
         data-button-for="scroll-to-top"
         @click="$emit(`scrollToTop`)"
       ><ArrowUpIcon class="h-6 w-6" /></button>
@@ -70,8 +77,10 @@
         class="
           scroll-to-bottom-btn
           inline-flex justify-center items-center text-2xl rounded-b-3xl p-0.5 pt-1 pb-1
-          text-white bg-blue-700
-          hover:drop-shadow-2xl hover:bg-blue-800"
+          text-white bg-blue-600
+          hover:drop-shadow-2xl hover:bg-blue-700
+          dark:bg-blue-600
+          dark:hover:bg-blue-500"
         data-button-for="scroll-to-bottom"
         @click="$emit(`scrollToBottom`)"
       ><ArrowDownIcon class="h-6 w-6" /></button>
@@ -87,8 +96,17 @@
         hover:drop-shadow-2xl "
       :class="
         savedTrExampleStore.isDirty ? 
-        `text-white bg-red-700 hover:bg-red-800` : 
-        `text-white bg-blue-700 hover:bg-blue-800`"
+        ` 
+          text-white bg-red-600 
+          dark:bg-red-600
+          hover:bg-red-700
+          dark:hover:bg-red-500
+          ` : `
+          text-white bg-blue-600 
+          dark:bg-blue-600
+          hover:bg-blue-700
+          dark:hover:bg-blue-500
+        `"
       data-button-for="save-modifications"
       ><ArrowUpOnSquareStackIcon class="h-6 w-6" /></button>
   </div>

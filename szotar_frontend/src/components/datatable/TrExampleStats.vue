@@ -51,6 +51,7 @@
 <script lang="ts" setup>
 import { useTranslationExampleStore } from '@/stores/translationExample';
   import { SparklesIcon, Squares2X2Icon, } from '@heroicons/vue/24/solid'
+  import {getPatternForSearchCondition} from 'szotar_common/helpers/getPatternForSearchCondition.js'
 import { computed } from 'vue';
 import DtSpinner from './DtSpinner.vue';
 import type { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';
@@ -60,20 +61,13 @@ import type { TrExampleStoreType } from '@/frontend_models/TrExampleStoreTypes';
   const store = useTranslationExampleStore(props.storeId)
 
   const countExamplesContainingThePhrase = (phrase: string): number => {
+    const regex = RegExp(getPatternForSearchCondition({
+      expression: phrase,
+      onlyWithSpaceDotOrCommaSuffix: false,
+      onlyWithSpacePrefix: false
+    }),'i')
     return store.filteredEntries.filter(e=>{
-      return [
-        phrase,
-        phrase.
-          replaceAll(/a$/gi,`á`).
-          replaceAll(/e$/gi,`é`).
-          replaceAll(/à$/gi,`a'`).
-          replaceAll(/è$/gi,`e'`).
-          replaceAll(/ì$/gi,`i'`).
-          replaceAll(/ò$/gi,`o'`).
-          replaceAll(/ù$/gi,`u'`)
-      ].some(phraseVariant =>
-        e.val.example.toLowerCase().includes(phraseVariant.toLowerCase())
-      )
+      return regex.test(e.val.example)
     }).length
   }
 

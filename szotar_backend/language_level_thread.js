@@ -2,7 +2,6 @@ import { parentPort as parentPortUnchecked, workerData } from 'worker_threads';
 import { createReadStream } from 'fs';
 import { createInterface } from 'readline';
 import { getPatternForSearchCondition } from 'szotar_common/helpers/getPatternForSearchCondition.js';
-import { swapFirstCharCase } from 'szotar_common/helpers/swapFirstCharCase.js';
 const BACKEND_RESULT_LIMIT = 20000; //10000;
 const readLines = (filename) => createInterface({
     input: createReadStream(filename, { encoding: 'utf8' }),
@@ -37,19 +36,7 @@ parentPort.on('message', (q) => {
     q.conditions = q.conditions.sort((a, b) => b.expression.length - a.expression.length);
     for (const searchCondition of q.conditions) {
         searchCondition.expression = searchCondition.expression.trim();
-        //TODO throw it out when the new regex format is considered safe enough
-        let genExpression;
-        if (searchCondition.onlyWithSpaceDotOrCommaSuffix) {
-            genExpression = [`${searchCondition.expression} `, `${searchCondition.expression}.`, `${searchCondition.expression},`];
-        }
-        else {
-            genExpression = [searchCondition.expression];
-        }
-        genExpression = genExpression.concat(genExpression.map((e) => swapFirstCharCase(e)));
-        if (searchCondition.onlyWithSpacePrefix) {
-            genExpression = genExpression.flatMap(e => [` ${e}`, `¿${e}`, `¡${e}`, `'${e}`]);
-        }
-        const searchRegex = new RegExp(getPatternForSearchCondition(searchCondition), 'gi');
+        const searchRegex = new RegExp(getPatternForSearchCondition(searchCondition), 'i');
         filteredEntries = filteredEntries.filter(e => {
             let subtitleStr = q.searchInTargetLanguage === true ? e.translated : e.original;
             return searchRegex.test(subtitleStr);

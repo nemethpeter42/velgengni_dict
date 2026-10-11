@@ -48,19 +48,8 @@ parentPort.on('message', (q: ThreadReqMessage) => {
 	q.conditions = q.conditions.sort((a,b)=>b.expression.length-a.expression.length)
 	for (const searchCondition of q.conditions) {
 		searchCondition.expression = searchCondition.expression.trim()
-		//TODO throw it out when the new regex format is considered safe enough
-		let genExpression: string[]
-		if (searchCondition.onlyWithSpaceDotOrCommaSuffix){
-			genExpression = [`${searchCondition.expression} `,`${searchCondition.expression}.`,`${searchCondition.expression},`]
-		} else {
-			genExpression = [searchCondition.expression]
-		}
-		genExpression = genExpression.concat(genExpression.map((e: string) => swapFirstCharCase(e)))
-		if (searchCondition.onlyWithSpacePrefix){
-			genExpression = genExpression.flatMap(e=>[` ${e}`, `¿${e}`, `¡${e}`, `'${e}`])
-		}
 
-		const searchRegex = new RegExp(getPatternForSearchCondition(searchCondition),'gi')
+		const searchRegex = new RegExp(getPatternForSearchCondition(searchCondition),'i')
 		
 		filteredEntries = filteredEntries.filter(e=>{
 			let subtitleStr = q.searchInTargetLanguage===true ? e.translated : e.original;
