@@ -1,2 +1,2 @@
-import { SearchCondition } from "../models/SearchCondition.js";
+import type { SearchCondition } from "../models/SearchCondition.js";
 export declare const getPatternForSearchCondition: (searchCondition: SearchCondition) => string;

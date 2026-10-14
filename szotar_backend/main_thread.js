@@ -95,7 +95,7 @@ const startExampleDbThreadsAndReadDicts = () => {
                 const chunks = await generateChunks(exampleSourceFiles[targetLang][sourceLang].filename);
                 await Promise.all(chunks.map(chunk => new Promise((resolve, reject) => {
                     try {
-                        const worker = new Worker(`./language_level_thread.js`, { workerData: {
+                        const worker = new Worker(`./chunk_related_worker.js`, { workerData: {
                                 sourceLang: sourceLang,
                                 targetLang: targetLang,
                                 filename: exampleSourceFiles[targetLang][sourceLang].filename,

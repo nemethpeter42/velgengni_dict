@@ -1,4 +1,4 @@
-import { SearchCondition } from "../models/SearchCondition.js"
+import type { SearchCondition } from "../models/SearchCondition.js"
 import { escapeRegex } from "./escapeRegex.js"
 import { charsToSwap } from "./charsToSwap.js"
 import { lastCharsToSwap } from "./lastCharsToSwap.js"

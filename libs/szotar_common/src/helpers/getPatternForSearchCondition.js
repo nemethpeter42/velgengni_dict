@@ -3,7 +3,6 @@ import { charsToSwap } from "./charsToSwap.js";
 import { lastCharsToSwap } from "./lastCharsToSwap.js";
 import { handleSpecialCharacters } from "./handleSpecialCharacters.js";
 import { swapFirstCharCase } from "./swapFirstCharCase.js";
-
 export const getPatternForSearchCondition = (searchCondition) => {
     const str = searchCondition.expression;
     return (searchCondition.onlyWithSpacePrefix ? `(^|[ ¿¡'])` : ``) +
