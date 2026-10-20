@@ -12,7 +12,7 @@
         savedTrExampleStore.isDirty ? 
         `text-white bg-red-700 hover:bg-red-800` : 
         `text-white bg-blue-700 hover:bg-blue-800`"
-      ><ArrowUpOnSquareStackIcon class="h-6 w-6" /></button>
+      ><SaveModificationsIcon class="h-6 w-6" /></button>
     <div
       class="
         absolute top-1 left-16 w-16 h-9 rounded-full drop-shadow-lg 
@@ -27,7 +27,7 @@
           text-white bg-blue-700
           hover:drop-shadow-2xl hover:bg-blue-800"
         @click="scrollToTop()"
-      ><ArrowUpIcon class="h-6 w-6" /></button>
+      ><ScrollToTopIcon class="h-6 w-6" /></button>
       <button 
         :title="$t('actions.scrollToBottom')"
         class="
@@ -36,14 +36,16 @@
           text-white bg-blue-700
           hover:drop-shadow-2xl hover:bg-blue-800"
         @click="scrollToBottom()"
-      ><ArrowDownIcon class="h-6 w-6" /></button>
+      ><ScrollToBottomIcon class="h-6 w-6" /></button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { useSavedTrExampleStore } from '@/stores/savedTrExample';
-  import { ArrowUpOnSquareStackIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/vue/24/solid'
+  import ScrollToTopIcon from './tr-example/icons/ScrollToTop.icon.vue';
+  import ScrollToBottomIcon from './tr-example/icons/ScrollToBottom.icon.vue';
+  import SaveModificationsIcon from './tr-example/icons/SaveModifications.icon.vue';
  
 
   const scrollToTop = () => {

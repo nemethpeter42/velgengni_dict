@@ -47,7 +47,7 @@
     "sourceLangSeparately": "forrásnyelv külön",
     "sourceLangJoined": "forrásnyelv egyben",
     "targetLang": "célnyelv",
-    "blacklist": "Feketelista",
+    "exclusionList": "Mellőzött kifejezések",
     "languagePair": "Nyelvpár:",
     "resultLimit": "Találati limit:",
     "searchInSourceLanguage": "Másik nyelv",

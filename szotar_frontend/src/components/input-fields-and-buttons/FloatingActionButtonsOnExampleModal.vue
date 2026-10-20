@@ -15,21 +15,40 @@
         hover:drop-shadow-2xl hover:bg-orange-600
         dark:hover:bg-orange-500"
       data-button-for="close-modal"
-      ><XMarkIcon class="h-6 w-6" /></button>
+      ><CloseModalIcon class="h-6 w-6" /></button>
 
-    <button 
-      :title="$t('common.next')"
-      @click="$emit(`nextBtnClick`)"
+    <div
       class="
-        floating-next-btn
-        text-white bg-blue-600 
-        w-9 h-14 rounded-full drop-shadow-lg
-        flex justify-center items-center text-2xl 
-        hover:drop-shadow-2xl hover:bg-blue-700
-        dark:bg-blue-600
-        dark:hover:bg-blue-500"
-      data-button-for="next"
-      ><ChevronRightIcon class="h-6 w-6" /></button>
+        w-9 rounded-full drop-shadow-lg
+        flex flex-col
+      "
+    >
+      <button
+        :title="$t('common.previous')"
+        @click="$emit(`prevBtnClick`)"
+        class="
+          floating-prev-btn
+          inline-flex justify-center items-center text-2xl rounded-t-3xl p-0.5 pb-1 pt-1
+          text-white bg-blue-600
+          hover:drop-shadow-2xl hover:bg-blue-700
+          dark:bg-blue-600
+          dark:hover:bg-blue-500"
+        data-button-for="previous"
+        ><PreviousEntryIcon class="h-6 w-6" /></button>
+      <button
+        :title="$t('common.next')"
+        @click="$emit(`nextBtnClick`)"
+        class="
+          floating-next-btn
+          text-white bg-blue-600
+          h-14 rounded-b-3xl
+          flex justify-center items-center text-2xl
+          hover:drop-shadow-2xl hover:bg-blue-700
+          dark:bg-blue-600
+          dark:hover:bg-blue-500"
+        data-button-for="next"
+        ><NextEntryIcon class="h-6 w-6" /></button>
+    </div>
 
     <button 
       :title="$t('actions.saveModifications')"
@@ -53,7 +72,7 @@
           dark:hover:bg-blue-500
         `"
       data-button-for="save-modifications"
-      ><ArrowUpOnSquareStackIcon class="h-6 w-6" /></button>
+      ><SaveModificationsIcon class="h-6 w-6" /></button>
 
     <div
       class="
@@ -72,7 +91,7 @@
           dark:hover:bg-blue-500"
         data-button-for="scroll-to-top"
         @click="$emit(`scrollToTop`)"
-      ><ArrowUpIcon class="h-6 w-6" /></button>
+      ><ScrollToTopIcon class="h-6 w-6" /></button>
       <button 
         :title="$t('actions.scrollToBottom')"
         class="
@@ -84,7 +103,7 @@
           dark:hover:bg-blue-500"
         data-button-for="scroll-to-bottom"
         @click="$emit(`scrollToBottom`)"
-      ><ArrowDownIcon class="h-6 w-6" /></button>
+      ><ScrollToBottomIcon class="h-6 w-6" /></button>
     </div>
     
     <button
@@ -114,7 +133,7 @@
         hover:drop-shadow-2xl"
       :class="highlightBtnColorClass"
       data-button-for="highlight"
-      ><PaintBrushIcon class="h-6 w-6" /></button>
+      ><HighlightEntryIcon class="h-6 w-6" /></button>
 
     <button
       :title="$t('actions.jumpToEntry')"
@@ -150,7 +169,7 @@
           hover:drop-shadow-2xl"
         :class="highlightBtnColorClass"
         data-button-for="highlight-mobile"
-        ><PaintBrushIcon class="h-6 w-6" /></button>
+        ><HighlightEntryIcon class="h-6 w-6" /></button>
       <button
         :title="$t('actions.jumpToEntry')"
         @click="jumpToEntry(props.dictStoreType)"
@@ -173,9 +192,15 @@
 import { useModalStore } from '@/stores/modal';
   import { useSavedTrExampleStore } from '@/stores/savedTrExample';
   import { useTranslationExampleStore } from '@/stores/translationExample';
-  import { ArrowUpOnSquareStackIcon, ArrowUpIcon, ArrowDownIcon, XMarkIcon, ChevronRightIcon, PaintBrushIcon } from '@heroicons/vue/24/solid'
+  import CloseModalIcon from './tr-example/icons/CloseModal.icon.vue';
   import ToggleMoreFloatingButtonsMobileIcon from './tr-example/icons/ToggleMoreFloatingButtonsMobile.icon.vue';
   import JumpToElementIcon from './tr-example/icons/JumpToElement.icon.vue';
+  import PreviousEntryIcon from './tr-example/icons/PreviousEntry.icon.vue';
+  import NextEntryIcon from './tr-example/icons/NextEntry.icon.vue';
+  import ScrollToTopIcon from './tr-example/icons/ScrollToTop.icon.vue';
+  import ScrollToBottomIcon from './tr-example/icons/ScrollToBottom.icon.vue';
+  import SaveModificationsIcon from './tr-example/icons/SaveModifications.icon.vue';
+  import HighlightEntryIcon from './tr-example/icons/HighlightEntry.icon.vue';
   import { jumpToEntry } from '@/helpers/jumpToEntry';
   import { computed, ref } from 'vue';
 
@@ -184,7 +209,7 @@ import { useModalStore } from '@/stores/modal';
     dictStoreType: DictStoreType,
  }>();
 
-  defineEmits(['nextBtnClick','scrollToTop','scrollToBottom',`highlightBtnClick`])
+  defineEmits(['prevBtnClick','nextBtnClick','scrollToTop','scrollToBottom',`highlightBtnClick`])
 
   const savedTrExampleStore = useSavedTrExampleStore();
   

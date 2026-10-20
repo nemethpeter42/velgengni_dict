@@ -47,7 +47,7 @@
     "sourceLangSeparately": "source language separately",
     "sourceLangJoined": "source language joined",
     "targetLang": "target language",
-    "blacklist": "Blacklist",
+    "exclusionList": "Exclusion list",
     "languagePair": "Language pair:",
     "resultLimit": "Result limit:",
     "searchInSourceLanguage": "Other language",

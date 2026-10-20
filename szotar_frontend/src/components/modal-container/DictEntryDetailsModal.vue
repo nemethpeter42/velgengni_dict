@@ -41,6 +41,7 @@
           ">
           <div class="fixed top-1/2 -translate-y-1/2">
             <FloatingActionButtonsOnExampleModal 
+              @prevBtnClick="prevBtnClick()"
               @nextBtnClick="nextBtnClick()"
               @highlightBtnClick="highlightBtnClick()"
               @scrollToTop="scrollToTop()"
@@ -139,6 +140,14 @@ import type { DictStoreType } from '@/frontend_models/DictStoreType.js';
     const mainContent = document.querySelectorAll(`#dictEntryDetailsModal .scrollable-modal-content`)[0]
     const bottomY = mainContent.scrollHeight;
     mainContent.scrollTo(0,bottomY)
+  }
+
+  const prevBtnClick = async () => {
+    if(!dictStore.isTheFirstEntryActive){
+      scrollToTop();
+      await new Promise((_) => setTimeout(_, 200));
+      dictStore.setCurrentIdx(dictStore.currentIdx-1);
+    }
   }
 
   const nextBtnClick = async () => {

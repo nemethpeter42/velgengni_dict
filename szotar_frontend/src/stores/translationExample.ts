@@ -82,7 +82,7 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
 
     const setQuickSearchQueryPhrase = (val: string) => quickSearchQueryPhrase.value = val
 
-    const blacklistQueryPhrase: Ref<string> = ref(``);
+    const exclusionListQueryPhrase: Ref<string> = ref(``);
 
     const bigFilterInputFieldVal = ref(``)
 
@@ -302,8 +302,8 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
     });
 
     //TODO ezt is lecserelni full regexesre
-    const finalPhrasesUsedInBlacklisting = computed(()=> {
-      return blacklistQueryPhrase.value.
+    const finalPhrasesUsedInExclusion = computed(()=> {
+      return exclusionListQueryPhrase.value.
         split(`,`).
         map(e=>e.trim()).
         filter(e=>e!==``).
@@ -355,12 +355,12 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
               );
         } 
         if (
-            finalPhrasesUsedInBlacklisting.value.length
+            finalPhrasesUsedInExclusion.value.length
           ) {
             res = res.
               filter(
                 e=> 
-                  !finalPhrasesUsedInBlacklisting.value.
+                  !finalPhrasesUsedInExclusion.value.
                   some(regex => regex.test(e.val?.example ?? ``))
               );
         } 
@@ -442,7 +442,7 @@ export const useTranslationExampleStore = (id: TrExampleStoreType) => {
 
 
     return {
-      blacklistQueryPhrase,
+      exclusionListQueryPhrase,
       isLoading,
       exampleList,
       refreshExampleList,

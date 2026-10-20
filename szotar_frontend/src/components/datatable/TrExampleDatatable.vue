@@ -27,10 +27,10 @@
           <!-- TODO separate data-test id-->
           <QuickSearch 
             :icon-hidden="true"
-            v-model="trExampleStore.blacklistQueryPhrase"
+            v-model="trExampleStore.exclusionListQueryPhrase"
             @input="trExampleStore.jumpToPage(`FIRST`);"
-            :label="$t('trExample.blacklist')"
-            data-test="blacklist-input"
+            :label="$t('trExample.exclusionList')"
+            data-test="exclusion-list-input"
           />
           <QuickSearch 
             :modelValue="trExampleStore.quickSearchQueryPhrase"

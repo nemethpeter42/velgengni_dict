@@ -197,9 +197,9 @@
       <!-- TODO separate data-test id-->
       <QuickSearch 
           :icon-hidden="true"
-          v-model="trExampleStore.blacklistQueryPhrase"
+          v-model="trExampleStore.exclusionListQueryPhrase"
           @input="trExampleStore.jumpToPage(`FIRST`);"
-          :label="$t('trExample.blacklist')"
+          :label="$t('trExample.exclusionList')"
           />
       </div>
   </div>

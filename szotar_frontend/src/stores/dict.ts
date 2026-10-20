@@ -197,7 +197,7 @@ export const useDictStore = (id: DictStoreType) => {
       trExampleStore.jumpToPage(`FIRST`);
       trExampleStore.setFilteringMode(`MARK_ONLY`);
       trExampleStore.setQuickSearchQueryPhrase(``);
-      trExampleStore.blacklistQueryPhrase = ``;
+      trExampleStore.exclusionListQueryPhrase = ``;
       //TODO wordList.ts-bol atepiteni
     }
 
