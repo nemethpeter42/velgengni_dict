@@ -23,12 +23,21 @@
           <DictBulkActions />
           
         </div>
-        <div class="flex my-1.5">
+        <div class="flex my-1.5 flex-wrap">
+          <!-- TODO separate data-test id-->
+          <QuickSearch 
+            :icon-hidden="true"
+            v-model="trExampleStore.blacklistQueryPhrase"
+            @input="trExampleStore.jumpToPage(`FIRST`);"
+            :label="$t('trExample.blacklist')"
+            data-test="blacklist-input"
+          />
           <QuickSearch 
             :modelValue="trExampleStore.quickSearchQueryPhrase"
             @update:modelValue="val => trExampleStore.setQuickSearchQueryPhrase(val)"
             @input="trExampleStore.jumpToPage(`FIRST`);"
             :label="$t('common.quickSearch')"
+            data-test="quicksearch-input"
           />
         </div>
       </div>

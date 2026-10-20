@@ -1,7 +1,12 @@
 
 <template>
+  <!---
+    TODO Change i18n to "Search in target language" 
+    and "Search in source language" respectively
+  --->
   <button 
     id="exampleSearchButton"
+    :title="$t('trExample.searchInTargetLanguage')"
     class="
       m-1 mr-2 mb-2 px-5 py-2.5 font-medium rounded-full text-sm text-center 
       text-white bg-blue-700 
@@ -12,7 +17,7 @@
       dark:focus:ring-blue-800
     "
     >
-    {{ $t('common.search') }}
+    {{ $t('trExample.searchInTargetLanguage') }}
   </button>
 </template>
 

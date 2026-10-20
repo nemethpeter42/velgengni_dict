@@ -116,15 +116,7 @@
       idValue="is-result-lang-highligted"
       :labelText="$t('trExample.targetLang')"
     />
-    <div class="m-1 flex items-center">
-      <!-- TODO separate data-test id-->
-      <QuickSearch 
-          :icon-hidden="true"
-          v-model="trExampleStore.blacklistQueryPhrase"
-          @input="trExampleStore.jumpToPage(`FIRST`);"
-          :label="$t('trExample.blacklist')"
-          />
-      </div>
+    
   </div>
 
 </template>

@@ -2,8 +2,8 @@ import { Worker, isMainThread, parentPort as parentPortUnchecked, workerData, Me
 import { createReadStream } from 'fs';
 import { createInterface } from 'readline';
 import {Example} from 'szotar_common/models/Example.js'
-import {ThreadReqMessage} from 'szotar_common/models/ThreadReqMessage.js'
-import {ThreadResMessage} from 'szotar_common/models/ThreadResMessage.js'
+import {WorkerReqMessage} from 'szotar_common/models/WorkerReqMessage.js'
+import {WorkerResMessage} from 'szotar_common/models/WorkerResMessage.js'
 import { getPatternForSearchCondition } from 'szotar_common/helpers/getPatternForSearchCondition.js';
 import { swapFirstCharCase } from 'szotar_common/helpers/swapFirstCharCase.js';
 
@@ -30,7 +30,7 @@ for await (const line of readLines(workerData.filename)) {
 	lineIdx++
 }
 
-console.log('thread #'+workerData.threadNumber+' for '+workerData.sourceLang+' <-> '+workerData.targetLang+' ready')
+console.log('worker #'+workerData.threadNumber+' for '+workerData.sourceLang+' <-> '+workerData.targetLang+' ready')
 
 //null-check
 if (parentPortUnchecked === null){
@@ -40,7 +40,7 @@ const parentPort = parentPortUnchecked as MessagePort
 
 parentPort.postMessage({threadStartStatus:'ready'})
 
-parentPort.on('message', (q: ThreadReqMessage) => {
+parentPort.on('message', (q: WorkerReqMessage) => {
 	let filteredEntries = db
 	// hossz szerint csokkeno sorrendben rendezes
 	//(ES logikat feltetelez ha regex-et csinalnal, feltetlenul vedd ki) 
@@ -59,7 +59,7 @@ parentPort.on('message', (q: ThreadReqMessage) => {
 	}
 
 	filteredEntries = filteredEntries.slice(0,BACKEND_RESULT_LIMIT)
-	const threadResMessage: ThreadResMessage = {
+	const workerResMessage: WorkerResMessage = {
 		requestType:q.requestType,
 		requestId:q.requestId,
 		resultData:{
@@ -71,5 +71,5 @@ parentPort.on('message', (q: ThreadReqMessage) => {
 			backendResultLimit: BACKEND_RESULT_LIMIT,
 		}
 	}
-	parentPort.postMessage(threadResMessage);
+	parentPort.postMessage(workerResMessage);
 });

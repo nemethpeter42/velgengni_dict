@@ -84,6 +84,7 @@
           dark:focus:ring-gray-700 
           "
         @click="$emit('update:modelValue',modelValue.concat([{onlyWithSpaceDotOrCommaSuffix: false,onlyWithSpacePrefix: false, expression: ``}]))"
+        :title="$t('searchCondition.new')"
         >{{ $t('searchCondition.new') }}</button>
       <button 
         id="splitOrJoinButton"
@@ -98,6 +99,7 @@
           dark:hover:text-white dark:hover:bg-cyan-700
           dark:focus:ring-gray-700 
           "
+        :title="$t('searchCondition.joinedOrSeparate')"
         @click="() => {
           if (modelValue.length) {
             $emit(`update:modelValue`,

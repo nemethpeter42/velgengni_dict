@@ -84,11 +84,11 @@
     </div>
     <div v-if="store.entryDetailsActiveTab === 2">
       <div class="mx-auto">
-        <ModalTrExampleFilterPanel storeId="dictModal" />
+        <ModalTrExampleFilterPanel :storeId="props.dictStoreType === `dictModule`? `dictModal`: `knowledgeModule`" />
       </div>
       <div class="max-w-5xl mx-auto pt-2 pb-3">
         <TrExampleDatatable 
-        storeId="dictModal" 
+        :storeId="props.dictStoreType === `dictModule`? `dictModal`: `knowledgeModule`"
         :wordListStoreDisabled="true"
         :addExistingButtonVisible="true"
         @createSavedTrExample="(val: Example) => createSavedTrExample(val)"
@@ -119,7 +119,10 @@ import NewSavedExampleEditor from '../input-fields-and-buttons/NewSavedExampleEd
 import SaveModificationsLargeBtn from '../input-fields-and-buttons/SaveModificationsLargeBtn.vue';
 import JumpToEntryButton from '../input-fields-and-buttons/JumpToEntryButton.vue';
 import HighlightCurrEntryButton from '../input-fields-and-buttons/HighlightCurrEntryButton.vue';
-  const store = useDictStore(`dictModule`)
+import type { DictStoreType } from '@/frontend_models/DictStoreType.js';
+  
+  const props = defineProps<{ dictStoreType: DictStoreType}>(); 
+  const store = useDictStore(props.dictStoreType)
   const savedTrExampleStore = useSavedTrExampleStore()
   const modalStore = useModalStore()
   
@@ -141,7 +144,7 @@ import HighlightCurrEntryButton from '../input-fields-and-buttons/HighlightCurrE
     const currSortedIdx = store.currentIdx;
     const currEntryIdxBeforeSort = store.currPageOfFilteredEntries[currSortedIdx]?.idx;
     store.quickSearchQueryPhrase = ``;
-    modalStore.openModals.delete(`DICT_ENTRY_DETAILS`);
+    modalStore.openModals.delete(`DICT_ENTRY_DETAILS-${props.dictStoreType}`);
     await new Promise((_) => setTimeout(_, 2500));
     const pageIdx = store.pagesOfFilteredEntries.findIndex(
       page => page.some(e => e.idx === currEntryIdxBeforeSort)

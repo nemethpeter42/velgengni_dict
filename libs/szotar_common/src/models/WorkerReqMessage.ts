@@ -1,6 +1,6 @@
 import { SearchCondition } from "./SearchCondition.js";
 
-export type ThreadReqMessage = {
+export type WorkerReqMessage = {
 	conditions: SearchCondition[],
 	searchInTargetLanguage?: boolean,
 	reverseFieldOrder?: boolean,

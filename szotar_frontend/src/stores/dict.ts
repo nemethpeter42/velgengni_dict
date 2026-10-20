@@ -38,7 +38,7 @@ export const obtainDictQueryResult = async (
 export const useDictStore = (id: DictStoreType) => { 
   const store =  defineStore(`dict-${id}`, () => {
     
-    const trExampleStore = useTranslationExampleStore(`dictModal`)
+    const trExampleStore = useTranslationExampleStore(id === `dictModule`? `dictModal`: `knowledgeModule`)
 
     const savedTrExStore = useSavedTrExampleStore()
 
@@ -188,7 +188,7 @@ export const useDictStore = (id: DictStoreType) => {
       const conditions = words.map(
         expression => ({
           expression, 
-          onlyWithSpaceDotOrCommaSuffix: false,//TODO provided by config
+          onlyWithSpaceDotOrCommaSuffix: true,//TODO provided by config
           onlyWithSpacePrefix: true, //TODO provided by config
         } as SearchCondition)
       )

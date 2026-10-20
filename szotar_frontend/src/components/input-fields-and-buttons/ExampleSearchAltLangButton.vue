@@ -1,6 +1,7 @@
 <template>
 <button 
     id="exampleSearchAltLangButton"
+    :title="$t('trExample.searchInSourceLanguage')"
     class="
       m-1 mr-2 mb-2 px-5 py-2.5 font-medium rounded-full text-sm text-center
       text-gray-900 bg-white 
@@ -13,7 +14,7 @@
       dark:focus:ring-gray-700 
       "
     >
-    {{ $t('trExample.otherLanguage') }}
+    {{ $t('trExample.searchInSourceLanguage') }}
   </button>  
 </template>
 <script lang="ts" setup>

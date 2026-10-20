@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-7xl home-page">
     <DictFilterPanel />
-    <DictDatatable />
+    <DictDatatable dictStoreType="dictModule" />
   </div>
   
   

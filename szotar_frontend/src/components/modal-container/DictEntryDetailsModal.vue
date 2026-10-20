@@ -1,106 +1,107 @@
 <template>
   <div 
-    v-if="modalStore.openModals.has(`DICT_ENTRY_DETAILS`)"
+    v-if="modalStore.openModals.has(`DICT_ENTRY_DETAILS-${props.dictStoreType}`)"
     class="dict-entry-details-modal-container">
     <Teleport to="body">
-    <div 
-      class="
-        fixed inset-0 z-[120]
-        bg-gray-900 bg-opacity-50 
-        dark:bg-opacity-80
-      "></div>
-    
-    <div 
-      id="dictEntryDetailsModal"  
+      <div 
+        class="
+          fixed inset-0 z-[120]
+          bg-gray-900 bg-opacity-50 
+          dark:bg-opacity-80
+        "></div>
       
-      tabindex="-1" 
-      aria-hidden="true" 
-      :class="{
-        flex: modalStore.openModals.has(`DICT_ENTRY_DETAILS`), 
-        hidden: !modalStore.openModals.has(`DICT_ENTRY_DETAILS`),
-      }" 
-      class="
-        p-4 fixed top-0 left-0 right-0 z-[130] overflow-x-hidden overflow-y-auto 
-        w-full h-[calc(100%-1rem)] max-h-full justify-center items-start
-        md:inset-0
-      ">
-      <!--
       <div 
-        data-backdrop-for="dictEntryDetailsModal"
-        @click="$event => triggerModalBackdrop($event)"
+        id="dictEntryDetailsModal"  
+        
+        tabindex="-1" 
+        aria-hidden="true" 
+        :class="{
+          flex: modalStore.openModals.has(`DICT_ENTRY_DETAILS-${props.dictStoreType}`), 
+          hidden: !modalStore.openModals.has(`DICT_ENTRY_DETAILS-${props.dictStoreType}`),
+        }" 
         class="
-          fixed inset-0 z-[5]
-          w-[60%]
-          bg-transparent
+          p-4 fixed top-0 left-0 right-0 z-[130] overflow-x-hidden overflow-y-auto 
+          w-full h-[calc(100%-1rem)] max-h-full justify-center items-start
+          md:inset-0
         ">
-      </div>-->
-      <div 
-        class="
-          z-[15]
-          fixed w-full max-w-[83rem] max-h-full
-        ">
-        <div style="
-          position: fixed;
-          height: 17rem;
-          width: 5px;
-          top: 50%;
-          transform: translate(0px, -50%); 
-        ">
-          <FloatingActionButtonsOnExampleModal 
-            @nextBtnClick="nextBtnClick()"
-            @highlightBtnClick="highlightBtnClick()"
-            @scrollToTop="scrollToTop()"
-            @scrollToBottom="scrollToBottom()"
-            :isEntryHighlighted="dictStore.highlightedIndices.has(dictStore.currentIdx)"
-            />
-        </div>
-      </div>
-      <div 
-        class="
-          scrollable-modal-content
-          z-[10]
-          relative w-full max-w-7xl max-h-full overflow-x-auto
-        ">
+        <!--
+        <div 
+          data-backdrop-for="dictEntryDetailsModal"
+          @click="$event => triggerModalBackdrop($event)"
+          class="
+            fixed inset-0 z-[5]
+            w-[60%]
+            bg-transparent
+          ">
+        </div>-->
         <div 
           class="
-            relative rounded-lg shadow 
-            bg-white 
-            dark:bg-gray-700
+            z-[15]
+            fixed w-full max-w-[83rem] max-h-full
+          ">
+          <div style="
+            position: fixed;
+            height: 17rem;
+            width: 5px;
+            top: 50%;
+            transform: translate(0px, -50%); 
+          ">
+            <FloatingActionButtonsOnExampleModal 
+              @nextBtnClick="nextBtnClick()"
+              @highlightBtnClick="highlightBtnClick()"
+              @scrollToTop="scrollToTop()"
+              @scrollToBottom="scrollToBottom()"
+              :isEntryHighlighted="dictStore.highlightedIndices.has(dictStore.currentIdx)"
+              :dictStoreType="props.dictStoreType"
+              />
+          </div>
+        </div>
+        <div 
+          class="
+            scrollable-modal-content
+            z-[10]
+            relative w-full max-w-7xl max-h-full overflow-x-auto
           ">
           <div 
             class="
-              p-6 pl-7 space-y-6
+              relative rounded-lg shadow 
+              bg-white 
+              dark:bg-gray-700
             ">
-            <DictEntryDetailsModalContent />
-          </div>
-          <div 
-            class="
-              p-6 flex justify-between space-x-2 border-t rounded-b 
-              border-gray-200 
-              dark:border-gray-600
-            ">
-            <div>
-              <button 
-                @click="closeModal()" 
-                type="button" 
-                class="
-                  px-5 py-2.5 rounded-lg border text-sm font-medium
-                  text-gray-500 bg-white border-gray-200
-                  hover:text-gray-900 hover:bg-gray-100 
-                  focus:ring-4 focus:outline-none focus:ring-blue-300 focus:z-10 
-                  dark:text-gray-300 dark:bg-gray-700 dark:border-gray-500 
-                  dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600
-                ">
-                {{ $t('common.close') }}
-              </button>
+            <div 
+              class="
+                p-6 pl-7 space-y-6
+              ">
+              <DictEntryDetailsModalContent :dictStoreType="props.dictStoreType"/>
             </div>
-            <div>
-                &nbsp;
+            <div 
+              class="
+                p-6 flex justify-between space-x-2 border-t rounded-b 
+                border-gray-200 
+                dark:border-gray-600
+              ">
+              <div>
+                <button 
+                  @click="closeModal()" 
+                  type="button" 
+                  class="
+                    px-5 py-2.5 rounded-lg border text-sm font-medium
+                    text-gray-500 bg-white border-gray-200
+                    hover:text-gray-900 hover:bg-gray-100 
+                    focus:ring-4 focus:outline-none focus:ring-blue-300 focus:z-10 
+                    dark:text-gray-300 dark:bg-gray-700 dark:border-gray-500 
+                    dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600
+                  ">
+                  {{ $t('common.close') }}
+                </button>
+              </div>
+              <div>
+                  &nbsp;
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </Teleport>
   </div>
 </template>
@@ -110,8 +111,11 @@
   import DictEntryDetailsModalContent from '../modal-content/DictEntryDetailsModalContent.vue';
   import FloatingActionButtonsOnExampleModal from '../input-fields-and-buttons/FloatingActionButtonsOnExampleModal.vue';
   import { useDictStore } from '@/stores/dict';
-  
-  const dictStore = useDictStore(`dictModule`);
+import type { DictStoreType } from '@/frontend_models/DictStoreType.js';
+  const props = defineProps<{
+    dictStoreType: DictStoreType
+  }>();
+  const dictStore = useDictStore(props.dictStoreType);
   const modalStore = useModalStore()
 
   
@@ -121,7 +125,7 @@
         [...$event?.originalTarget?.attributes]?.
           map(e=>({name: e.name, value: e.value})) as {name: string, value: string}[];
       if (attributes.filter(e=>e.name===`data-backdrop-for`,`dictEntryDetailsModal`).length > 0) {
-        modalStore.openModals.delete(`DICT_ENTRY_DETAILS`)
+        modalStore.openModals.delete(`DICT_ENTRY_DETAILS-${props.dictStoreType}`)
       }
       $event.stopPropagation();
     } catch(e) {
@@ -130,7 +134,7 @@
   }
 
   const closeModal = () => {
-    modalStore.openModals.delete(`DICT_ENTRY_DETAILS`)
+    modalStore.openModals.delete(`DICT_ENTRY_DETAILS-${props.dictStoreType}`)
   }
 
   const scrollToTop = () => {

@@ -24,7 +24,8 @@
       <SavedQueriesModal type="dictModule"/>
       <ExportModal />
       <TableConfigurationModal />
-      <DictEntryDetailsModal />
+      <DictEntryDetailsModal dictStoreType="dictModule" />
+      <DictEntryDetailsModal dictStoreType="knowledgeModule" />
       <WordListModal />
       
       <nav class="m-auto text-center main-navigation-bar flex items-center justify-center">

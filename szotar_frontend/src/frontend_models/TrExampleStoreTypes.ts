@@ -1,1 +1,1 @@
-export type TrExampleStoreType = `standalone` | `dictModal`;
+export type TrExampleStoreType = `standalone` | `dictModal` | `knowledgeModule`;

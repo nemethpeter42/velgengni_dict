@@ -21,7 +21,7 @@ for await (const line of readLines(workerData.filename)) {
     }
     lineIdx++;
 }
-console.log('thread #' + workerData.threadNumber + ' for ' + workerData.sourceLang + ' <-> ' + workerData.targetLang + ' ready');
+console.log('worker #' + workerData.threadNumber + ' for ' + workerData.sourceLang + ' <-> ' + workerData.targetLang + ' ready');
 //null-check
 if (parentPortUnchecked === null) {
     throw new Error(`parentPort is null`);
@@ -43,7 +43,7 @@ parentPort.on('message', (q) => {
         });
     }
     filteredEntries = filteredEntries.slice(0, BACKEND_RESULT_LIMIT);
-    const threadResMessage = {
+    const workerResMessage = {
         requestType: q.requestType,
         requestId: q.requestId,
         resultData: {
@@ -53,5 +53,5 @@ parentPort.on('message', (q) => {
             backendResultLimit: BACKEND_RESULT_LIMIT,
         }
     };
-    parentPort.postMessage(threadResMessage);
+    parentPort.postMessage(workerResMessage);
 });

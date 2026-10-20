@@ -22,19 +22,19 @@ const exampleSourceFiles = {
         //source language
         'de': {
             filename: 'example_source_dbs/de-hu.txt',
-            workerThreads: [],
+            workers: [],
         },
         'es': {
             filename: 'example_source_dbs/es-hu.txt',
-            workerThreads: [],
+            workers: [],
         },
         'it': {
             filename: 'example_source_dbs/it-hu.txt',
-            workerThreads: [],
+            workers: [],
         },
         'nl': {
             filename: 'example_source_dbs/nl-hu.txt',
-            workerThreads: [],
+            workers: [],
         },
     },
 };
@@ -104,13 +104,13 @@ const startExampleDbThreadsAndReadDicts = () => {
                                 lastLineToKeepExclusive: chunk.lastLineToKeepExclusive,
                                 requestType: `START_WORKER`
                             } });
-                        exampleSourceFiles[targetLang][sourceLang].workerThreads.push(worker);
+                        exampleSourceFiles[targetLang][sourceLang].workers.push(worker);
                         worker.once(`message`, (message) => {
                             resolve();
                         });
                     }
                     catch (error) {
-                        console.error(`Error while loading thread #${chunk.threadNumber} "${sourceLang}"->"${targetLang}". Details: ${error}`);
+                        console.error(`Error while loading worker #${chunk.threadNumber} "${sourceLang}"->"${targetLang}". Details: ${error}`);
                         reject(error);
                     }
                 })));
@@ -214,30 +214,30 @@ app.post('/find', (req, res) => {
                 reverseFieldOrder = !reverseFieldOrder;
                 searchInTargetLanguage = !searchInTargetLanguage;
             }
-            const getResultFromThreads = async (workerThreads) => {
-                const result = await Promise.all(workerThreads.map(workerThread => new Promise((resolve, reject) => {
+            const getResultFromThreads = async (workers) => {
+                const result = await Promise.all(workers.map(worker => new Promise((resolve, reject) => {
                     try {
                         const requestId = uuid.v4();
                         const requestType = `FIND_ENTRIES`;
-                        const threadReqMessage = {
+                        const workerReqMessage = {
                             requestType: requestType,
                             requestId: requestId,
                             conditions: q.conditions,
                             reverseFieldOrder: reverseFieldOrder,
                             searchInTargetLanguage: searchInTargetLanguage,
                         };
-                        workerThread.postMessage(threadReqMessage);
+                        worker.postMessage(workerReqMessage);
                         const listener = (message) => {
                             if (message.requestType === requestType && message.requestId === requestId) {
                                 //console.log(`DEBUG: response for message with request type '${message.requestType}' and request id '${message.requestId}' received`);
                                 resolvePromiseThenSelfDestruct(message.resultData);
                             }
                         };
-                        const resolvePromiseThenSelfDestruct = (threadRes) => {
-                            workerThread.removeListener(`message`, listener);
-                            resolve(threadRes);
+                        const resolvePromiseThenSelfDestruct = (workerRes) => {
+                            worker.removeListener(`message`, listener);
+                            resolve(workerRes);
                         };
-                        workerThread.on(`message`, listener);
+                        worker.on(`message`, listener);
                     }
                     catch (error) {
                         console.error(`Error while getting result from a thread. Details: ${error}`);
@@ -249,7 +249,7 @@ app.post('/find', (req, res) => {
                     backendResultLimit: result?.at(0)?.backendResultLimit ?? -1,
                 };
             };
-            getResultFromThreads(exampleSource.workerThreads).then((threadRes) => {
+            getResultFromThreads(exampleSource.workers).then((threadRes) => {
                 if (q.resultLimit !== undefined && q.resultLimit !== 0) {
                     threadRes.entries = threadRes.entries.slice(0, q.resultLimit);
                 }

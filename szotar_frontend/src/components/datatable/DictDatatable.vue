@@ -130,8 +130,10 @@ import { useSavedTrExampleStore } from '@/stores/savedTrExample';
 import DictTableSavedExampleRow from './DictTableSavedExampleRow.vue';
 import ShowExportModalBtn from '../input-fields-and-buttons/ShowExportModalBtn.vue';
 import HighlightCurrEntryIconButton from '../input-fields-and-buttons/HighlightCurrEntryIconButton.vue';
+import type { DictStoreType } from '@/frontend_models/DictStoreType.js';
+const props = defineProps<{dictStoreType: DictStoreType}> ();
 
-const store = useDictStore(`dictModule`)
+const store = useDictStore(props.dictStoreType);
 
 const scrollToTableTop = (): void => {
     document.getElementById(`datatable-table-top-anchor`)?.scrollIntoView();
@@ -153,7 +155,7 @@ const  modalStore = useModalStore();
 
 const showDictEntryDetailsModal = (idx: number) => {
   store.setCurrentIdx(idx)
-  modalStore.openModals.add(`DICT_ENTRY_DETAILS`)
+  modalStore.openModals.add(`DICT_ENTRY_DETAILS-${props.dictStoreType}`)
 }
 
 function showConfigModal() {

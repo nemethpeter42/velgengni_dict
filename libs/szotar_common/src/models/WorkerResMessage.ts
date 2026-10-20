@@ -1,6 +1,6 @@
 import { ExampleArrayWithBackendLimit } from "./ExampleArrayWithBackendLimit.js";
 
-export type ThreadResMessage = {
+export type WorkerResMessage = {
     requestType: string,
     requestId: string,
     resultData: ExampleArrayWithBackendLimit,

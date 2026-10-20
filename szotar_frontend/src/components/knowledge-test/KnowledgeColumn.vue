@@ -23,6 +23,7 @@
           :originalIsAskedInTestMode="originalIsAskedInTestMode.has(index)"
           :testMode="testMode"
           :isEntryRevealed="revealedEntries.has(index)"
+          @click="store.setCurrentIdx(item.idx); modalStore.openModals.add(`DICT_ENTRY_DETAILS-knowledgeModule`)"
           @revealEntry="revealedEntries.add(index)"
           :highlightMode="mode.has(`MARK_FAVORITES`)"
           
@@ -48,8 +49,12 @@ import type { KnowledgeModuleMode } from '@/frontend_models/KnowledgeModuleMode'
 import { computed, ref } from 'vue';
 import TestModeButton from '../input-fields-and-buttons/knowledge/TestModeButton.vue';
 import KnowledgeEntry from './KnowledgeEntry.vue';
+import { useDictStore } from '@/stores/dict.js';
+import { useModalStore } from '@/stores/modal.js';
   defineEmits<{toggleTestMode: []}>();
 
+  const store = useDictStore(`knowledgeModule`);
+  const modalStore = useModalStore();
   const favoritesStore = useFavoritesStore();
 
   const props = defineProps<{

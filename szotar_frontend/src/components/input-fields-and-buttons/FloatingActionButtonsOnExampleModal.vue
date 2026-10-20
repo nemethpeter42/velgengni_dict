@@ -2,7 +2,7 @@
   <div class="floating-action-buttons-on-example-modal absolute z-[100]">
     <button 
       :title="$t('actions.closeModal')"
-      @click="modalStore.openModals.delete(`DICT_ENTRY_DETAILS`)"
+      @click="modalStore.openModals.delete(`DICT_ENTRY_DETAILS-${props.dictStoreType}`)"
       class="
         floating-close-modal-btn
         text-white bg-orange-500 
@@ -113,20 +113,22 @@
 </template>
 
 <script setup lang="ts">
-  import { useModalStore } from '@/stores/modal';
+  import type { DictStoreType } from '@/frontend_models/DictStoreType';
+import { useModalStore } from '@/stores/modal';
   import { useSavedTrExampleStore } from '@/stores/savedTrExample';
   import { useTranslationExampleStore } from '@/stores/translationExample';
   import { ArrowUpOnSquareStackIcon, ArrowUpIcon, ArrowDownIcon, XMarkIcon, ChevronRightIcon, PaintBrushIcon } from '@heroicons/vue/24/solid'
   
   const props = defineProps<{  
     isEntryHighlighted: boolean,
+    dictStoreType: DictStoreType,
  }>();
 
   defineEmits(['nextBtnClick','scrollToTop','scrollToBottom',`highlightBtnClick`])
 
   const savedTrExampleStore = useSavedTrExampleStore();
   
-  const trExampleStore = useTranslationExampleStore(`dictModal`);
+  const trExampleStore = useTranslationExampleStore(props.dictStoreType === `dictModule` ? `dictModal` : `knowledgeModule`);
   const modalStore = useModalStore();
 
   // deprecated. 
