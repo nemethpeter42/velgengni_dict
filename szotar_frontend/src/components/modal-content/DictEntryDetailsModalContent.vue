@@ -57,7 +57,7 @@
         data-button-for="highligh-current-entry"
       />
       <JumpToEntryButton
-        @click="jumpToEntry()"
+        @click="jumpToEntry(props.dictStoreType)"
         data-button-for="jump-to-entry"
       />
     </div>
@@ -112,7 +112,6 @@
   import ModalTrExampleFilterPanel from '../datatable/filter-panel/ModalTrExampleFilterPanel.vue';
   import { type Example } from 'szotar_common/models/Example.js';
   import { useSavedTrExampleStore } from '@/stores/savedTrExample';
-  import { useModalStore } from '@/stores/modal';
 import SavedTrExampleDatatable from '../datatable/SavedTrExampleDatatable.vue';
 import { type SavedTranslationExample } from 'szotar_common/models/SavedTranslationExample.js';
 import NewSavedExampleEditor from '../input-fields-and-buttons/NewSavedExampleEditor.vue';
@@ -120,11 +119,11 @@ import SaveModificationsLargeBtn from '../input-fields-and-buttons/SaveModificat
 import JumpToEntryButton from '../input-fields-and-buttons/JumpToEntryButton.vue';
 import HighlightCurrEntryButton from '../input-fields-and-buttons/HighlightCurrEntryButton.vue';
 import type { DictStoreType } from '@/frontend_models/DictStoreType.js';
-  
+import { jumpToEntry } from '@/helpers/jumpToEntry';
+
   const props = defineProps<{ dictStoreType: DictStoreType}>(); 
   const store = useDictStore(props.dictStoreType)
   const savedTrExampleStore = useSavedTrExampleStore()
-  const modalStore = useModalStore()
   
   const createSavedTrExample = async (example: Example) => {
     const dictName = store.dictNameUsedInLastQuery;
@@ -140,21 +139,4 @@ import type { DictStoreType } from '@/frontend_models/DictStoreType.js';
     );
   }
 
-  const jumpToEntry = async () => {
-    const currSortedIdx = store.currentIdx;
-    const currEntryIdxBeforeSort = store.currPageOfFilteredEntries[currSortedIdx]?.idx;
-    store.quickSearchQueryPhrase = ``;
-    modalStore.openModals.delete(`DICT_ENTRY_DETAILS-${props.dictStoreType}`);
-    await new Promise((_) => setTimeout(_, 2500));
-    const pageIdx = store.pagesOfFilteredEntries.findIndex(
-      page => page.some(e => e.idx === currEntryIdxBeforeSort)
-    );
-    const entrySubIndex = 
-      store.pagesOfFilteredEntries[pageIdx]?.
-        findIndex(e => e.idx === currEntryIdxBeforeSort) ?? -1;
-    if (pageIdx === -1) {return}
-    store.currentPageInputForTwoWayBinding = ''+(pageIdx+1);
-    await new Promise((_) => setTimeout(_, 2500));
-    document.querySelector(`#datatable-table-top-anchor [data-row-index="${entrySubIndex}"]`)?.scrollIntoView();
-  }
 </script>

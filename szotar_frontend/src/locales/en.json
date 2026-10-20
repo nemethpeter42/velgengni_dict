@@ -80,7 +80,8 @@
     "scrollToBottom": "Scroll to bottom",
     "closeModal": "Close modal",
     "highlightButton": "Highlight button",
-    "jump": "Jump"
+    "moreButtons": "More buttons",
+    "jumpToEntry": "Jump to entry"
   },
   "knowledge": {
     "reveal": "Reveal",

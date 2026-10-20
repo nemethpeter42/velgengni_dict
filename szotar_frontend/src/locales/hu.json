@@ -80,7 +80,8 @@
     "scrollToBottom": "Ugrás az oldal aljára",
     "closeModal": "Ablak bezárása",
     "highlightButton": "Kiemelés gomb",
-    "jump": "Ugrás"
+    "moreButtons": "További gombok",
+    "jumpToEntry": "Ugrás a bejegyzéshez"
   },
   "knowledge": {
     "reveal": "Megoldás",

@@ -1,13 +1,16 @@
 <template>
-  <div class="floating-action-buttons-on-example-modal absolute z-[100]">
-    <button 
+  <div class="floating-action-buttons-on-example-modal
+    relative ml-1 z-[100]
+    flex flex-row items-end gap-2">
+    <div class="w-9 flex flex-col items-stretch gap-2">
+    <button
       :title="$t('actions.closeModal')"
       @click="modalStore.openModals.delete(`DICT_ENTRY_DETAILS-${props.dictStoreType}`)"
       class="
         floating-close-modal-btn
         text-white bg-orange-500 
         dark:bg-orange-600 
-        absolute top-[0.25rem] left-1 w-9 h-9 rounded-full drop-shadow-lg
+        w-9 h-9 rounded-full drop-shadow-lg
         flex justify-center items-center text-2xl 
         hover:drop-shadow-2xl hover:bg-orange-600
         dark:hover:bg-orange-500"
@@ -20,7 +23,7 @@
       class="
         floating-next-btn
         text-white bg-blue-600 
-        absolute top-[3rem] left-1 w-9 h-14 rounded-full drop-shadow-lg
+        w-9 h-14 rounded-full drop-shadow-lg
         flex justify-center items-center text-2xl 
         hover:drop-shadow-2xl hover:bg-blue-700
         dark:bg-blue-600
@@ -29,34 +32,32 @@
       ><ChevronRightIcon class="h-6 w-6" /></button>
 
     <button 
-      :title="$t('actions.highlightButton')"
-      @click="$emit(`highlightBtnClick`)"
+      :title="$t('actions.saveModifications')"
+      @click="savedTrExampleStore.saveDb()"
       class="
-        floating-highlight-btn
-        text-white
-        absolute top-[7rem] left-1 w-9 h-9 rounded-full drop-shadow-lg
+        save-modifications-btn
+        w-9 h-9 rounded-full drop-shadow-lg
         flex justify-center items-center text-2xl 
-        hover:drop-shadow-2xl" 
-      :class="{
-        [`
-          bg-orange-500 
-          hover:bg-orange-600 
-          dark:bg-orange-600 
-          dark:hover:bg-orange-500 
-        `]: props.isEntryHighlighted,  
-        [`
-          bg-blue-600 
-          hover:bg-blue-700
+        hover:drop-shadow-2xl "
+      :class="
+        savedTrExampleStore.isDirty ? 
+        ` 
+          text-white bg-red-600 
+          dark:bg-red-600
+          hover:bg-red-700
+          dark:hover:bg-red-500
+          ` : `
+          text-white bg-blue-600 
           dark:bg-blue-600
+          hover:bg-blue-700
           dark:hover:bg-blue-500
-        `]: !props.isEntryHighlighted,  
-      }"
-      data-button-for="highlight"
-      ><PaintBrushIcon class="h-6 w-6" /></button>
+        `"
+      data-button-for="save-modifications"
+      ><ArrowUpOnSquareStackIcon class="h-6 w-6" /></button>
 
     <div
       class="
-        absolute top-[9.75rem] left-1 w-9 h-16 rounded-full drop-shadow-lg 
+        w-9 h-16 rounded-full drop-shadow-lg 
         flex flex-col
       "
     >
@@ -86,29 +87,84 @@
       ><ArrowDownIcon class="h-6 w-6" /></button>
     </div>
     
-    <button 
-      :title="$t('actions.saveModifications')"
-      @click="savedTrExampleStore.saveDb()"
+    <button
+      :title="$t('actions.moreButtons')"
+      @click="isMoreButtonsOpen = !isMoreButtonsOpen"
       class="
-        save-modifications-btn
-        absolute top-[14.25rem] left-1 w-9 h-9 rounded-full drop-shadow-lg
-        flex justify-center items-center text-2xl 
-        hover:drop-shadow-2xl "
-      :class="
-        savedTrExampleStore.isDirty ? 
-        ` 
-          text-white bg-red-600 
-          dark:bg-red-600
-          hover:bg-red-700
-          dark:hover:bg-red-500
-          ` : `
-          text-white bg-blue-600 
+        floating-toggle-more-btn
+        hidden [@media(max-height:480px)]:flex
+        text-white bg-blue-600
+        w-9 h-9 rounded-full drop-shadow-lg
+        justify-center items-center text-2xl
+        hover:drop-shadow-2xl hover:bg-blue-700
+        dark:bg-blue-600
+        dark:hover:bg-blue-500"
+      data-button-for="toggle-more"
+      ><ToggleMoreFloatingButtonsMobileIcon class="h-6 w-6" /></button>
+
+    <button
+      :title="$t('actions.highlightButton')"
+      @click="$emit(`highlightBtnClick`)"
+      class="
+        floating-highlight-btn
+        [@media(max-height:480px)]:hidden
+        text-white
+        w-9 h-9 rounded-full drop-shadow-lg
+        flex justify-center items-center text-2xl
+        hover:drop-shadow-2xl"
+      :class="highlightBtnColorClass"
+      data-button-for="highlight"
+      ><PaintBrushIcon class="h-6 w-6" /></button>
+
+    <button
+      :title="$t('actions.jumpToEntry')"
+      @click="jumpToEntry(props.dictStoreType)"
+      class="
+        floating-jump-btn
+        [@media(max-height:480px)]:hidden
+        text-white bg-blue-600
+        w-9 h-9 rounded-full drop-shadow-lg
+        flex justify-center items-center text-2xl
+        hover:drop-shadow-2xl hover:bg-blue-700
+        dark:bg-blue-600
+        dark:hover:bg-blue-500"
+      data-button-for="jump"
+      ><JumpToElementIcon class="h-6 w-6" /></button>
+    </div>
+
+    <!-- extra column, only on screens shorter than 480px -->
+    <div
+      v-if="isMoreButtonsOpen"
+      class="
+        floating-more-buttons-column
+        hidden [@media(max-height:480px)]:flex
+        w-9 flex-col items-stretch gap-2">
+      <button
+        :title="$t('actions.highlightButton')"
+        @click="$emit(`highlightBtnClick`)"
+        class="
+          floating-highlight-btn
+          text-white
+          w-9 h-9 rounded-full drop-shadow-lg
+          flex justify-center items-center text-2xl
+          hover:drop-shadow-2xl"
+        :class="highlightBtnColorClass"
+        data-button-for="highlight-mobile"
+        ><PaintBrushIcon class="h-6 w-6" /></button>
+      <button
+        :title="$t('actions.jumpToEntry')"
+        @click="jumpToEntry(props.dictStoreType)"
+        class="
+          floating-jump-btn
+          text-white bg-blue-600
+          w-9 h-9 rounded-full drop-shadow-lg
+          flex justify-center items-center text-2xl
+          hover:drop-shadow-2xl hover:bg-blue-700
           dark:bg-blue-600
-          hover:bg-blue-700
-          dark:hover:bg-blue-500
-        `"
-      data-button-for="save-modifications"
-      ><ArrowUpOnSquareStackIcon class="h-6 w-6" /></button>
+          dark:hover:bg-blue-500"
+        data-button-for="jump-mobile"
+        ><JumpToElementIcon class="h-6 w-6" /></button>
+    </div>
   </div>
 </template>
 
@@ -118,7 +174,11 @@ import { useModalStore } from '@/stores/modal';
   import { useSavedTrExampleStore } from '@/stores/savedTrExample';
   import { useTranslationExampleStore } from '@/stores/translationExample';
   import { ArrowUpOnSquareStackIcon, ArrowUpIcon, ArrowDownIcon, XMarkIcon, ChevronRightIcon, PaintBrushIcon } from '@heroicons/vue/24/solid'
-  
+  import ToggleMoreFloatingButtonsMobileIcon from './tr-example/icons/ToggleMoreFloatingButtonsMobile.icon.vue';
+  import JumpToElementIcon from './tr-example/icons/JumpToElement.icon.vue';
+  import { jumpToEntry } from '@/helpers/jumpToEntry';
+  import { computed, ref } from 'vue';
+
   const props = defineProps<{  
     isEntryHighlighted: boolean,
     dictStoreType: DictStoreType,
@@ -130,6 +190,20 @@ import { useModalStore } from '@/stores/modal';
   
   const trExampleStore = useTranslationExampleStore(props.dictStoreType === `dictModule` ? `dictModal` : `knowledgeModule`);
   const modalStore = useModalStore();
+
+  const isMoreButtonsOpen = ref(false);
+
+  const highlightBtnColorClass = computed(() => props.isEntryHighlighted ? `
+      bg-orange-500
+      hover:bg-orange-600
+      dark:bg-orange-600
+      dark:hover:bg-orange-500
+    ` : `
+      bg-blue-600
+      hover:bg-blue-700
+      dark:bg-blue-600
+      dark:hover:bg-blue-500
+    `);
 
   // deprecated. 
   // however, i keep it for possible future reuse

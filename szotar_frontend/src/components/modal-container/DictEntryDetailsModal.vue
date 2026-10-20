@@ -39,13 +39,7 @@
             z-[15]
             fixed w-full max-w-[83rem] max-h-full
           ">
-          <div style="
-            position: fixed;
-            height: 17rem;
-            width: 5px;
-            top: 50%;
-            transform: translate(0px, -50%); 
-          ">
+          <div class="fixed top-1/2 -translate-y-1/2">
             <FloatingActionButtonsOnExampleModal 
               @nextBtnClick="nextBtnClick()"
               @highlightBtnClick="highlightBtnClick()"

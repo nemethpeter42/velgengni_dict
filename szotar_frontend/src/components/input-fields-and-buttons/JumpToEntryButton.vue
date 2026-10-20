@@ -9,7 +9,7 @@
       dark:text-gray-50 dark:bg-gray-800 dark:border-gray-600
       dark:hover:bg-gray-700
       dark:focus:ring-gray-700">
-    {{ $t('actions.jump') }}
+    {{ $t('actions.jumpToEntry') }}
   </button>
 </template>
 <script lang="ts" setup>
